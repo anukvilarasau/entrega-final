@@ -80,6 +80,9 @@ async def main() -> int:
         print(f"\n❌ ERROR: {e}\n", file=sys.stderr)
         return 1
 
+    from observability.monitoreo import configurar_langsmith
+
+    configurar_langsmith(modo_mock)  # exporta LANGSMITH_* del .env (LangChain las lee de os.environ)
     componentes = crear_componentes(modo_mock=modo_mock, fallar_web=args.fallar_web)
     grafo = construir_grafo(componentes, max_pasos=args.max_pasos)
 

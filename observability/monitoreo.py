@@ -43,9 +43,20 @@ def _verdadero(valor: str | None) -> bool:
 def configurar_langsmith(modo_mock: bool) -> dict[str, Any]:
     """Deja las variables de LangSmith listas y devuelve el estado (lo muestra GET /health).
 
-    - Con clave y LANGSMITH_TRACING=true → tracing activo, proyecto LANGSMITH_PROJECT (pre-entrega-7).
+    - Con clave y LANGSMITH_TRACING=true → tracing activo, proyecto LANGSMITH_PROJECT (entrega-final).
     - En modo mock se apaga, salvo que LANGSMITH_TRACING=true venga explícito en el entorno.
+
+    LangChain lee estas variables de os.environ; config.py las lee del .env con pydantic-settings (que no
+    toca os.environ). Por eso se exportan acá, sin pisar lo que ya venga en el entorno (Docker, tests).
     """
+    a = config.AJUSTES
+    for nombre, valor in (("LANGSMITH_API_KEY", a.langsmith_api_key), ("LANGSMITH_PROJECT", a.langsmith_project),
+                          ("LANGSMITH_ENDPOINT", a.langsmith_endpoint),
+                          ("LANGSMITH_TRACING", "true" if a.langsmith_tracing else "")):
+        if valor.strip() and not os.getenv(nombre, "").strip():
+            os.environ[nombre] = valor.strip()
+    if not os.getenv("LANGSMITH_ENDPOINT", "").strip():
+        os.environ.pop("LANGSMITH_ENDPOINT", None)  # vacío = el endpoint por defecto del SDK (no "")
     os.environ.setdefault("LANGSMITH_PROJECT", PROYECTO_POR_DEFECTO)
     hay_clave = bool(os.getenv("LANGSMITH_API_KEY", "").strip())
     pedido = _verdadero(os.getenv("LANGSMITH_TRACING"))

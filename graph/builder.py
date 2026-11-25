@@ -23,6 +23,7 @@ graph/builder.py — El grafo principal: topología JERÁRQUICA con un superviso
 traza y la guarda en traces/. La usan main.py, demo.ipynb y los tests.
 """
 
+import asyncio
 import logging
 import tempfile
 from dataclasses import dataclass
@@ -170,10 +171,10 @@ async def consultar(
         log.error("La corrida falló: %s: %s", type(e).__name__, e)
         traza.cerrar("error", ultimo, tokens.usage_metadata, aviso=f"{type(e).__name__}: {e}")
         if guardar:
-            traza.guardar()
+            await asyncio.to_thread(traza.guardar)  # E/S de disco: fuera del event loop
         raise
     if guardar:
-        traza.guardar()
+        await asyncio.to_thread(traza.guardar)  # E/S de disco: fuera del event loop
     return traza
 
 def construir_grafo_api(

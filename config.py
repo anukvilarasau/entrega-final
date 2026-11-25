@@ -72,6 +72,7 @@ class Ajustes(BaseSettings):
     memoria_coleccion: str = "busquedas_viajes"
     memoria_max_dias: int = Field(default=7, ge=0)
     memoria_max_distancia: float = Field(default=0.55, ge=0, le=2)
+    memoria_embeddings: str = Field(default="chroma-default", min_length=3)
 
     # --- Frenos del grafo ---
     max_pasos_supervisor: int = Field(default=6, ge=2)
@@ -145,6 +146,7 @@ MEMORIA_MAX_DIAS: int = AJUSTES.memoria_max_dias
 # Distancia coseno máxima para considerar relevante un resultado de memoria. Calibrado en la PE6 con
 # all-MiniLM-L6-v2: la misma consulta da 0.09; parecidas, 0.24-0.44; de otro tema, 0.64-0.72.
 MEMORIA_MAX_DISTANCIA: float = AJUSTES.memoria_max_distancia
+MEMORIA_EMBEDDINGS: str = AJUSTES.memoria_embeddings
 TAVILY_MAX_RESULTADOS: int = AJUSTES.tavily_max_resultados
 
 # Fecha de "hoy": interpreta "en enero" como el próximo enero y valida que el viaje no sea en el pasado.

@@ -1,5 +1,5 @@
 """
-memory.py — Memoria local de búsquedas con ChromaDB.
+rag/memoria.py — Memoria local de búsquedas web con ChromaDB (el "caché semántico" de Tavily).
 
 Todo lo que el investigador trae de la web (Tavily) se guarda acá, con
 metadatos: destino, tema, URL, título y FECHA de búsqueda. La próxima vez que
@@ -20,9 +20,11 @@ la página se guarda aparte, en los metadatos, y se devuelve tal cual.
 
 Si ninguno pasa los tres, el investigador tiene que ir a la web.
 
-Embeddings:
-- Modo real: el modelo por defecto de ChromaDB (all-MiniLM-L6-v2 en ONNX,
-  SIN torch; se descarga una sola vez, ~80 MB).
+Embeddings (variable MEMORIA_EMBEDDINGS):
+- "chroma-default" (por defecto): el modelo de ChromaDB (all-MiniLM-L6-v2 en ONNX,
+  SIN torch; ~80 MB). MEMORIA_MAX_DISTANCIA está calibrado con este modelo.
+- cualquier modelo de fastembed (por ejemplo el mismo multilingüe del RAG):
+  se adapta con `EmbeddingFastembed`. Si se cambia, hay que recalibrar el umbral.
 - Modo mock y tests: `EmbeddingHash`, un embedding simple por palabras que no
   descarga nada, para que todo corra offline.
 """
@@ -117,6 +119,40 @@ class EmbeddingHash(EmbeddingFunction[Documents]):
         return ["cosine"]
 
 
+class EmbeddingFastembed(EmbeddingFunction[Documents]):
+    """Adaptador de un modelo de fastembed (MEMORIA_EMBEDDINGS) a la interfaz de ChromaDB."""
+
+    def __init__(self, modelo: str) -> None:
+        from rag.embeddings import cargar_fastembed
+
+        self.modelo = modelo
+        self._m = cargar_fastembed("embedding", modelo, config.MODELOS_CACHE_DIR)
+
+    def __call__(self, input: Documents) -> Embeddings:  # noqa: A002 (nombre exigido por Chroma)
+        return [v for v in self._m.embed(list(input))]  # type: ignore[attr-defined]
+
+    @staticmethod
+    def name() -> str:
+        return "fastembed_memoria"
+
+    def get_config(self) -> dict[str, Any]:
+        return {"modelo": self.modelo}
+
+    @staticmethod
+    def build_from_config(config: dict[str, Any]) -> "EmbeddingFastembed":  # noqa: A002
+        return EmbeddingFastembed(config["modelo"])
+
+
+register_embedding_function(EmbeddingFastembed)
+
+
+def embedding_de_memoria() -> EmbeddingFunction[Documents]:
+    """El embedding de la memoria según MEMORIA_EMBEDDINGS (modo real)."""
+    if config.MEMORIA_EMBEDDINGS == "chroma-default":
+        return DefaultEmbeddingFunction()  # type: ignore[return-value]
+    return EmbeddingFastembed(config.MEMORIA_EMBEDDINGS)
+
+
 # ---------------------------------------------------------------------------
 # Datos que entran y salen de la memoria
 # ---------------------------------------------------------------------------
@@ -180,7 +216,7 @@ class MemoriaBusquedas:
         self._cliente = chromadb.PersistentClient(path=str(ruta))
         self._coleccion = self._cliente.get_or_create_collection(
             name=coleccion,
-            embedding_function=embedding or DefaultEmbeddingFunction(),  # type: ignore[arg-type]
+            embedding_function=embedding or embedding_de_memoria(),  # type: ignore[arg-type]
             configuration={"hnsw": {"space": "cosine"}},  # distancia coseno: 0 = idéntico
         )
 

@@ -1,0 +1,241 @@
+{
+  "pregunta": "¿Qué hacer en Salta y qué clima hay en julio?",
+  "escenario": "",
+  "modo": "mock",
+  "modelo": "claude-haiku-5-5",
+  "max_pasos": 6,
+  "recursion_limit": 20,
+  "inicio": "2026-11-25T14:46:16.624-03:00",
+  "fin": "2026-11-25T14:46:17.856-03:00",
+  "duracion_s": 1.23,
+  "estado": "completo",
+  "ruta": [
+    "supervisor",
+    "investigador",
+    "supervisor",
+    "sintesis"
+  ],
+  "pedido": {
+    "origen": null,
+    "destino": "Salta",
+    "fecha_ida": "2027-07-10",
+    "fecha_vuelta": null,
+    "dias": null,
+    "personas": null,
+    "presupuesto": null,
+    "moneda": null,
+    "supuestos": [
+      "julio sin día exacto: se asume del 10/07/2027"
+    ]
+  },
+  "eventos": [
+    {
+      "n": 1,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T14:46:16.693-03:00",
+      "detalle": {
+        "pedido_extraido": {
+          "destino": "Salta",
+          "fecha_ida": "2027-07-10",
+          "supuestos": [
+            "julio sin día exacto: se asume del 10/07/2027"
+          ]
+        },
+        "paso": 1,
+        "turno": 1,
+        "siguiente": "investigador",
+        "instruccion": "Buscá lo que pide el usuario: ¿Qué hacer en Salta y qué clima hay en julio?",
+        "temas": [
+          "clima",
+          "actividades"
+        ],
+        "evaluacion": "R1: todavía no hay datos. Empieza el investigador.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 2,
+      "nodo": "investigador",
+      "timestamp": "2026-11-25T14:46:17.846-03:00",
+      "detalle": {
+        "ronda": 1,
+        "turno": 1,
+        "instruccion": "Buscá lo que pide el usuario: ¿Qué hacer en Salta y qué clima hay en julio?",
+        "contenido": "## Hallazgos\n### Clima\n- Clima típico (promedios mensuales): | Mes | Máxima (°C) | Mínima (°C) | Lluvia (mm) | |---|---|---|---| | Enero | 27,4 | 16,1 | 183 | | Febrero | 26,1 | 15,6 | 163 | | Marzo | 24,8 | 14,7 | 119 | | Abril | 22,6 | 11,6 | 36 | | Mayo | 21,0 | 7,7 | 8 | | Junio | 19,1 | 3,8 | 3 | | Julio | 20,2 | 2,9 | 3 | | Agosto | 22,3 | 4,5 | 5 | | Septiembre | 23,5 | 7,4 | 8 | | Octubre | 26,4 | 11,3 | 25 | | Noviembre | 27,4 | 13,9 | 66 | | Diciembre | 27,8 | 15,5 | 137 | Salta disfruta de 4 estaciones bien definidas y es conocida por su clima muy agradable. Los veranos son cálidos con frecuentes tormentas y clima nublado. Las temperaturas diurnas rondan entre los 26 y 28°C (79 a 82°F), con noches suaves  — [guia:salta#001] (guía)\n- Tel.: (0387) 4227267. - **Casa La Teresita Hotel**: Pasaje Zorrilla 249, Salta. | E-mail: casalateresita@arnet.com.ar hotelboutiquecasalateresita@hotmail.com | Tel./fax: (0387) 4318821. - **Aldaba Hotel**: Aldaba Hotel está ubicado en el antiguo paseo de la vieja estación de trenes, a 7 cuadras de la Plaza 9 de Julio en el casco histórico de la ciudad de Salta. En los servicios se incluye, el desayuno tipo buffet, degustación de vino, detalles de cortesía, Internet wi – fi, ambientes climatizados, TV por cable, teléfono y fax, con atención personalizada y bilingüe todo el año. El sitio web cuenta con sistema de reservas con confirmación instantánea. Mitre 910, Salta. | E-mail:reservas@aldaba — [guia:salta#030] (guía)\n- *: Ubicado en la misma manzana del cabildo, a una cuadra de la plaza 9 de Julio y el Museo Arqueológico de Alta Montaña, el Museo de Arte Contemporáneo y la Basílica San Francisco. Cuenta con 55 habitaciones. El sitio web cuenta con sistema de reservas con confirmación instantánea. Alvarado 646, Salta. | Tel.: (0387) 4317300. - **Hotel Wilson**: En el centro de la ciudad de Salta, a 3 cuadras de la plaza principal \"9 de Julio\". El sitio web cuenta con sistema de reservas con confirmación instantánea. Alvarado 950, Salta. | E-mail: info@wilsonhotel.com.ar | Tel.: (0387) 4312211. - **Hotel Cristian**: Hotel con servicio 3 estrellas. Ubicado a 6 cuadras de la plaza principal. Desayuno continent — [guia:salta#031] (guía)\n- Salta es una ciudad ubicada en el noroeste de Argentina, conocida por su impresionante belleza natural, su rica historia colonial y su cultura vibrante. Fundada en 1582, es una de las ciudades más antiguas del país y conserva un importante legado arquitectónico, con calles empedradas, iglesias barrocas y plazas históricas. Salta destaca por su gastronomía, que incluye platos tradicionales como las empanadas salteñas, los tamales y las humitas; y su música folclórica, especialmente el tango, el carnavalito y la zamba. La ciudad se encuentra rodeada de majestuosos paisajes montañosos, como los cerros que se elevan en sus alrededores y la famosa Quebrada de Humahuaca, un paisaje declarado Patri — [guia:salta#000] (guía)\n### Actividades\n- que se apareció recientemente en la cima de ese cerro a una mujer. Se ora los sábados por el mediodía pero se sube por ruta solamente por la mañana; los días de semana en cualquier horario. En el camino hacia la cima se ofrece agua y al llegar se encontrará con el santuario y otras atracciones. Puede subirse también en taxi o por un sendero que se inicia en la base del cerro. Debe tomar en consideración que hay días en que no es frecuente conseguir un taxi o remis si desea descender por este medio. - **Museo de Bellas Artes** Ubicado sobre la avenida Belgrano, abarca una colección permanente de obras que fueron echas por artistas regionales, como nacionales e internacionales, y otras colecci — [guia:salta#013] (guía)\n- Es una excursión que parte desde la estación de trenes de la ciudad de Salta (cerca de \"La Balcarce\", zona de peñas y artesanías) y se realiza en un día entero, partiendo a las 6 de la mañana y con regreso nuevamente a la estación a las 22 h aproximadamente. La ruta corre paralela a las vías del tren; si no consigue pasajes en el tren a las nubes, puede realizarlo en otras excursiones similares y en vehículos especialmente preparados para la excursión, como puede ser el movitrak, que realizan el mismo trayecto. Como última opción, y en caso de no conseguir ninguna excursión paga, alquile un auto particular y realice el mismo trayecto parando en diferentes pueblos muy atractivos donde el tren — [guia:salta#020] (guía)\n- Salta es una ciudad ubicada en el noroeste de Argentina, conocida por su impresionante belleza natural, su rica historia colonial y su cultura vibrante. Fundada en 1582, es una de las ciudades más antiguas del país y conserva un importante legado arquitectónico, con calles empedradas, iglesias barrocas y plazas históricas. Salta destaca por su gastronomía, que incluye platos tradicionales como las empanadas salteñas, los tamales y las humitas; y su música folclórica, especialmente el tango, el carnavalito y la zamba. La ciudad se encuentra rodeada de majestuosos paisajes montañosos, como los cerros que se elevan en sus alrededores y la famosa Quebrada de Humahuaca, un paisaje declarado Patri — [guia:salta#000] (guía)\n- Existe la posibilidad de contratar diferentes excursiones para realizar los diferentes circuitos turísticos, o bien se pueden realizar por cuenta propia en vehículo. Si se decide hacer el recorrido por cuenta propia es siempre recomendable consultar a defensa civil de Salta, 0387-521-5601 y 0387-421-3031, acerca de la transitabilidad de las rutas, puesto que pueden haber derrumbes durante todo el año, y especialmente en la temporada de lluvias (enero y febrero), período durante el cual son frecuentes las crecidas de ríos. — [guia:salta#015] (guía)\n## Datos que faltan\n- ninguno",
+        "fuentes": [
+          {
+            "ref": "guia:salta#001",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Comprender > Clima",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:salta#030",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Dormir > Salta capital",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:salta#031",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Dormir > Salta capital",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:salta#000",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Comprender",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:salta#013",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Ver",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:salta#020",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Hacer > Otros atractivos > Tren a las nubes",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:salta#000",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Comprender",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:salta#015",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Salta",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Salta",
+            "seccion": "Hacer > Circuitos Turísticos Tradicionales",
+            "licencia": "CC BY-SA 4.0"
+          }
+        ],
+        "herramientas": [
+          "consultar_guias"
+        ],
+        "llamadas": [
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "consulta": "clima en Salta en julio",
+              "destino": "Salta",
+              "tema": "clima"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'clima en Salta en julio' [destino=Salta, tema=clima]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:salta#001] origen=guia | Salta § Comprender > Clima | url=https://es.wikivoyage.org/wiki/Salta\nClima típico (promedios mensuales):\n| Mes | Máxima (°C) | Mínima (°C) | Lluvia (mm) |\n|---|---|---|---|\n| Enero | 27,4 | 16,1 | 183 |\n| Febrero | 26,1 | 15,6 | 163 |\n| Marzo | 24,8 | 14,7 | 119 |\n| Abril | 22,6 | 11,6 | 36 |\n| Mayo | 21,0 | 7,7 | 8 |\n| Junio | 19,1 | 3,8 | 3 |\n| Julio ...",
+            "timestamp": "2026-11-25T14:46:17.845-03:00"
+          },
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "consulta": "qué ver y qué hacer en Salta: actividades y excursiones",
+              "destino": "Salta",
+              "tema": "actividades"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'qué ver y qué hacer en Salta: actividades y excursiones' [destino=Salta, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:salta#013] origen=guia | Salta § Ver | url=https://es.wikivoyage.org/wiki/Salta\nque se apareció recientemente en la cima de ese cerro a una mujer. Se ora los sábados por el mediodía pero se sube por ruta solamente por la mañana; los días de semana en cualquier horario. En el camino hacia la cima se ofrece agua y al llegar se encontrará con e...",
+            "timestamp": "2026-11-25T14:46:17.845-03:00"
+          }
+        ],
+        "cobertura": [
+          {
+            "tema": "clima",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "actividades",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          }
+        ],
+        "observaciones": []
+      }
+    },
+    {
+      "n": 3,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T14:46:17.851-03:00",
+      "detalle": {
+        "paso": 2,
+        "turno": 1,
+        "siguiente": "FINALIZAR",
+        "instruccion": "",
+        "temas": [],
+        "evaluacion": "R1-R6 OK: hay datos con fuentes.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 4,
+      "nodo": "sintesis",
+      "timestamp": "2026-11-25T14:46:17.855-03:00",
+      "detalle": {
+        "respuesta": "## Lo que encontramos\n- Clima típico (promedios mensuales): | Mes | Máxima (°C) | Mínima (°C) | Lluvia (mm) | |---|---|---|---| | Enero | 27,4 | 16,1 | 183 | | Febrero | 26,1 | 15,6 | 163 | | Marzo | 24,8 | 14,7 | 119 | | Abril | 22,6 | 11,6 | 36 | | Mayo | 21,0 | 7,7 | 8 | | Junio | 19,1 | 3,8 | 3 | | Julio | 20,2 | 2,9 | 3 | | Agosto | 22,3 | 4,5 | 5 | | Septiembre | 23,5 | 7,4 | 8 | | Octubre | 26,4 | 11,3 | 25 | | Noviembre | 27,4 | 13,9 | 66 | | Diciembre | 27,8 | 15,5 | 137 | Salta disfruta de 4 estaciones bien definidas y es conocida por su clima muy agradable. Los veranos son cálidos con frecuentes tormentas y clima nublado. Las temperaturas diurnas rondan entre los 26 y 28°C (79 a 82°F), con noches suaves  — [guia:salta#001] (guía)\n- Tel.: (0387) 4227267. - **Casa La Teresita Hotel**: Pasaje Zorrilla 249, Salta. | E-mail: casalateresita@arnet.com.ar hotelboutiquecasalateresita@hotmail.com | Tel./fax: (0387) 4318821. - **Aldaba Hotel**: Aldaba Hotel está ubicado en el antiguo paseo de la vieja estación de trenes, a 7 cuadras de la Plaza 9 de Julio en el casco histórico de la ciudad de Salta. En los servicios se incluye, el desayuno tipo buffet, degustación de vino, detalles de cortesía, Internet wi – fi, ambientes climatizados, TV por cable, teléfono y fax, con atención personalizada y bilingüe todo el año. El sitio web cuenta con sistema de reservas con confirmación instantánea. Mitre 910, Salta. | E-mail:reservas@aldaba — [guia:salta#030] (guía)\n- *: Ubicado en la misma manzana del cabildo, a una cuadra de la plaza 9 de Julio y el Museo Arqueológico de Alta Montaña, el Museo de Arte Contemporáneo y la Basílica San Francisco. Cuenta con 55 habitaciones. El sitio web cuenta con sistema de reservas con confirmación instantánea. Alvarado 646, Salta. | Tel.: (0387) 4317300. - **Hotel Wilson**: En el centro de la ciudad de Salta, a 3 cuadras de la plaza principal \"9 de Julio\". El sitio web cuenta con sistema de reservas con confirmación instantánea. Alvarado 950, Salta. | E-mail: info@wilsonhotel.com.ar | Tel.: (0387) 4312211. - **Hotel Cristian**: Hotel con servicio 3 estrellas. Ubicado a 6 cuadras de la plaza principal. Desayuno continent — [guia:salta#031] (guía)\n- Salta es una ciudad ubicada en el noroeste de Argentina, conocida por su impresionante belleza natural, su rica historia colonial y su cultura vibrante. Fundada en 1582, es una de las ciudades más antiguas del país y conserva un importante legado arquitectónico, con calles empedradas, iglesias barrocas y plazas históricas. Salta destaca por su gastronomía, que incluye platos tradicionales como las empanadas salteñas, los tamales y las humitas; y su música folclórica, especialmente el tango, el carnavalito y la zamba. La ciudad se encuentra rodeada de majestuosos paisajes montañosos, como los cerros que se elevan en sus alrededores y la famosa Quebrada de Humahuaca, un paisaje declarado Patri — [guia:salta#000] (guía)\n- que se apareció recientemente en la cima de ese cerro a una mujer. Se ora los sábados por el mediodía pero se sube por ruta solamente por la mañana; los días de semana en cualquier horario. En el camino hacia la cima se ofrece agua y al llegar se encontrará con el santuario y otras atracciones. Puede subirse también en taxi o por un sendero que se inicia en la base del cerro. Debe tomar en consideración que hay días en que no es frecuente conseguir un taxi o remis si desea descender por este medio. - **Museo de Bellas Artes** Ubicado sobre la avenida Belgrano, abarca una colección permanente de obras que fueron echas por artistas regionales, como nacionales e internacionales, y otras colecci — [guia:salta#013] (guía)\n- Es una excursión que parte desde la estación de trenes de la ciudad de Salta (cerca de \"La Balcarce\", zona de peñas y artesanías) y se realiza en un día entero, partiendo a las 6 de la mañana y con regreso nuevamente a la estación a las 22 h aproximadamente. La ruta corre paralela a las vías del tren; si no consigue pasajes en el tren a las nubes, puede realizarlo en otras excursiones similares y en vehículos especialmente preparados para la excursión, como puede ser el movitrak, que realizan el mismo trayecto. Como última opción, y en caso de no conseguir ninguna excursión paga, alquile un auto particular y realice el mismo trayecto parando en diferentes pueblos muy atractivos donde el tren — [guia:salta#020] (guía)\n- Salta es una ciudad ubicada en el noroeste de Argentina, conocida por su impresionante belleza natural, su rica historia colonial y su cultura vibrante. Fundada en 1582, es una de las ciudades más antiguas del país y conserva un importante legado arquitectónico, con calles empedradas, iglesias barrocas y plazas históricas. Salta destaca por su gastronomía, que incluye platos tradicionales como las empanadas salteñas, los tamales y las humitas; y su música folclórica, especialmente el tango, el carnavalito y la zamba. La ciudad se encuentra rodeada de majestuosos paisajes montañosos, como los cerros que se elevan en sus alrededores y la famosa Quebrada de Humahuaca, un paisaje declarado Patri — [guia:salta#000] (guía)\n- Existe la posibilidad de contratar diferentes excursiones para realizar los diferentes circuitos turísticos, o bien se pueden realizar por cuenta propia en vehículo. Si se decide hacer el recorrido por cuenta propia es siempre recomendable consultar a defensa civil de Salta, 0387-521-5601 y 0387-421-3031, acerca de la transitabilidad de las rutas, puesto que pueden haber derrumbes durante todo el año, y especialmente en la temporada de lluvias (enero y febrero), período durante el cual son frecuentes las crecidas de ríos. — [guia:salta#015] (guía)\n\n## Fuentes\n- [guía] Wikivoyage, «Salta» § Comprender > Clima — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Dormir > Salta capital — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Comprender — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Ver — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Hacer > Otros atractivos > Tren a las nubes — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Hacer > Circuitos Turísticos Tradicionales — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._"
+      }
+    }
+  ],
+  "respuesta_final": "## Lo que encontramos\n- Clima típico (promedios mensuales): | Mes | Máxima (°C) | Mínima (°C) | Lluvia (mm) | |---|---|---|---| | Enero | 27,4 | 16,1 | 183 | | Febrero | 26,1 | 15,6 | 163 | | Marzo | 24,8 | 14,7 | 119 | | Abril | 22,6 | 11,6 | 36 | | Mayo | 21,0 | 7,7 | 8 | | Junio | 19,1 | 3,8 | 3 | | Julio | 20,2 | 2,9 | 3 | | Agosto | 22,3 | 4,5 | 5 | | Septiembre | 23,5 | 7,4 | 8 | | Octubre | 26,4 | 11,3 | 25 | | Noviembre | 27,4 | 13,9 | 66 | | Diciembre | 27,8 | 15,5 | 137 | Salta disfruta de 4 estaciones bien definidas y es conocida por su clima muy agradable. Los veranos son cálidos con frecuentes tormentas y clima nublado. Las temperaturas diurnas rondan entre los 26 y 28°C (79 a 82°F), con noches suaves  — [guia:salta#001] (guía)\n- Tel.: (0387) 4227267. - **Casa La Teresita Hotel**: Pasaje Zorrilla 249, Salta. | E-mail: casalateresita@arnet.com.ar hotelboutiquecasalateresita@hotmail.com | Tel./fax: (0387) 4318821. - **Aldaba Hotel**: Aldaba Hotel está ubicado en el antiguo paseo de la vieja estación de trenes, a 7 cuadras de la Plaza 9 de Julio en el casco histórico de la ciudad de Salta. En los servicios se incluye, el desayuno tipo buffet, degustación de vino, detalles de cortesía, Internet wi – fi, ambientes climatizados, TV por cable, teléfono y fax, con atención personalizada y bilingüe todo el año. El sitio web cuenta con sistema de reservas con confirmación instantánea. Mitre 910, Salta. | E-mail:reservas@aldaba — [guia:salta#030] (guía)\n- *: Ubicado en la misma manzana del cabildo, a una cuadra de la plaza 9 de Julio y el Museo Arqueológico de Alta Montaña, el Museo de Arte Contemporáneo y la Basílica San Francisco. Cuenta con 55 habitaciones. El sitio web cuenta con sistema de reservas con confirmación instantánea. Alvarado 646, Salta. | Tel.: (0387) 4317300. - **Hotel Wilson**: En el centro de la ciudad de Salta, a 3 cuadras de la plaza principal \"9 de Julio\". El sitio web cuenta con sistema de reservas con confirmación instantánea. Alvarado 950, Salta. | E-mail: info@wilsonhotel.com.ar | Tel.: (0387) 4312211. - **Hotel Cristian**: Hotel con servicio 3 estrellas. Ubicado a 6 cuadras de la plaza principal. Desayuno continent — [guia:salta#031] (guía)\n- Salta es una ciudad ubicada en el noroeste de Argentina, conocida por su impresionante belleza natural, su rica historia colonial y su cultura vibrante. Fundada en 1582, es una de las ciudades más antiguas del país y conserva un importante legado arquitectónico, con calles empedradas, iglesias barrocas y plazas históricas. Salta destaca por su gastronomía, que incluye platos tradicionales como las empanadas salteñas, los tamales y las humitas; y su música folclórica, especialmente el tango, el carnavalito y la zamba. La ciudad se encuentra rodeada de majestuosos paisajes montañosos, como los cerros que se elevan en sus alrededores y la famosa Quebrada de Humahuaca, un paisaje declarado Patri — [guia:salta#000] (guía)\n- que se apareció recientemente en la cima de ese cerro a una mujer. Se ora los sábados por el mediodía pero se sube por ruta solamente por la mañana; los días de semana en cualquier horario. En el camino hacia la cima se ofrece agua y al llegar se encontrará con el santuario y otras atracciones. Puede subirse también en taxi o por un sendero que se inicia en la base del cerro. Debe tomar en consideración que hay días en que no es frecuente conseguir un taxi o remis si desea descender por este medio. - **Museo de Bellas Artes** Ubicado sobre la avenida Belgrano, abarca una colección permanente de obras que fueron echas por artistas regionales, como nacionales e internacionales, y otras colecci — [guia:salta#013] (guía)\n- Es una excursión que parte desde la estación de trenes de la ciudad de Salta (cerca de \"La Balcarce\", zona de peñas y artesanías) y se realiza en un día entero, partiendo a las 6 de la mañana y con regreso nuevamente a la estación a las 22 h aproximadamente. La ruta corre paralela a las vías del tren; si no consigue pasajes en el tren a las nubes, puede realizarlo en otras excursiones similares y en vehículos especialmente preparados para la excursión, como puede ser el movitrak, que realizan el mismo trayecto. Como última opción, y en caso de no conseguir ninguna excursión paga, alquile un auto particular y realice el mismo trayecto parando en diferentes pueblos muy atractivos donde el tren — [guia:salta#020] (guía)\n- Salta es una ciudad ubicada en el noroeste de Argentina, conocida por su impresionante belleza natural, su rica historia colonial y su cultura vibrante. Fundada en 1582, es una de las ciudades más antiguas del país y conserva un importante legado arquitectónico, con calles empedradas, iglesias barrocas y plazas históricas. Salta destaca por su gastronomía, que incluye platos tradicionales como las empanadas salteñas, los tamales y las humitas; y su música folclórica, especialmente el tango, el carnavalito y la zamba. La ciudad se encuentra rodeada de majestuosos paisajes montañosos, como los cerros que se elevan en sus alrededores y la famosa Quebrada de Humahuaca, un paisaje declarado Patri — [guia:salta#000] (guía)\n- Existe la posibilidad de contratar diferentes excursiones para realizar los diferentes circuitos turísticos, o bien se pueden realizar por cuenta propia en vehículo. Si se decide hacer el recorrido por cuenta propia es siempre recomendable consultar a defensa civil de Salta, 0387-521-5601 y 0387-421-3031, acerca de la transitabilidad de las rutas, puesto que pueden haber derrumbes durante todo el año, y especialmente en la temporada de lluvias (enero y febrero), período durante el cual son frecuentes las crecidas de ríos. — [guia:salta#015] (guía)\n\n## Fuentes\n- [guía] Wikivoyage, «Salta» § Comprender > Clima — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Dormir > Salta capital — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Comprender — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Ver — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Hacer > Otros atractivos > Tren a las nubes — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Hacer > Circuitos Turísticos Tradicionales — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+  "metricas": {
+    "turno": 1,
+    "ruta": "supervisor → investigador → supervisor → sintesis",
+    "pasos_supervisor": 2,
+    "decision_forzada_por_freno": false,
+    "delegaciones": {
+      "investigador": 1
+    },
+    "refinamientos": 0,
+    "llamadas_por_herramienta": {
+      "consultar_guias": 2
+    },
+    "busquedas_web": 0,
+    "consultas_guias": 2,
+    "fuentes_guia": 7,
+    "fuentes_memoria": 0,
+    "fuentes_web": 0,
+    "observaciones": [],
+    "validacion": "no se validó",
+    "presupuesto_entra": null,
+    "alternativa_calculada": false
+  },
+  "tokens": {},
+  "archivo": "traces\\consulta_mock_20261125-144616.json"
+}

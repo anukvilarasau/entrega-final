@@ -341,7 +341,7 @@ class Worker:
                  "(RECURSION_LIMIT) antes de terminar.") if cortado else None
         traza.cerrar("cortado_por_recursion_limit" if cortado else "completo", valores, comunes["tokens"], aviso=aviso)
         if self.guardar_trazas:
-            traza.guardar(config.TRACES_DIR / "api")
+            await asyncio.to_thread(traza.guardar, config.TRACES_DIR / "api")  # E/S de disco: fuera del event loop
         resultado = {
             "respuesta_final": traza.respuesta_final,
             "estado_grafo": traza.estado,
