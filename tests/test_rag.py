@@ -317,3 +317,20 @@ def test_el_reranker_llm_no_se_usa_en_mock() -> None:
     b = crear_base_conocimiento(modo_mock=True)
     assert isinstance(b.reranker, RerankerSolapamiento) and isinstance(b.embeddings, EmbeddingsHash)
 
+
+
+async def test_hitl_usa_el_destino_mencionado_si_el_pedido_no_lo_tiene(base_mock: BaseConocimiento, tmp_path: Path) -> None:
+    """Caso real del notebook: '¿cómo llego del aeropuerto al centro de Mendoza?' se extrajo sin destino y pausaba."""
+    from graph.hitl import crear_nodo_aprobacion
+    from graph.state import PedidoViaje
+
+    assert base_mock.destino_mencionado("¿Cómo llego del aeropuerto al centro de Mendoza?") == "Mendoza"
+    assert base_mock.destino_mencionado("Quiero ver las Cataratas") == "Iguazú"
+    assert base_mock.destino_mencionado("¿Saltamos en paracaídas?") is None  # "salta" solo como palabra completa
+    memoria = MemoriaBusquedas(ruta=tmp_path / "mem", embedding=EmbeddingHash())
+    nodo = crear_nodo_aprobacion(memoria, base_mock)
+    salida = await nodo({"pregunta": "¿Cómo llego del aeropuerto al centro de Mendoza y qué bodegas visito?",
+                         "pedido": PedidoViaje(), "temas_pedidos": ["como_llegar", "actividades"],
+                         "pasos_supervisor": 1, "permiso_web": "libre", "turno": 1, "aprobaciones": []})
+    assert salida["permiso_web"] == "sin_pedir"  # sin pausa: las guías cubren los dos temas
+    assert salida["aprobaciones"][0].temas_en_guias == ["como_llegar", "actividades"]

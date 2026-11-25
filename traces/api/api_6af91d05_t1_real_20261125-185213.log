@@ -1,0 +1,74 @@
+==========================================================================================
+TRAZA MULTI-AGENTE | escenario: api_6af91d05_t1 | modo: real | modelo: claude-haiku-5-5
+MAX_PASOS_SUPERVISOR: 6 | RECURSION_LIMIT: 20 | inicio: 2026-11-25T18:52:13.796+00:00
+==========================================================================================
+PREGUNTA: ¿Cómo llego del aeropuerto al centro de Mendoza y qué bodegas puedo visitar?
+RUTA: supervisor → aprobacion_web → investigador → supervisor → sintesis
+
+[18:52:16.524] SUPERVISOR · pedido extraído: {"destino": "Mendoza", "supuestos": []}
+[18:52:16.524] SUPERVISOR · decisión 1 → investigador
+           evaluación: Aún no hay aportes. La pregunta pide cómo llegar del aeropuerto al centro de Mendoza y qué bodegas visitar: son temas estables (como_llegar, actividades) que responden las guías, sin presupuesto ni cuentas. No hace falta analista. Corresponde mandar al investigador solo con esos temas, sin búsquedas web de precios (R7).
+           instrucción: Buscá en la base de guías (Wikivoyage) información estable sobre Mendoza: cómo llegar del aeropuerto (El Plumerillo) al centro de la ciudad, y actividades, especialmente bodegas y visitas a viñedos que se pueden hacer. Indicá las fuentes de guía para cada dato. No hace falta buscar precios ni usar la web.
+           temas pedidos: como_llegar, actividades
+[18:52:16.532] APROBACIÓN WEB · sin_pedir (memoria) · sin memoria: ninguno
+[18:52:35.092] INVESTIGADOR · ronda 1 · herramientas: consultar_guias
+           ACCIÓN: consultar_guias({"consulta": "cómo llegar del aeropuerto El Plumerillo al centro de la ciudad", "destino": "Mendoza", "tema": "como_llegar"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'cómo llegar del aeropuerto El Plumerillo al centro de la ciudad' [destino=Mendoza, tema=como_llegar]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:mendoza#002] origen=guia | Mendoz...
+           ACCIÓN: consultar_guias({"consulta": "bodegas y visitas a viñedos que se pueden hacer", "destino": "Mendoza", "tema": "actividades"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'bodegas y visitas a viñedos que se pueden hacer' [destino=Mendoza, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:mendoza#007] origen=guia | Mendoza § Ver | url=ht...
+           ACCIÓN: consultar_guias({"consulta": "rutas del vino Luján de Cuyo Maipú Valle de Uco bodegas para visitar", "destino": "Mendoza", "tema": "actividades"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'rutas del vino Luján de Cuyo Maipú Valle de Uco bodegas para visitar' [destino=Mendoza, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:mendoza#008] origen=guia | M...
+           fuentes: guia:mendoza#002 (guia, como_llegar), guia:mendoza#003 (guia, como_llegar), guia:mendoza#020 (guia, como_llegar), guia:mendoza#018 (guia, como_llegar), guia:mendoza#007 (guia, actividades), guia:mendoza#017 (guia, actividades), guia:mendoza#008 (guia, actividades), guia:mendoza#009 (guia, actividades), guia:mendoza#013 (guia, actividades)
+           cobertura: como_llegar 1 (0 mem / 0 web, sin precios); actividades 1 (0 mem / 0 web, sin precios)
+           chequeo por código: sin observaciones
+[18:52:37.094] SUPERVISOR · decisión 2 → FINALIZAR
+           evaluación: R1: la pregunta pide cómo llegar del aeropuerto al centro y qué bodegas visitar; ambos temas tienen datos de guía (como_llegar y actividades). No hay presupuesto ni pedido de cuentas, así que no hace falta analista. R2: todos los aportes tienen fuente de guía (guia:mendoza#002, #003, #007, #008, #009, #013, #017). R3: no aplica, no se pidieron precios. R4: no aplica, no hay presupuesto. R5: el aporte no tiene observaciones del chequeo sin resolver. R6: no hay contradicciones relevantes; la inconsistencia de 2 horas vs 1 hora en el colectivo es menor y el propio aporte la aclara (la guía indica una hora). R7: la pregunta solo pide temas estables, que las guías ya respondieron sin gastar búsquedas web. Cumple la rúbrica; se puede finalizar.
+[18:52:43.627] SÍNTESIS · respuesta final (3486 caracteres)
+
+RESPUESTA FINAL:
+## Cómo llegar del aeropuerto al centro
+
+El aeropuerto es el Gobernador Francisco Gabrielli (El Plumerillo, MDZ), a unos 11 km del centro [guia:mendoza#002]. Tenés dos opciones:
+
+- **Remis o taxi:** tienen precios fijos publicados. La guía cita AR$225 al centro, pero es un dato de 2019, así que tomalo solo como referencia [guia:mendoza#002].
+- **Colectivo urbano:** pasa cada 40 minutos y la guía indica unos 60 minutos hasta el centro. Hay una inconsistencia en la fuente, que en un pasaje dice 2 horas [guia:mendoza#002]. Necesitás tarjeta de autobús, que no se vende en el aeropuerto, así que conviene llevarla desde antes.
+
+Si llegás por micro de larga distancia, la terminal está a unos 2 km al este del centro. Desde ahí hay taxis y remis, y a pie son unos 15 minutos, aunque la guía no lo recomienda de noche [guia:mendoza#003].
+
+## Bodegas para visitar
+
+- **Zonas principales:** Maipú y Luján de Cuyo son las más conocidas por el Malbec. También destacan el Cabernet Sauvignon y el Merlot [guia:mendoza#013].
+- **Bodegas con visitas sin cita:** Norton y Rutini, entre otras [guia:mendoza#007].
+- **Consejo práctico:** muchas bodegas cierran los fines de semana y conviene reservar con antelación [guia:mendoza#007].
+- **Época ideal:** la cosecha, en marzo y abril [guia:mendoza#007].
+- **Alojamiento cerca de bodegas:** Posada Borravino (Chacras de Coria, cerca de bodegas muy lindas), Club Tapiz (Luján de Cuyo), Cavas Wine Lodge (fuera de la ciudad) y Tupungato Divino (Tupungato) [guia:mendoza#017].
+- **Tours de degustación:** Potrerillos Explorer ofrece catas y también trekking, rafting y cabalgatas [guia:mendoza#009].
+
+## Otras actividades cercanas
+
+- **Parque San Martín:** sendero desde el zoológico hasta el Cerro de la Gloria, con buena vista al atardecer. Se puede alquilar bici en "Bicis del Parque" [guia:mendoza#007].
+- **Museos:** Museo Municipal de Arte Moderno, Museo del Área Fundacional y Museo Provincial de Bellas Artes (Casa Fader) [guia:mendoza#008].
+- **Termas de Cacheuta:** a una hora de la ciudad, con el Parque del Agua. Se llega en bus desde la terminal (Espreso Uspallata) [guia:mendoza#009].
+
+## Lo que no pudimos averiguar
+
+- Los nombres completos de las bodegas, sus horarios, precios de visitas y rutas por zona. Para armar un recorrido de bodegas hacen falta fuentes más específicas.
+- Los precios actuales de remis, colectivo y Cacheuta. Las guías traen valores viejos.
+- El mes del viaje, que define si la visita a bodegas cae en temporada de cosecha. Si me decís cuándo viajás, puedo ajustar las recomendaciones.
+
+## Fuentes
+- [guía] Wikivoyage, «Mendoza» § Llegar > Por avión — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Llegar > Por bus — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Ver — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Dormir > Derroche — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Ver > Museos — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Hacer — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Comer y Beber — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+
+_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._
+
+------------------------------------------------------------------------------------------
+ESTADO: completo | DURACIÓN: 29.84 s | DECISIONES DEL SUPERVISOR: 2
+REFINAMIENTOS: 0 | BÚSQUEDAS WEB REALES (TAVILY): 0 | DATOS: 9 de guías · 0 de memoria · 0 de la web
+VALIDACIÓN: no se validó | PRESUPUESTO ENTRA: None | HERRAMIENTAS: {"consultar_guias": 3}
+TOKENS: {"claude-haiku-5-5": {"output_tokens": 4276, "total_tokens": 37568, "input_token_details": {"ephemeral_1h_input_tokens": 0, "cache_creation": 0, "cache_read": 0, "ephemeral_5m_input_tokens": 0}, "output_token_details": {"reasoning": 429}, "input_tokens": 33292}}

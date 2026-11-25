@@ -1,0 +1,291 @@
+{
+  "pregunta": "¿Cómo llego del aeropuerto al centro de Mendoza y qué bodegas puedo visitar?",
+  "escenario": "api_6af91d05_t1",
+  "modo": "real",
+  "modelo": "claude-haiku-5-5",
+  "max_pasos": 6,
+  "recursion_limit": 20,
+  "inicio": "2026-11-25T18:52:13.796+00:00",
+  "fin": "2026-11-25T18:52:43.635+00:00",
+  "duracion_s": 29.84,
+  "estado": "completo",
+  "ruta": [
+    "supervisor",
+    "aprobacion_web",
+    "investigador",
+    "supervisor",
+    "sintesis"
+  ],
+  "pedido": {
+    "origen": null,
+    "destino": "Mendoza",
+    "fecha_ida": null,
+    "fecha_vuelta": null,
+    "dias": null,
+    "personas": null,
+    "presupuesto": null,
+    "moneda": null,
+    "supuestos": []
+  },
+  "eventos": [
+    {
+      "n": 1,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:52:16.524+00:00",
+      "detalle": {
+        "pedido_extraido": {
+          "destino": "Mendoza",
+          "supuestos": []
+        },
+        "paso": 1,
+        "turno": 1,
+        "siguiente": "investigador",
+        "instruccion": "Buscá en la base de guías (Wikivoyage) información estable sobre Mendoza: cómo llegar del aeropuerto (El Plumerillo) al centro de la ciudad, y actividades, especialmente bodegas y visitas a viñedos que se pueden hacer. Indicá las fuentes de guía para cada dato. No hace falta buscar precios ni usar la web.",
+        "temas": [
+          "como_llegar",
+          "actividades"
+        ],
+        "evaluacion": "Aún no hay aportes. La pregunta pide cómo llegar del aeropuerto al centro de Mendoza y qué bodegas visitar: son temas estables (como_llegar, actividades) que responden las guías, sin presupuesto ni cuentas. No hace falta analista. Corresponde mandar al investigador solo con esos temas, sin búsquedas web de precios (R7).",
+        "forzada": false
+      }
+    },
+    {
+      "n": 2,
+      "nodo": "aprobacion_web",
+      "timestamp": "2026-11-25T18:52:16.532+00:00",
+      "detalle": {
+        "ronda": 1,
+        "turno": 1,
+        "temas_sin_memoria": [],
+        "temas_en_memoria": [],
+        "temas_en_guias": [
+          "como_llegar",
+          "actividades"
+        ],
+        "pausa": false,
+        "resultado": "sin_pedir",
+        "origen": "memoria",
+        "comentario": ""
+      }
+    },
+    {
+      "n": 3,
+      "nodo": "investigador",
+      "timestamp": "2026-11-25T18:52:35.092+00:00",
+      "detalle": {
+        "ronda": 1,
+        "turno": 1,
+        "instruccion": "Buscá en la base de guías (Wikivoyage) información estable sobre Mendoza: cómo llegar del aeropuerto (El Plumerillo) al centro de la ciudad, y actividades, especialmente bodegas y visitas a viñedos que se pueden hacer. Indicá las fuentes de guía para cada dato. No hace falta buscar precios ni usar la web.",
+        "contenido": "## Hallazgos\n\n### Cómo llegar (aeropuerto El Plumerillo → centro)\n- El Aeropuerto Internacional Gobernador Francisco Gabrielli (El Plumerillo, IATA MDZ) está a 11 km del centro de la ciudad. — [guia:mendoza#002] (guía)\n- Desde el aeropuerto se puede tomar un remis (taxi) con precios fijos publicados. La guía cita \"AR$ 225 al centro - 2019\", pero es un dato viejo y no sirve como precio actual. — [guia:mendoza#002] (guía)\n- Hay un colectivo urbano al centro, pero pasa solo cada 40 minutos y tarda unas 2 horas... según la guía, tarda una hora en llegar al centro. Requiere tarjeta de autobús, que no se vende en el aeropuerto. — [guia:mendoza#002] (guía)\n- Referencia de la terminal de micros (no es el aeropuerto): está a unos 2 km al este del centro; hay taxis y remis, y a pie son unos 15 minutos, aunque no se recomienda de noche. — [guia:mendoza#003] (guía)\n\n### Actividades: bodegas y viñedos\n- Muchas bodegas ofrecen visitas guiadas y catas de vino. Conviene reservar con antelación, porque muchas cierran los fines de semana. Algunas importantes (Norton, Rutini, entre otras) tienen \"visitas sin cita previa\". — [guia:mendoza#007] (guía)\n- Buena época para visitar: la cosecha, en marzo y abril. — [guia:mendoza#007] (guía)\n- Zonas de vino citadas: los Malbecs de Maipú y de Luján de Cuyo son los más famosos; también destacan Cabernet Sauvignon y Merlot. — [guia:mendoza#013] (guía)\n- Alojamientos en zona vitivinícola que la guía menciona cerca de bodegas: Posada Borravino (Chacras de Coria, \"cerca de algunas de las bodegas más bonitas\"), Club Tapiz (Luján de Cuyo), Cavas Wine Lodge (fuera de la ciudad) y Tupungato Divino (Tupungato). — [guia:mendoza#017] (guía)\n- Empresas de tours de degustación de vinos: Potrerillos Explorer (Potrerillos, ofrece también trekking, rafting y otras actividades). — [guia:mendoza#009] (guía)\n\n### Otras actividades (complemento)\n- Parque San Martín: caminar o pedalear; sendero desde el zoológico hasta el Cerro de la Gloria, con vista de la ciudad y las montañas, especialmente al atardecer. Alquiler de bicicletas en \"Bicis del Parque\". — [guia:mendoza#007] (guía)\n- Museos: Museo Municipal de Arte Moderno (Plaza Independencia), Museo del Área Fundacional, Museo Provincial de Bellas Artes (Casa Fader), entre otros. — [guia:mendoza#008] (guía)\n- Termas de Cacheuta, a una hora de la ciudad, con el \"Parque del Agua\"; la guía indica AR$70 en temporada alta y fines de semana (dato desactualizado). Se consulta por bus en la terminal (Espreso Uspallata). — [guia:mendoza#009] (guía)\n- Trekking, rafting, cabalgatas y excursiones de montaña en Potrerillos y alrededores. — [guia:mendoza#009] (guía)\n\n## Datos que faltan\n- Las guías no dan nombres completos de bodegas ni horarios, precios de visitas o rutas concretas por zona (Maipú, Luján de Cuyo, Valle de Uco). Hacen falta fuentes más específicas si se necesita un itinerario de bodegas.\n- Los precios de la guía (remis de AR$225 en 2019, colectivo, Cacheuta AR$70) son antiguos. No se buscaron precios actuales porque el supervisor pidió no usar la web.\n- No se informó el mes del viaje, así que no se consultó el clima ni la temporada de cosecha con detalle más allá de la mención de marzo y abril.",
+        "fuentes": [
+          {
+            "ref": "guia:mendoza#002",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Llegar > Por avión",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#003",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Llegar > Por bus",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#020",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Siguiente destino",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#018",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Seguridad",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#007",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Ver",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#017",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Dormir > Derroche",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#008",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Ver > Museos",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#009",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Hacer",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:mendoza#013",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Mendoza",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Mendoza",
+            "seccion": "Comer y Beber",
+            "licencia": "CC BY-SA 4.0"
+          }
+        ],
+        "herramientas": [
+          "consultar_guias"
+        ],
+        "llamadas": [
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "consulta": "cómo llegar del aeropuerto El Plumerillo al centro de la ciudad",
+              "destino": "Mendoza",
+              "tema": "como_llegar"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'cómo llegar del aeropuerto El Plumerillo al centro de la ciudad' [destino=Mendoza, tema=como_llegar]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:mendoza#002] origen=guia | Mendoza § Llegar > Por avión | url=https://es.wikivoyage.org/wiki/Mendoza\n- **Aeropuerto Internacional Gobernador Francisco Gabrielli**, más conocido como Aeropuerto Internacional El Plumerillo, a 11 kilometros del centro de la ciudad de Mendoza. (**MDZ** IATA). Un aeropuerto pequeño, con vuelos a Buenos ...",
+            "timestamp": "2026-11-25T18:52:35.089+00:00"
+          },
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "consulta": "bodegas y visitas a viñedos que se pueden hacer",
+              "destino": "Mendoza",
+              "tema": "actividades"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'bodegas y visitas a viñedos que se pueden hacer' [destino=Mendoza, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:mendoza#007] origen=guia | Mendoza § Ver | url=https://es.wikivoyage.org/wiki/Mendoza\n- **Parque San Martín**. Este enorme parque es ideal para caminar o andar en bicicleta. También hay un zoológico en la esquina noroeste del parque, con animales en pequeñas jaulas. Detrás del zoológico comienza un sendero que lleva hasta el Cerro de la Gloria, do...",
+            "timestamp": "2026-11-25T18:52:35.089+00:00"
+          },
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "consulta": "rutas del vino Luján de Cuyo Maipú Valle de Uco bodegas para visitar",
+              "destino": "Mendoza",
+              "tema": "actividades"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'rutas del vino Luján de Cuyo Maipú Valle de Uco bodegas para visitar' [destino=Mendoza, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:mendoza#008] origen=guia | Mendoza § Ver > Museos | url=https://es.wikivoyage.org/wiki/Mendoza\n- Espacio Contemporáneo de Arte (ECA)\n- Museo de Ciencias Naturales y Antropológicas \"Juan C. Moyano\"\n- Museo Provincial de Bellas Artes Emiliano Guiñazú (Casa Fader)\n- Museo Municipal de Arte Moderno de Mza (MMAMM). Plaza Independen...",
+            "timestamp": "2026-11-25T18:52:35.089+00:00"
+          }
+        ],
+        "cobertura": [
+          {
+            "tema": "como_llegar",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "actividades",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          }
+        ],
+        "observaciones": []
+      }
+    },
+    {
+      "n": 4,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:52:37.094+00:00",
+      "detalle": {
+        "paso": 2,
+        "turno": 1,
+        "siguiente": "FINALIZAR",
+        "instruccion": "",
+        "temas": [],
+        "evaluacion": "R1: la pregunta pide cómo llegar del aeropuerto al centro y qué bodegas visitar; ambos temas tienen datos de guía (como_llegar y actividades). No hay presupuesto ni pedido de cuentas, así que no hace falta analista. R2: todos los aportes tienen fuente de guía (guia:mendoza#002, #003, #007, #008, #009, #013, #017). R3: no aplica, no se pidieron precios. R4: no aplica, no hay presupuesto. R5: el aporte no tiene observaciones del chequeo sin resolver. R6: no hay contradicciones relevantes; la inconsistencia de 2 horas vs 1 hora en el colectivo es menor y el propio aporte la aclara (la guía indica una hora). R7: la pregunta solo pide temas estables, que las guías ya respondieron sin gastar búsquedas web. Cumple la rúbrica; se puede finalizar.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 5,
+      "nodo": "sintesis",
+      "timestamp": "2026-11-25T18:52:43.627+00:00",
+      "detalle": {
+        "respuesta": "## Cómo llegar del aeropuerto al centro\n\nEl aeropuerto es el Gobernador Francisco Gabrielli (El Plumerillo, MDZ), a unos 11 km del centro [guia:mendoza#002]. Tenés dos opciones:\n\n- **Remis o taxi:** tienen precios fijos publicados. La guía cita AR$225 al centro, pero es un dato de 2019, así que tomalo solo como referencia [guia:mendoza#002].\n- **Colectivo urbano:** pasa cada 40 minutos y la guía indica unos 60 minutos hasta el centro. Hay una inconsistencia en la fuente, que en un pasaje dice 2 horas [guia:mendoza#002]. Necesitás tarjeta de autobús, que no se vende en el aeropuerto, así que conviene llevarla desde antes.\n\nSi llegás por micro de larga distancia, la terminal está a unos 2 km al este del centro. Desde ahí hay taxis y remis, y a pie son unos 15 minutos, aunque la guía no lo recomienda de noche [guia:mendoza#003].\n\n## Bodegas para visitar\n\n- **Zonas principales:** Maipú y Luján de Cuyo son las más conocidas por el Malbec. También destacan el Cabernet Sauvignon y el Merlot [guia:mendoza#013].\n- **Bodegas con visitas sin cita:** Norton y Rutini, entre otras [guia:mendoza#007].\n- **Consejo práctico:** muchas bodegas cierran los fines de semana y conviene reservar con antelación [guia:mendoza#007].\n- **Época ideal:** la cosecha, en marzo y abril [guia:mendoza#007].\n- **Alojamiento cerca de bodegas:** Posada Borravino (Chacras de Coria, cerca de bodegas muy lindas), Club Tapiz (Luján de Cuyo), Cavas Wine Lodge (fuera de la ciudad) y Tupungato Divino (Tupungato) [guia:mendoza#017].\n- **Tours de degustación:** Potrerillos Explorer ofrece catas y también trekking, rafting y cabalgatas [guia:mendoza#009].\n\n## Otras actividades cercanas\n\n- **Parque San Martín:** sendero desde el zoológico hasta el Cerro de la Gloria, con buena vista al atardecer. Se puede alquilar bici en \"Bicis del Parque\" [guia:mendoza#007].\n- **Museos:** Museo Municipal de Arte Moderno, Museo del Área Fundacional y Museo Provincial de Bellas Artes (Casa Fader) [guia:mendoza#008].\n- **Termas de Cacheuta:** a una hora de la ciudad, con el Parque del Agua. Se llega en bus desde la terminal (Espreso Uspallata) [guia:mendoza#009].\n\n## Lo que no pudimos averiguar\n\n- Los nombres completos de las bodegas, sus horarios, precios de visitas y rutas por zona. Para armar un recorrido de bodegas hacen falta fuentes más específicas.\n- Los precios actuales de remis, colectivo y Cacheuta. Las guías traen valores viejos.\n- El mes del viaje, que define si la visita a bodegas cae en temporada de cosecha. Si me decís cuándo viajás, puedo ajustar las recomendaciones.\n\n## Fuentes\n- [guía] Wikivoyage, «Mendoza» § Llegar > Por avión — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Llegar > Por bus — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Ver — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Dormir > Derroche — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Ver > Museos — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Hacer — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Comer y Beber — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._"
+      }
+    }
+  ],
+  "respuesta_final": "## Cómo llegar del aeropuerto al centro\n\nEl aeropuerto es el Gobernador Francisco Gabrielli (El Plumerillo, MDZ), a unos 11 km del centro [guia:mendoza#002]. Tenés dos opciones:\n\n- **Remis o taxi:** tienen precios fijos publicados. La guía cita AR$225 al centro, pero es un dato de 2019, así que tomalo solo como referencia [guia:mendoza#002].\n- **Colectivo urbano:** pasa cada 40 minutos y la guía indica unos 60 minutos hasta el centro. Hay una inconsistencia en la fuente, que en un pasaje dice 2 horas [guia:mendoza#002]. Necesitás tarjeta de autobús, que no se vende en el aeropuerto, así que conviene llevarla desde antes.\n\nSi llegás por micro de larga distancia, la terminal está a unos 2 km al este del centro. Desde ahí hay taxis y remis, y a pie son unos 15 minutos, aunque la guía no lo recomienda de noche [guia:mendoza#003].\n\n## Bodegas para visitar\n\n- **Zonas principales:** Maipú y Luján de Cuyo son las más conocidas por el Malbec. También destacan el Cabernet Sauvignon y el Merlot [guia:mendoza#013].\n- **Bodegas con visitas sin cita:** Norton y Rutini, entre otras [guia:mendoza#007].\n- **Consejo práctico:** muchas bodegas cierran los fines de semana y conviene reservar con antelación [guia:mendoza#007].\n- **Época ideal:** la cosecha, en marzo y abril [guia:mendoza#007].\n- **Alojamiento cerca de bodegas:** Posada Borravino (Chacras de Coria, cerca de bodegas muy lindas), Club Tapiz (Luján de Cuyo), Cavas Wine Lodge (fuera de la ciudad) y Tupungato Divino (Tupungato) [guia:mendoza#017].\n- **Tours de degustación:** Potrerillos Explorer ofrece catas y también trekking, rafting y cabalgatas [guia:mendoza#009].\n\n## Otras actividades cercanas\n\n- **Parque San Martín:** sendero desde el zoológico hasta el Cerro de la Gloria, con buena vista al atardecer. Se puede alquilar bici en \"Bicis del Parque\" [guia:mendoza#007].\n- **Museos:** Museo Municipal de Arte Moderno, Museo del Área Fundacional y Museo Provincial de Bellas Artes (Casa Fader) [guia:mendoza#008].\n- **Termas de Cacheuta:** a una hora de la ciudad, con el Parque del Agua. Se llega en bus desde la terminal (Espreso Uspallata) [guia:mendoza#009].\n\n## Lo que no pudimos averiguar\n\n- Los nombres completos de las bodegas, sus horarios, precios de visitas y rutas por zona. Para armar un recorrido de bodegas hacen falta fuentes más específicas.\n- Los precios actuales de remis, colectivo y Cacheuta. Las guías traen valores viejos.\n- El mes del viaje, que define si la visita a bodegas cae en temporada de cosecha. Si me decís cuándo viajás, puedo ajustar las recomendaciones.\n\n## Fuentes\n- [guía] Wikivoyage, «Mendoza» § Llegar > Por avión — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Llegar > Por bus — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Ver — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Dormir > Derroche — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Ver > Museos — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Hacer — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Comer y Beber — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+  "metricas": {
+    "turno": 1,
+    "ruta": "supervisor → aprobacion_web → investigador → supervisor → sintesis",
+    "pasos_supervisor": 2,
+    "decision_forzada_por_freno": false,
+    "delegaciones": {
+      "investigador": 1
+    },
+    "refinamientos": 0,
+    "llamadas_por_herramienta": {
+      "consultar_guias": 3
+    },
+    "busquedas_web": 0,
+    "consultas_guias": 3,
+    "fuentes_guia": 9,
+    "fuentes_memoria": 0,
+    "fuentes_web": 0,
+    "observaciones": [],
+    "validacion": "no se validó",
+    "presupuesto_entra": null,
+    "alternativa_calculada": false
+  },
+  "tokens": {
+    "claude-haiku-5-5": {
+      "output_tokens": 4276,
+      "total_tokens": 37568,
+      "input_token_details": {
+        "ephemeral_1h_input_tokens": 0,
+        "cache_creation": 0,
+        "cache_read": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "output_token_details": {
+        "reasoning": 429
+      },
+      "input_tokens": 33292
+    }
+  },
+  "archivo": "traces/api/api_6af91d05_t1_real_20261125-185213.json"
+}

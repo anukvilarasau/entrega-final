@@ -1,0 +1,213 @@
+{
+  "n": 5,
+  "nombre": "error_controlado",
+  "pregunta": "Quiero ir a Mendoza del 20 al 12 de marzo, somos 3, salimos de Rosario y tenemos 900.000 pesos. ¿Nos alcanza?",
+  "aprobar": false,
+  "demuestra": "Error controlado: fechas imposibles + web rechazada → DONE pidiendo corregir",
+  "pausa": {
+    "tipo": "aprobacion_busqueda_web",
+    "ronda": 1,
+    "destino": "Mendoza",
+    "temas_sin_memoria": [
+      "pasajes",
+      "alojamiento",
+      "comida"
+    ],
+    "temas_en_memoria": [
+      "cambio"
+    ],
+    "temas_en_guias": [
+      "actividades",
+      "como_llegar",
+      "clima",
+      "barrios"
+    ],
+    "consultas_previstas": [
+      "precio de pasajes Rosario → Mendoza",
+      "precio de alojamiento por noche en Mendoza",
+      "cuánto cuesta comer en Mendoza"
+    ],
+    "instruccion_del_supervisor": "Buscá datos para un viaje de Rosario a Mendoza para 3 personas, ida 2027-03-20 y vuelta 2027-03-12 (la vuelta figura anterior a la ida; reportá esa fecha tal como está). Necesitamos precios de referencia (rangos, valores 'desde' o promedios), no precios exactos: pasajes Rosario-Mendoza para 3 personas, alojamiento en Mendoza para 3 personas, comida por día, y la cotización del dólar oficial, tarjeta y MEP (no el blue). Incluí también actividades, cómo llegar, clima y barrios de Mendoza en marzo desde las guías. Indicá fuente de cada dato (mem-..., URL o guia:...).",
+    "como_responder": "POST /tasks/{job_id}/approve con {\"aprobado\": true} o {\"aprobado\": false}"
+  },
+  "errores_http": {
+    "GET job inexistente (404)": 404,
+    "seguimiento de thread inexistente (404)": 404,
+    "pregunta demasiado corta (422)": 422,
+    "campo desconocido (422)": 422
+  },
+  "conversacion": null,
+  "job": {
+    "job_id": "26e00e1edf1e439f9a03588bc5503510",
+    "estado": "DONE",
+    "pregunta": "Quiero ir a Mendoza del 20 al 12 de marzo, somos 3, salimos de Rosario y tenemos 900.000 pesos. ¿Nos alcanza?",
+    "auto_aprobar": false,
+    "modo": "real",
+    "thread_id": "26e00e1edf1e439f9a03588bc5503510",
+    "turno": 1,
+    "creado": "2026-11-25T18:41:06.537+00:00",
+    "iniciado": "2026-11-25T18:41:06.539+00:00",
+    "actualizado": "2026-11-25T18:42:15.209+00:00",
+    "terminado": "2026-11-25T18:42:15.209+00:00",
+    "nodo_actual": null,
+    "ruta": [
+      "supervisor",
+      "aprobacion_web",
+      "investigador",
+      "supervisor",
+      "aprobacion_web",
+      "investigador",
+      "supervisor",
+      "analista",
+      "supervisor",
+      "sintesis"
+    ],
+    "aprobacion_pendiente": null,
+    "aprobaciones": [
+      {
+        "ronda": 1,
+        "aprobado": false,
+        "comentario": "sin gastar en la web",
+        "temas": [
+          "pasajes",
+          "alojamiento",
+          "comida"
+        ],
+        "timestamp": "2026-11-25T18:41:12.634+00:00"
+      }
+    ],
+    "resultado": {
+      "respuesta_final": "> ⚠️ La búsqueda web no fue autorizada: esta respuesta usa solo los datos que ya estaban en la memoria local de búsquedas, así que puede estar incompleta.\n\nEl viaje, tal como lo escribiste, no se puede presupuestar todavía: la fecha de vuelta (12 de marzo de 2027) es anterior a la de ida (20 de marzo de 2027). Para armar el itinerario y el presupuesto necesitamos que confirmes las fechas. Puede ser que la vuelta sea el 12 de marzo y la ida antes (por ejemplo, el 10 o el 11), o que la ida sea el 20 y la vuelta algún día posterior. Con eso también definimos cuántos días dura el viaje.\n\n## Lo que no pudimos averiguar\n\nEsta consulta se respondió solo con datos de la memoria local. La búsqueda en la web no fue autorizada por el revisor, así que no tenemos precios actuales de:\n\n- **Pasajes Rosario–Mendoza** para 3 personas, en avión o micro.\n- **Alojamiento** en Mendoza para 3 personas (precio por noche).\n- **Comida** por día en Mendoza.\n\nTampoco tenemos la cantidad de días del viaje.\n\n## Lo que sí sabemos\n\n**Clima en marzo** (típico, según la guía) [guia:mendoza#001]: máxima promedio de 27,3 °C, mínima de 14,4 °C y unos 27 mm de lluvia en el mes. Los veranos son secos, así que el calor se modera por la baja humedad, y las montañas cercanas son frescas incluso en esa época.\n\n**Cómo llegar** [guia:mendoza#002] [guia:mendoza#003]: hay vuelos a El Plumerillo (MDZ), pero la guía los describe como más caros que el micro. La terminal de micros está a unos 2 km al este del centro, con conexiones diarias. La guía recomienda comprar con anticipación en temporada alta, de diciembre a marzo. Desde el aeropuerto podés tomar un remis a precio fijo o el colectivo, que sale cada 40 minutos. No tenemos confirmado si hay vuelos directos desde Rosario.\n\n**Qué hacer** [guia:mendoza#007] [guia:mendoza#008] [guia:mendoza#009]: el Parque San Martín para caminar o andar en bici, con una buena vista al atardecer desde el Cerro de la Gloria. Las bodegas ofrecen visitas y catas; marzo y abril son buenos meses por la cosecha, aunque muchas requieren reserva y cierran los fines de semana. Hay museos como el Museo Provincial de Bellas Artes, el MMAMM y el Museo del Área Fundacional. Para aventura, Potrerillos tiene trekking, rafting y parapente. Las Termas de Cacheuta quedan a una hora de la ciudad.\n\n**Dónde alojarse** [guia:mendoza#014] [guia:mendoza#017]: la zona entre Plaza Independencia y el Parque San Martín es la más agradable, con bares y restaurantes cerca en Aristides Villanueva. Al este del centro está la opción más barata, aunque con más ruido. Si buscan algo fuera de la ciudad, Chacras de Coria y Luján de Cuyo tienen hoteles de vino. Cuidado con pagar depósitos por adelantado en alquileres temporarios.\n\n## Cambio de moneda\n\nPara tener una referencia, la memoria guarda un dólar oficial de $1.615 [mem-71caa0983bd4] y otro de $1.579 [mem-118a59bdea75]. Son cotizaciones de noviembre de 2026 y no alcanzan para calcular el presupuesto.\n\n## Próximo paso\n\nConfirmanos las fechas correctas y cuántos días quieren quedarse. Con eso podemos armar el itinerario y el presupuesto, siempre que se autorice la búsqueda web para tener precios actuales de pasajes y alojamiento.\n\n## Fuentes\n- [guía] Wikivoyage, «Mendoza» § Ver > Museos — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Ver — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Hacer — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Llegar > Por avión — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Llegar > Por bus — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Entender > Clima — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Dormir — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Mendoza» § Dormir > Derroche — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)\n- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [memoria] mem-118a59bdea75 → https://www.lanacion.com.ar/dolar-hoy — cambio, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+      "estado_grafo": "completo",
+      "ruta": "supervisor → aprobacion_web → investigador → supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+      "turno": 1,
+      "thread_id": "26e00e1edf1e439f9a03588bc5503510",
+      "permiso_web": "rechazada",
+      "aprobaciones_hitl": [
+        {
+          "ronda": 1,
+          "turno": 1,
+          "temas_sin_memoria": [
+            "pasajes",
+            "alojamiento",
+            "comida"
+          ],
+          "temas_en_memoria": [
+            "cambio"
+          ],
+          "temas_en_guias": [
+            "actividades",
+            "como_llegar",
+            "clima",
+            "barrios"
+          ],
+          "pausa": true,
+          "resultado": "rechazada",
+          "origen": "persona",
+          "comentario": "sin gastar en la web",
+          "timestamp": "2026-11-25T18:41:12.653+00:00"
+        },
+        {
+          "ronda": 2,
+          "turno": 1,
+          "temas_sin_memoria": [
+            "pasajes",
+            "alojamiento",
+            "comida"
+          ],
+          "temas_en_memoria": [],
+          "temas_en_guias": [],
+          "pausa": false,
+          "resultado": "rechazada",
+          "origen": "decision_previa",
+          "comentario": "",
+          "timestamp": "2026-11-25T18:41:46.797+00:00"
+        }
+      ],
+      "metricas": {
+        "turno": 1,
+        "ruta": "supervisor → aprobacion_web → investigador → supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+        "pasos_supervisor": 4,
+        "decision_forzada_por_freno": false,
+        "delegaciones": {
+          "investigador": 2,
+          "analista": 1
+        },
+        "refinamientos": 1,
+        "llamadas_por_herramienta": {
+          "consultar_guias": 4,
+          "buscar_en_memoria": 7,
+          "buscar_en_web": 7,
+          "validar_viaje": 1
+        },
+        "busquedas_web": 0,
+        "consultas_guias": 4,
+        "fuentes_guia": 12,
+        "fuentes_memoria": 3,
+        "fuentes_web": 0,
+        "observaciones": [
+          "Se pidieron precios de pasajes pero los resultados encontrados no traen ningún precio.",
+          "Se pidieron precios de alojamiento pero los resultados encontrados no traen ningún precio.",
+          "Las búsquedas no devolvieron ninguna fuente utilizable.",
+          "Se pidieron precios de pasajes pero los resultados encontrados no traen ningún precio.",
+          "Se pidieron precios de alojamiento pero los resultados encontrados no traen ningún precio."
+        ],
+        "validacion": "rechazada",
+        "presupuesto_entra": null,
+        "alternativa_calculada": false
+      },
+      "pedido": {
+        "origen": "Rosario",
+        "destino": "Mendoza",
+        "fecha_ida": "2027-03-20",
+        "fecha_vuelta": "2027-03-12",
+        "dias": null,
+        "personas": 3,
+        "presupuesto": 900000.0,
+        "moneda": "ARS",
+        "supuestos": [
+          "Ida 20/03/2027 y vuelta 12/03/2027 según lo dicho; el año se asume 2027 por ser el próximo marzo; la vuelta es anterior a la ida tal como la escribió el usuario."
+        ]
+      },
+      "traza": "traces/api/api_26e00e1e_t1_real_20261125-184106.json"
+    },
+    "error": null,
+    "tramos": 2,
+    "duracion_s": 68.67,
+    "tiempo_ejecucion_s": 67.14,
+    "total_tokens": 108354,
+    "costo_usd": 0.015437,
+    "tokens": {
+      "claude-haiku-5-5": {
+        "input_token_details": {
+          "cache_read": 0,
+          "ephemeral_1h_input_tokens": 0,
+          "cache_creation": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "output_token_details": {
+          "reasoning": 1075
+        },
+        "input_tokens": 96849,
+        "output_tokens": 11505,
+        "total_tokens": 108354
+      }
+    }
+  },
+  "archivo": "5_error_controlado.json",
+  "langsmith": {
+    "run_ids": [
+      "01a21402-efeb-73c8-b8f0-4ff1c37d392a",
+      "01a21403-07bd-77d4-9e03-cb0cb7d22765"
+    ],
+    "run_id": "01a21402-efeb-73c8-b8f0-4ff1c37d392a",
+    "tramos": 2,
+    "latencia_s": 67.13,
+    "costo_usd": 0.015437,
+    "tokens": 108354,
+    "estados": [
+      "success",
+      "success"
+    ]
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "n": 1,
+  "nombre": "solo_guias",
+  "pregunta": "¿Qué se puede hacer en Salta en julio y qué clima hace? Pensamos ir 4 días.",
+  "aprobar": null,
+  "demuestra": "RAG sin pausa: lo estable sale de las guías (0 búsquedas web, sin analista)",
+  "conversacion": null,
+  "job": {
+    "job_id": "5b884fae8c754494b44420d7688d4fd7",
+    "estado": "DONE",
+    "pregunta": "¿Qué se puede hacer en Salta en julio y qué clima hace? Pensamos ir 4 días.",
+    "auto_aprobar": false,
+    "modo": "real",
+    "thread_id": "5b884fae8c754494b44420d7688d4fd7",
+    "turno": 1,
+    "creado": "2026-11-25T18:36:24.505+00:00",
+    "iniciado": "2026-11-25T18:36:24.509+00:00",
+    "actualizado": "2026-11-25T18:36:47.794+00:00",
+    "terminado": "2026-11-25T18:36:47.794+00:00",
+    "nodo_actual": null,
+    "ruta": [
+      "supervisor",
+      "aprobacion_web",
+      "investigador",
+      "supervisor",
+      "sintesis"
+    ],
+    "aprobacion_pendiente": null,
+    "aprobaciones": [],
+    "resultado": {
+      "respuesta_final": "## Qué hacer en Salta en julio\n\nTomamos como fechas de referencia el 10 al 13 de julio de 2027, porque no indicaste un día exacto.\n\n**En la ciudad:**\n- **Cabildo Histórico y Museo Histórico del Norte**, en la Plaza 9 de Julio. El edificio es de 1783 y el museo recorre la historia regional desde la prehistoria hasta mediados del siglo XX. Los textos están solo en español [guia:salta#011].\n- **Cerro San Bernardo**, con vistas de la ciudad y los alrededores. Se puede subir en teleférico desde el Parque San Martín, en taxi, o caminando por 1070 escalones desde la estatua de Güemes [guia:salta#011].\n- **La Balcarce**, la calle de bares, restaurantes, peñas y boliches. Los fines de semana hay ferias artesanales [guia:salta#023].\n- **Teatros Provincial y Del Huerto**, con obras de teatro, ballet y la sinfónica provincial. También el Estadio Padre Ernesto Martearena, si te interesa el fútbol regional [guia:salta#023].\n- **Shopping de la ciudad**, con cine y juegos infantiles, para un plan de lluvia o de descanso [guia:salta#023].\n\n**Excursiones desde Salta:**\n- Salta es punto de partida para **Cafayate, Cachi y Purmamarca**, y para la **Quebrada de Humahuaca**, Patrimonio de la Humanidad [guia:salta#000].\n- Podés contratar excursiones o ir en vehículo propio. Si vas por cuenta propia, la guía recomienda consultar a Defensa Civil de Salta (0387-521-5601 y 0387-421-3031) sobre el estado de las rutas, porque pueden producirse derrumbes en cualquier época del año [guia:salta#013].\n\n## Clima en julio\n\nJulio es un mes de invierno seco:\n- **Máxima promedio:** 20,2 °C.\n- **Mínima promedio:** 2,9 °C.\n- **Lluvia:** unos 3 mm en el mes.\n\nLos días suelen ser agradables, pero las noches son frías y las heladas son comunes. La nieve es rara [guia:salta#001].\n\nPara comparar, junio tiene máximas de 19,1 °C y mínimas de 3,8 °C, y agosto, de 22,3 °C y 4,5 °C, con algo más de lluvia (5 mm) [guia:salta#001]. Julio es, entonces, uno de los meses más fríos de la temporada, pero sigue siendo seco y con buenos días para salir.\n\n## Lo que no pudimos averiguar\n\n- Horarios y disponibilidad actuales del teleférico, los museos y las excursiones para julio de 2027.\n- Estado de las rutas a Cafayate, Cachi, Purmamarca y la Quebrada de Humahuaca en esas fechas. Conviene confirmarlo con Defensa Civil antes de salir.\n- Eventos específicos de julio. La guía no los detalla.\n\nSi me decís cuántas personas viajan y tu presupuesto aproximado, puedo armar un itinerario día por día con costos estimados.\n\n## Fuentes\n- [guía] Wikivoyage, «Salta» § Ver — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Beber y salir — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Comprender — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Comprender > Clima — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Salta» § Hacer > Circuitos Turísticos Tradicionales — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+      "estado_grafo": "completo",
+      "ruta": "supervisor → aprobacion_web → investigador → supervisor → sintesis",
+      "turno": 1,
+      "thread_id": "5b884fae8c754494b44420d7688d4fd7",
+      "permiso_web": "sin_pedir",
+      "aprobaciones_hitl": [
+        {
+          "ronda": 1,
+          "turno": 1,
+          "temas_sin_memoria": [],
+          "temas_en_memoria": [],
+          "temas_en_guias": [
+            "actividades",
+            "clima"
+          ],
+          "pausa": false,
+          "resultado": "sin_pedir",
+          "origen": "memoria",
+          "comentario": "",
+          "timestamp": "2026-11-25T18:36:27.883+00:00"
+        }
+      ],
+      "metricas": {
+        "turno": 1,
+        "ruta": "supervisor → aprobacion_web → investigador → supervisor → sintesis",
+        "pasos_supervisor": 2,
+        "decision_forzada_por_freno": false,
+        "delegaciones": {
+          "investigador": 1
+        },
+        "refinamientos": 0,
+        "llamadas_por_herramienta": {
+          "consultar_guias": 2
+        },
+        "busquedas_web": 0,
+        "consultas_guias": 2,
+        "fuentes_guia": 6,
+        "fuentes_memoria": 0,
+        "fuentes_web": 0,
+        "observaciones": [],
+        "validacion": "no se validó",
+        "presupuesto_entra": null,
+        "alternativa_calculada": false
+      },
+      "pedido": {
+        "origen": null,
+        "destino": "Salta",
+        "fecha_ida": "2027-07-10",
+        "fecha_vuelta": "2027-07-13",
+        "dias": 4,
+        "personas": null,
+        "presupuesto": null,
+        "moneda": null,
+        "supuestos": [
+          "Julio sin día exacto: ida el 10/07/2027 (julio de 2026 ya pasó)",
+          "Duración de 4 días: vuelta calculada como ida + 3 días"
+        ]
+      },
+      "traza": "traces/api/api_5b884fae_t1_real_20261125-183624.json"
+    },
+    "error": null,
+    "tramos": 1,
+    "duracion_s": 23.29,
+    "tiempo_ejecucion_s": 23.27,
+    "total_tokens": 25846,
+    "costo_usd": 0.004063,
+    "tokens": {
+      "claude-haiku-5-5": {
+        "input_tokens": 22150,
+        "total_tokens": 25846,
+        "input_token_details": {
+          "cache_read": 0,
+          "cache_creation": 0,
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "output_tokens": 3696,
+        "output_token_details": {
+          "reasoning": 237
+        }
+      }
+    }
+  },
+  "archivo": "1_solo_guias.json",
+  "langsmith": {
+    "run_ids": [
+      "01a213fe-a245-747c-b948-155c39f627d4"
+    ],
+    "run_id": "01a213fe-a245-747c-b948-155c39f627d4",
+    "tramos": 1,
+    "latencia_s": 23.25,
+    "costo_usd": 0.004063,
+    "tokens": 25846,
+    "estados": [
+      "success"
+    ]
+  }
+}

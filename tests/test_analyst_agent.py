@@ -110,3 +110,14 @@ async def test_sin_precios_no_inventa(memoria: MemoriaBusquedas) -> None:
     assert aporte.herramientas == ["validar_viaje"]
     assert "Datos que faltan" in aporte.contenido and "pasaje" in aporte.contenido
     assert any("no se calculó el presupuesto" in o for o in aporte.observaciones)
+
+
+def test_el_veredicto_del_presupuesto_no_se_pierde_al_truncar_la_traza() -> None:
+    """Regresión de la prueba final 4: con muchos renglones, 'RESULTADO: NO ENTRA' quedaba después del corte."""
+    from agents.common import LARGO_RESULTADO_TRAZA, resumir_resultado
+
+    largo = "PRESUPUESTO — opción 'económica':\n" + "\n".join(f"- renglón {i}: $ 100.000" for i in range(40))
+    texto = largo + "\nTOTAL: $ 4.000.000 | PRESUPUESTO: $ 350.000\nRESULTADO: NO ENTRA en el presupuesto. Faltan $ 3.650.000."
+    corto = resumir_resultado(texto)
+    assert len(texto) > LARGO_RESULTADO_TRAZA and "NO ENTRA" in corto and corto.endswith("Faltan $ 3.650.000.")
+    assert resumir_resultado("VÁLIDO: corto") == "VÁLIDO: corto"

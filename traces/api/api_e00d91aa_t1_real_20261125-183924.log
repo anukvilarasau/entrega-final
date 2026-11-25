@@ -1,0 +1,154 @@
+==========================================================================================
+TRAZA MULTI-AGENTE | escenario: api_e00d91aa_t1 | modo: real | modelo: claude-haiku-5-5
+MAX_PASOS_SUPERVISOR: 6 | RECURSION_LIMIT: 20 | inicio: 2026-11-25T18:39:24.995+00:00
+==========================================================================================
+PREGUNTA: Queremos ir 7 días a El Calafate en febrero, somos 2, salimos desde Córdoba y tenemos 350.000 pesos. ¿Nos alcanza?
+RUTA: supervisor → aprobacion_web → investigador → supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis
+
+[18:39:29.163] SUPERVISOR · pedido extraído: {"origen": "Córdoba", "destino": "El Calafate", "fecha_ida": "2027-02-10", "fecha_vuelta": "2027-02-16", "dias": 7, "personas": 2, "presupuesto": 350000.0, "moneda": "ARS", "supuestos": ["febrero sin día exacto: ida el 10/02/2027 (febrero de 2026 ya pasó), vuelta el 16/02/2027 según 7 días"]}
+[18:39:29.163] SUPERVISOR · decisión 1 → investigador
+           evaluación: Pregunta con presupuesto (350.000 ARS, 2 personas, 7 días, Córdoba→El Calafate). Rúbrica: R1 cobertura no cumplida (faltan pasajes, alojamiento, comida/actividades y cotización del dólar). R2-R4 sin aportes todavía. R5-R6 no aplican aún. Hace falta primero el investigador con precios de referencia y fuentes; luego el analista valida y calcula.
+           instrucción: Buscar para un viaje de Córdoba a El Calafate, ida 2027-02-10, vuelta 2027-02-16 (7 días), 2 personas. Temas: pasajes (ida y vuelta Córdoba–El Calafate, precios de referencia en ARS, rangos o valores 'desde' aunque no sean de las fechas exactas), alojamiento (precio de referencia por noche para 2 personas en El Calafate en febrero), comida (costo de referencia diario para 2 personas), actividades (principales excursiones y costos de referencia), cambio (cotización del dólar oficial, tarjeta y MEP, no el blue). Incluir fuente (mem-... o URL) en cada hallazgo; los temas estables (actividades, como_llegar, clima, consejos) pueden salir de guías.
+           temas pedidos: pasajes, alojamiento, comida, actividades, cambio, clima, como_llegar, consejos
+[18:39:29.588] APROBACIÓN WEB · aprobada (persona, con pausa) · sin memoria: pasajes, alojamiento, comida
+[18:40:03.203] INVESTIGADOR · ronda 1 · herramientas: consultar_guias, buscar_en_memoria, buscar_en_web
+           ACCIÓN: consultar_guias({"destino": "El Calafate", "consulta": "qué ver y hacer, excursiones principales", "tema": "actividades"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'qué ver y hacer, excursiones principales' [destino=El Calafate, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:el-calafate#007] origen=guia | El Calafate § Hacer |...
+           ACCIÓN: consultar_guias({"destino": "El Calafate", "consulta": "cómo llegar desde Córdoba o aeropuerto, moverse", "tema": "como_llegar"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'cómo llegar desde Córdoba o aeropuerto, moverse' [destino=El Calafate, tema=como_llegar]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:el-calafate#002] origen=guia | El Calafate § ...
+           ACCIÓN: consultar_guias({"destino": "El Calafate", "consulta": "clima típico en febrero, temperaturas y lluvias", "tema": "clima"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'clima típico en febrero, temperaturas y lluvias' [destino=El Calafate, tema=clima]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:el-calafate#001] origen=guia | El Calafate § Entend...
+           ACCIÓN: consultar_guias({"destino": "El Calafate", "consulta": "consejos de viaje y seguridad", "tema": "consejos"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'consejos de viaje y seguridad' [destino=El Calafate, tema=consejos]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:el-calafate#002] origen=guia | El Calafate § Llegar > En avión | u...
+           ACCIÓN: buscar_en_memoria({"destino": "El Calafate", "consulta": "pasajes aéreos Córdoba El Calafate ida y vuelta precio ARS", "tema": "pasajes"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'pasajes aéreos Córdoba El Calafate ida y vuelta precio ARS' [destino=El Calafate, tema=pasajes]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"destino": "El Calafate", "consulta": "precio alojamiento hotel por noche febrero", "tema": "alojamiento"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio alojamiento hotel por noche febrero' [destino=El Calafate, tema=alojamiento]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"destino": "El Calafate", "consulta": "costo comida restaurantes precio por persona", "tema": "comida"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'costo comida restaurantes precio por persona' [destino=El Calafate, tema=comida]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"destino": "El Calafate", "consulta": "cotización dólar oficial tarjeta MEP", "tema": "cambio"})
+           OBSERVACIÓN: MEMORIA — 3 datos vigentes para 'cotización dólar oficial tarjeta MEP':  [mem-71caa0983bd4] origen=memoria | tema=cambio | buscado hace 0.0 días (2026-11-25) | url=https://www.infobae.com/economia/divisas/dolar-hoy Fuente: Reuters - Real Time  Dólar oficial  $1.615  Dólar tarjeta  $2.099,50  Dólar b...
+           ACCIÓN: buscar_en_web({"destino": "El Calafate", "consulta": "precio pasaje avión Córdoba El Calafate ida y vuelta ARS", "tema": "pasajes"})
+           OBSERVACIÓN: WEB (Tavily) — 3 resultados para 'precio pasaje avión Córdoba El Calafate ida y vuelta ARS' (guardados en memoria):  [https://www.skyscanner.com.ar/rutas/cor/fte/cordoba-a-el-calafate.html] origen=web | tema=pasajes | guardado como mem-3ca774df28a8 Pasajes de Córdoba a El Calafate | Skyscanner 1 esc...
+           ACCIÓN: buscar_en_web({"destino": "El Calafate", "consulta": "precio hotel por noche habitación doble El Calafate febrero", "tema": "alojamiento"})
+           OBSERVACIÓN: WEB (Tavily) — 3 resultados para 'precio hotel por noche habitación doble El Calafate febrero' (guardados en memoria):  [https://www.kayak.com.ec/El-Calafate-Hoteles-South-B-B-El-Calafate.575787.ksp] origen=web | tema=alojamiento | guardado como mem-724977e46ba6 South B&B El Calafate - Hoteles - KAY...
+           ACCIÓN: buscar_en_web({"destino": "El Calafate", "consulta": "precio comida restaurante menú por persona El Calafate", "tema": "comida"})
+           OBSERVACIÓN: WEB (Tavily) — 3 resultados para 'precio comida restaurante menú por persona El Calafate' (guardados en memoria):  [https://www.tripadvisor.es/Restaurant_Review-g312851-d2542219-Reviews-Mi_Rancho-El_Calafate_Province_of_Santa_Cruz_Patagonia.html] origen=web | tema=comida | guardado como mem-d39ae1cf...
+           fuentes: guia:el-calafate#007 (guia, actividades), guia:el-calafate#008 (guia, actividades), guia:el-calafate#006 (guia, actividades), guia:el-calafate#010 (guia, actividades), guia:el-calafate#002 (guia, como_llegar), guia:el-calafate#006 (guia, como_llegar), guia:el-calafate#011 (guia, como_llegar), guia:el-calafate#005 (guia, como_llegar), guia:el-calafate#001 (guia, clima), guia:el-calafate#000 (guia, clima), guia:el-calafate#008 (guia, clima), guia:el-calafate#010 (guia, clima), guia:el-calafate#002 (guia, consejos), guia:el-calafate#003 (guia, consejos), guia:el-calafate#009 (guia, consejos), guia:el-calafate#013 (guia, consejos), mem-71caa0983bd4 (memoria, cambio), mem-118a59bdea75 (memoria, cambio), mem-d041e707b47c (memoria, cambio), https://www.skyscanner.com.ar/rutas/cor/fte/cordoba-a-el-calafate.html (web, pasajes), https://jetsmart.com/ofertas/es-ar/vuelos-desde-cordoba-a-el-calafate (web, pasajes), https://www.espanol.skyscanner.com/rutas/cor/fte/cordoba-a-el-calafate.html (web, pasajes), https://www.kayak.com.ec/El-Calafate-Hoteles-South-B-B-El-Calafate.575787.ksp (web, alojamiento), https://www.booking.com/city/ar/el-calafate.es-ar.html (web, alojamiento), https://www.expedia.com/es/El-Calafate-Hoteles-Bahia-Redonda-Hotel.h4650710.Informacion-Hotel (web, alojamiento), https://www.tripadvisor.es/Restaurant_Review-g312851-d2542219-Reviews-Mi_Rancho-El_Calafate_Province_of_Santa_Cruz_Patagonia.html (web, comida), https://funpatagonia.com/donde-comer-en-el-calafate-guia-rapida (web, comida), https://www.instagram.com/reel/DRvRu2dD6_K?hl=en (web, comida)
+           cobertura: actividades 1 (0 mem / 0 web, sin precios); como_llegar 1 (0 mem / 0 web, sin precios); clima 1 (0 mem / 0 web, sin precios); consejos 1 (0 mem / 0 web, sin precios); pasajes 3 (0 mem / 3 web, con precios); alojamiento 3 (0 mem / 3 web, con precios); comida 3 (0 mem / 3 web, sin precios); cambio 3 (3 mem / 0 web, con precios)
+           chequeo por código: sin observaciones
+[18:40:06.828] SUPERVISOR · decisión 2 → investigador
+           evaluación: R1 Cobertura: faltan datos de comida con precio (solo hay un precio de cena en restaurante, sin costo diario) y falta confirmar actividades con costos de referencia; pasajes, alojamiento y cambio tienen datos. R2 Fuentes: todos los aportes tienen fuente (guía, memoria o URL). Estables con guía OK. R3 Precios: pasajes y alojamiento tienen montos de referencia, pero las unidades son dudosas (alojamiento en moneda no clara, pasajes sin unidad explícita). El analista puede calcular aclarando unidades. R4 Cálculo: aún no hay cálculo del analista. R5 Observaciones: ninguna pendiente. R6 Coherencia: hay precios de pasajes en distintas fechas y unidades; el analista debe aclararlo. R7 Economía: se piden solo temas con precio necesarios (pasajes, alojamiento, comida, cambio ya cubierto por memoria). Falta comida con costo diario; actividades ya tienen guía pero sin costos. Conviene una búsqueda acotada de comida antes de calcular.
+           instrucción: Para el viaje Córdoba–El Calafate, 2 personas, 2027-02-10 al 2027-02-16 (7 días). Buscar en web (o memoria si ya hay) un costo de referencia DIARIO en ARS para 2 personas en comida (supermercado, almuerzo y cena típicos en El Calafate), indicando si el monto es por persona o por pareja. Buscar también costos de referencia en ARS de las principales excursiones (por ejemplo Glaciar Perito Moreno), por persona. Pedí precios de referencia, no exactos. Incluir fuente (URL o mem-...) en cada hallazgo y aclarar la unidad de cada monto.
+           temas pedidos: comida, actividades
+[18:40:06.836] APROBACIÓN WEB · aprobada (decision_previa) · sin memoria: ninguno
+[18:40:31.567] INVESTIGADOR · ronda 2 · herramientas: buscar_en_memoria, consultar_guias, buscar_en_web
+           ACCIÓN: buscar_en_memoria({"consulta": "precios comida supermercado almuerzo cena restaurante El Calafate", "destino": "El Calafate", "tema": "comida"})
+           OBSERVACIÓN: MEMORIA — 3 datos vigentes para 'precios comida supermercado almuerzo cena restaurante El Calafate':  [mem-d39ae1cfdac8] origen=memoria | tema=comida | buscado hace 0.0 días (2026-11-25) | url=https://www.tripadvisor.es/Restaurant_Review-g312851-d2542219-Reviews-Mi_Rancho-El_Calafate_Province_of_San...
+           ACCIÓN: buscar_en_memoria({"consulta": "precio excursión Glaciar Perito Moreno tour por persona", "destino": "El Calafate", "tema": "actividades"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio excursión Glaciar Perito Moreno tour por persona' [destino=El Calafate, tema=actividades]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: consultar_guias({"destino": "El Calafate", "consulta": "qué ver y hacer, excursiones, Glaciar Perito Moreno", "tema": "actividades"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'qué ver y hacer, excursiones, Glaciar Perito Moreno' [destino=El Calafate, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:el-calafate#007] origen=guia | El Calafat...
+           ACCIÓN: buscar_en_web({"consulta": "precio excursión Glaciar Perito Moreno por persona ARS 2026 tour", "destino": "El Calafate", "tema": "actividades"})
+           OBSERVACIÓN: NO SE BUSCÓ EN LA WEB: 'actividades' es un tema estable y la base de conocimiento tiene la guía de El Calafate. Usá consultar_guias (la web es solo para precios y tipo de cambio).
+           ACCIÓN: buscar_en_web({"consulta": "precio promedio comida diaria supermercado almuerzo cena restaurante El Calafate pesos 2026", "destino": "El Calafate", "tema": "comida", "forzar": true})
+           OBSERVACIÓN: WEB (Tavily) — 3 resultados para 'precio promedio comida diaria supermercado almuerzo cena restaurante El Calafate pesos 2026' (guardados en memoria):  [https://gotripzi.com/es/destinations/el-calafate-ar/cost] origen=web | tema=comida | guardado como mem-7fbc9bd9cafc ¿Cuánto cuesta El Calafate y la...
+           ACCIÓN: buscar_en_web({"consulta": "precio excursión Glaciar Perito Moreno por persona en pesos argentinos tarifa tour 2026", "destino": "El Calafate", "tema": "otro"})
+           OBSERVACIÓN: WEB (Tavily) — 3 resultados para 'precio excursión Glaciar Perito Moreno por persona en pesos argentinos tarifa tour 2026' (guardados en memoria):  [https://peritomorenoglaciertour.com/es/perito-moreno-glacier-cost] origen=web | tema=otro | guardado como mem-632c0103479e Glaciar Perito Moreno: Preci...
+           fuentes: mem-d39ae1cfdac8 (memoria, comida), mem-4d829d20678d (memoria, comida), mem-bbff924a9734 (memoria, comida), guia:el-calafate#007 (guia, actividades), guia:el-calafate#000 (guia, actividades), guia:el-calafate#012 (guia, actividades), guia:el-calafate#006 (guia, actividades), https://gotripzi.com/es/destinations/el-calafate-ar/cost (web, comida), https://citycost.org/el-calafate (web, comida), https://latamtravellers.com/blogs/news/how-much-does-an-argentina-trip-cost-in-2026-usd-guide (web, comida), https://peritomorenoglaciertour.com/es/perito-moreno-glacier-cost (web, otro), https://infodecalafate.com/blog/guia-practica-de-el-calafate/cuanto-cuestan-excursiones-el-calafate (web, otro), https://calafate.tours/blog/tarifas (web, otro)
+           cobertura: comida 6 (3 mem / 3 web, con precios); actividades 1 (0 mem / 0 web, sin precios); otro 3 (0 mem / 3 web, con precios)
+           chequeo por código: sin observaciones
+[18:40:36.686] SUPERVISOR · decisión 3 → analista
+           evaluación: R1 Cobertura: faltan datos de comida diaria para 2 personas en ARS (solo hay cenas sueltas y un cálculo orientativo no sourced), y falta el cálculo. Cambio: hay fuentes de memoria (3) pero no se ve cotización del dólar oficial, tarjeta y MEP en los aportes listados; la cobertura muestra cambio con 3 fuentes de memoria, pero el contenido de esos aportes no está a la vista. Pasajes y alojamiento tienen precios de referencia, aunque con unidades dudosas. R2 Fuentes: todo aporte tiene fuente (guía, web o mem-). Los precios de pasajes y alojamiento son de web. R3 Precios: pasajes y alojamiento tienen montos; alojamiento está en moneda no clara (posiblemente USD), que el analista debe resolver con la cotización. R4 Cálculo: no se ejecutó validar_viaje ni calcular_presupuesto. R5 Observaciones: ninguna pendiente. R6 Coherencia: hay precios de excursiones que difieren entre fuentes (Parque 50.000 vs 45.000), que el analista puede aclarar. R7: el pedido incluye presupuesto, así que el alcance es correcto. Pendiente: que el analista valide y calcule con los datos disponibles; la comida diaria es un punto a aclarar por el analista usando los valores de gotripzi como referencia por persona o pareja.
+           instrucción: Validá el viaje (Córdoba–El Calafate, ida 2027-02-10, vuelta 2027-02-16, 7 días, 2 personas, presupuesto 350.000 ARS) con validar_viaje. Luego calculá el presupuesto con calcular_presupuesto usando: pasajes ida y vuelta para 2 personas (referencias web de Skyscanner desde ARS 213.421–373.159 por persona según fuente; aclará si es por persona o pareja), alojamiento 7 noches para 2 personas (los precios de Kayak/Expedia son de ~USD 72–86 por noche por habitación; convertí con la cotización del dólar oficial, tarjeta y MEP de los hallazgos de cambio, y aclaralo), comida diaria para 2 personas (referencia gotripzi: ARS 21.490 por plato económico y 53.717 por cena de gama media, asumiendo por persona; indicá el supuesto), y actividades principales (Glaciar Perito Moreno desde ARS 72.000 por persona; entrada al Parque ARS 50.000 por persona para extranjeros, con diferencia entre fuentes). Indicá si el total entra en 350.000 ARS, qué unidades son dudosas y qué supuestos usaste.
+[18:40:56.401] ANALISTA · ronda 3 · herramientas: validar_viaje, calcular_presupuesto
+           ACCIÓN: validar_viaje({"origen": "Córdoba", "destino": "El Calafate", "fecha_ida": "2027-02-10", "fecha_vuelta": "2027-02-16", "personas": 2, "presupuesto": 350000, "moneda": "ARS", "dias_pedidos": 7})
+           OBSERVACIÓN: VÁLIDO: Córdoba → El Calafate, del 2027-02-10 al 2027-02-16 (7 días, 6 noches), 2 personas, presupuesto $ 350.000.
+           ACCIÓN: calcular_presupuesto({"opcion": "económica", "personas": 2, "noches": 6, "dias": 7, "presupuesto": 350000, "moneda_presupuesto": "ARS", "pasaje": {"monto": 213421, "moneda": "ARS", "tramo": "ida_y_vuelta", "medio": "avión 1 escala, Aerolíneas Argentinas (unidad no especi...)
+           OBSERVACIÓN: PRESUPUESTO — opción 'económica' (7 días, 6 noches, 2 personas): - Pasajes avión 1 escala, Aerolíneas Argentinas (unidad no especificada en la fuente; se asume por persona): $ 426.842  [$ 213.421 por persona (ida y vuelta) × 2 personas] - Alojamiento hotel habitación doble (South B&B, desde): $ 906....
+           ACCIÓN: calcular_presupuesto({"opcion": "alternativa: 3 noches, sin extras", "personas": 2, "noches": 3, "dias": 4, "presupuesto": 350000, "moneda_presupuesto": "ARS", "pasaje": {"monto": 213421, "moneda": "ARS", "tramo": "ida_y_vuelta", "medio": "avión 1 escala (unidad no espec...)
+           OBSERVACIÓN: PRESUPUESTO — opción 'alternativa: 3 noches, sin extras' (4 días, 3 noches, 2 personas): - Pasajes avión 1 escala (unidad no especificada; se asume por persona): $ 426.842  [$ 213.421 por persona (ida y vuelta) × 2 personas] - Alojamiento hotel habitación doble (South B&B, desde): $ 453.492  [$ 151....
+           fuentes: https://www.espanol.skyscanner.com/rutas/cor/fte/cordoba-a-el-calafate.html (web, pasajes), https://www.kayak.com.ec/El-Calafate-Hoteles-South-B-B-El-Calafate.575787.ksp (web, alojamiento), https://gotripzi.com/es/destinations/el-calafate-ar/cost (web, comida), https://infodecalafate.com/blog/guia-practica-de-el-calafate/cuanto-cuestan-excursiones-el-calafate (web, actividades), https://calafate.tours/blog/tarifas (web, actividades), mem-118a59bdea75 (memoria, cambio), mem-71caa0983bd4 (memoria, cambio)
+           chequeo por código: sin observaciones
+[18:40:59.091] SUPERVISOR · decisión 4 → FINALIZAR
+           evaluación: R1 Cobertura: pasajes, alojamiento, comida, actividades y cambio tienen datos; falta cotización en ARS con fuente de memoria (hay 3 de cambio, OK). R2 Fuentes: todos los aportes tienen fuente (guía, memoria o web). R3 Precios: pasajes (Skyscanner, JetSMART) y alojamiento (Kayak/Expedia, en moneda dudosa) traen montos de referencia; suficiente para estimar. R4 Cálculo: el analista ejecutó validar_viaje (VÁLIDO) y calcular_presupuesto, y dijo que NO entra (total ~1.878.686 vs 350.000; aun sin extras, pasajes ya superan el presupuesto). R5 Observaciones: ninguna pendiente. R6 Coherencia: el analista usó 6 noches y 2 personas, consistente con los datos; las unidades dudosas están aclaradas. R7 Economía: se pidieron precios con permiso y fuentes suficientes; no hace falta más búsqueda. Conclusión: el cálculo ya está hecho y el resultado es claro (no alcanza), con los supuestos y unidades dudosas explicitados. Finalizar para que la síntesis le informe al usuario.
+[18:41:05.839] SÍNTESIS · respuesta final (5328 caracteres)
+
+RESPUESTA FINAL:
+## Respuesta corta
+
+No alcanza. Con $350.000 ARS no entran ni los pasajes ida y vuelta para 2 personas, que se estiman en $426.842 (según la fuente más barata encontrada, que no tiene fecha confirmada) [https://www.espanol.skyscanner.com/rutas/cor/fte/cordoba-a-el-calafate.html].
+
+## Itinerario
+
+No armo itinerario día por día porque el presupuesto no alcanza, y las actividades se calcularon para la opción completa de 7 días.
+
+Lo que sí sirve para planificar:
+- **Clima esperado en febrero:** máxima de 18,5 °C y mínima de 7,5 °C, con viento fuerte que baja la sensación térmica; pueden darse temperaturas bajo cero [guia:el-calafate#001].
+- **Actividades principales:** Glaciar Perito Moreno, a unos 80 km, con buses que salen cerca de las 08:00 y 13:45 [guia:el-calafate#007]; navegación a Upsala y Spegazzini desde Puerto Bandera [guia:el-calafate#008]; Glaciarium con shuttle gratuito [guia:el-calafate#006]; y Bahía Redonda, un paseo corto [guia:el-calafate#006].
+
+## Presupuesto
+
+**Opción de 7 días, 6 noches, 2 personas: NO ENTRA**
+
+| Concepto | Cálculo | Total ARS |
+|---|---|---|
+| Pasajes ida y vuelta | $213.421 × 2 personas | $426.842 |
+| Alojamiento (South B&B) | US$72 × 6 noches, convertido con dólar tarjeta $2.100 | $906.984 |
+| Comida | $21.490 × 7 días × 2 personas (piso optimista) | $300.860 |
+| Perito Moreno (tour desde) | $72.000 × 2 | $144.000 |
+| Entrada al Parque (extranjeros) | $50.000 × 2 | $100.000 |
+| **Total** | | **$1.878.686** |
+
+- Faltan **$1.528.686**.
+- Costo por día: $268.384 ($134.192 por persona por día).
+
+**Alternativa de 4 días, 3 noches, sin extras: NO ENTRA**
+- Pasajes $426.842 + alojamiento $453.492 + comida $171.920 = **$1.052.254**.
+- Faltan $702.254. Costo por día: $263.064.
+
+**Cotización usada:** dólar tarjeta de $2.100 (Infobae [mem-71caa0983bd4]; La Nación da $2.052,70 [mem-118a59bdea75]). Con el oficial ($1.579 a $1.615) o el MEP ($1.573 a $1.694), el alojamiento bajaría, pero no alcanza para cambiar el resultado.
+
+## Alternativas
+
+Para que el viaje entre en $350.000 habría que bajar mucho los pasajes o subir el presupuesto. Algunas ideas:
+- **Buscar otras fechas:** en Skyscanner y JetSMART, los precios varían bastante según el mes [https://jetsmart.com/ofertas/es-ar/vuelos-desde-cordoba-a-el-calafate]. Pero el precio de febrero no está confirmado en las fuentes.
+- **Reducir días:** la alternativa de 4 días ya reduce el total a $1.052.254, aunque sigue sin entrar.
+- **Ahorrar en comida:** comprar provisiones en el Anonima, que tiene precios razonables y abre hasta las 21:00 (excepto domingos) [guia:el-calafate#009].
+- **Alojamiento compartido o más económico:** la oferta hotelera se concentra en la Avenida Libertador [guia:el-calafate#006].
+- **Actividades gratuitas:** Bahía Redonda, a pie o a caballo [guia:el-calafate#006].
+
+## Lo que no pudimos averiguar
+
+- **Pasajes para las fechas exactas (10 al 16/02/2027):** los precios encontrados son de otras fechas y algunos no tienen unidad clara.
+- **Alojamiento en ARS:** las fuentes no indican moneda ni unidad con claridad.
+- **Costo diario de comida para 2 personas en ARS:** no se encontró una cifra confiable.
+- **Excursiones:** los precios "desde" no tienen fecha de vigencia para febrero de 2027. La entrada al Parque varía entre $45.000 y $50.000 según la fuente.
+- **Cotización:** las fuentes son de noviembre de 2026 y no se sabe si seguirán vigentes en 2027.
+
+## Fuentes
+- [guía] Wikivoyage, «El Calafate» § Hacer — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)
+- [guía] Wikivoyage, «El Calafate» § Hacer > Otras excursiones — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)
+- [guía] Wikivoyage, «El Calafate» § Ver — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)
+- [guía] Wikivoyage, «El Calafate» § Entender > Clima — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)
+- [guía] Wikivoyage, «El Calafate» § Comprar — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)
+- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25
+- [memoria] mem-118a59bdea75 → https://www.lanacion.com.ar/dolar-hoy — cambio, buscado el 2026-11-25
+- [web] https://jetsmart.com/ofertas/es-ar/vuelos-desde-cordoba-a-el-calafate — pasajes, buscado el 2026-11-25
+- [web] https://www.espanol.skyscanner.com/rutas/cor/fte/cordoba-a-el-calafate.html — pasajes, buscado el 2026-11-25
+- [memoria] mem-118a59bdea75 — cambio, buscado el 2026-11-25
+- [memoria] mem-71caa0983bd4 — cambio, buscado el 2026-11-25
+- [web] https://www.kayak.com.ec/El-Calafate-Hoteles-South-B-B-El-Calafate.575787.ksp — alojamiento, buscado el 2026-11-25
+- [web] https://gotripzi.com/es/destinations/el-calafate-ar/cost — comida, buscado el 2026-11-25
+- [web] https://infodecalafate.com/blog/guia-practica-de-el-calafate/cuanto-cuestan-excursiones-el-calafate — actividades, buscado el 2026-11-25
+- [web] https://calafate.tours/blog/tarifas — actividades, buscado el 2026-11-25
+
+_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._
+
+_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._
+
+------------------------------------------------------------------------------------------
+ESTADO: completo | DURACIÓN: 100.86 s | DECISIONES DEL SUPERVISOR: 4
+REFINAMIENTOS: 1 | BÚSQUEDAS WEB REALES (TAVILY): 5 | DATOS: 13 de guías · 6 de memoria · 15 de la web
+VALIDACIÓN: aprobada | PRESUPUESTO ENTRA: True | HERRAMIENTAS: {"consultar_guias": 5, "buscar_en_memoria": 6, "buscar_en_web": 6, "validar_viaje": 1, "calcular_presupuesto": 2}
+TOKENS: {"claude-haiku-5-5": {"input_token_details": {"cache_read": 0, "ephemeral_1h_input_tokens": 0, "cache_creation": 0, "ephemeral_5m_input_tokens": 0}, "output_token_details": {"reasoning": 3581}, "input_tokens": 148868, "output_tokens": 19147, "total_tokens": 168015}}

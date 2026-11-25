@@ -18,6 +18,7 @@ dentro del proceso (es de solo lectura una vez indexada).
 """
 
 import logging
+import re
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -66,6 +67,20 @@ class BaseConocimiento:
         for nombre in sorted(self._nombres, key=len, reverse=True):
             if len(nombre) >= 4 and (nombre in t or (len(t) >= 4 and t in nombre)):
                 return self._nombres[nombre]
+        return None
+
+    def destino_mencionado(self, texto: str | None) -> str | None:
+        """El destino con guía que aparece en un texto libre (la pregunta), como palabra completa, o None.
+
+        Respaldo para cuando el pedido extraído no tiene destino: "¿cómo llego del aeropuerto al centro de
+        Mendoza?" no es un viaje con origen y destino, pero es sobre Mendoza (caso real del notebook).
+        """
+        if not texto:
+            return None
+        t = f" {re.sub(r'[^a-z0-9]+', ' ', normalizar(texto))} "
+        for nombre in sorted(self._nombres, key=len, reverse=True):
+            if len(nombre) >= 4 and f" {nombre} " in t:
+                return self._por_slug[self._nombres[nombre]].destino
         return None
 
     def tiene_guia(self, destino: str | None) -> bool:

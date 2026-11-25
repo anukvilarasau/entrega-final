@@ -1,0 +1,141 @@
+{
+  "n": 4,
+  "nombre": "no_alcanza",
+  "pregunta": "Queremos ir 7 días a El Calafate en febrero, somos 2, salimos desde Córdoba y tenemos 350.000 pesos. ¿Nos alcanza?",
+  "aprobar": true,
+  "demuestra": "Presupuesto insuficiente: el analista lo detecta y propone una alternativa",
+  "conversacion": null,
+  "job": {
+    "job_id": "c523e0fb319b41fab92dc5b4a5deb1ee",
+    "estado": "DONE",
+    "pregunta": "Queremos ir 7 días a El Calafate en febrero, somos 2, salimos desde Córdoba y tenemos 350.000 pesos. ¿Nos alcanza?",
+    "auto_aprobar": false,
+    "modo": "real",
+    "thread_id": "c523e0fb319b41fab92dc5b4a5deb1ee",
+    "turno": 1,
+    "creado": "2026-11-25T18:44:20.703+00:00",
+    "iniciado": "2026-11-25T18:44:20.704+00:00",
+    "actualizado": "2026-11-25T18:45:25.684+00:00",
+    "terminado": "2026-11-25T18:45:25.684+00:00",
+    "nodo_actual": null,
+    "ruta": [
+      "supervisor",
+      "aprobacion_web",
+      "investigador",
+      "supervisor",
+      "analista",
+      "supervisor",
+      "sintesis"
+    ],
+    "aprobacion_pendiente": null,
+    "aprobaciones": [],
+    "resultado": {
+      "respuesta_final": "## Respuesta corta\n\nNo les alcanza. Con 350.000 ARS, el viaje de 7 días (6 noches) para 2 personas desde Córdoba queda muy lejos del presupuesto: el pasaje solo ya cuesta casi el doble.\n\n## Itinerario\n\nLas actividades encontradas en las guías son estas:\n\n- **Día 1 (10/02, llegada):** llegada al aeropuerto Comandante Armando Tola (FTE). Hay cajeros en la ciudad, no en el aeropuerto, que suele estar fuera de servicio [guia:el-calafate#002]. Resto del día libre.\n- **Día 2:** Glaciar Perito Moreno, a unos 80 km. Se puede ir en autobús (unos 90 minutos; salidas alrededor de las 08:00 y 13:45) [guia:el-calafate#007].\n- **Día 3:** excursión lacustre a Ríos de Hielo Upsala y Spegazzini, que sale de Puerto Bandera y navega unos 70 km por el Brazo Norte del Lago Argentino [guia:el-calafate#008].\n- **Día 4:** Glaciarium, horario 12:00–20:00 [guia:el-calafate#006].\n- **Día 5:** paseo a pie o a caballo hasta la Bahía Redonda (cauquenes, cisnes y flamencos) [guia:el-calafate#006].\n- **Días 6 y 7:** libres o de descanso, porque no hay más actividades encontradas. Regreso el 16/02.\n\nClima esperado en febrero: máxima de 18,5 °C, mínima de 7,5 °C, lluvia de 7,8 mm. Es fresco y seco, con vientos fuertes que bajan la sensación térmica [guia:el-calafate#001].\n\n## Presupuesto\n\nEscenario principal (alojamiento leído en USD, el más probable):\n\n| Concepto | Monto ARS |\n|---|---|\n| Pasajes Aerolíneas, ida y vuelta, 2 personas ($342.510 c/u) [mem-3ca774df28a8] | 685.020 |\n| Alojamiento, habitación doble, 6 noches (US$72 por noche) [mem-724977e46ba6] | 906.984 |\n| Comida, 7 días × 2 personas ($21.490 por persona por día, supuesto) [mem-7fbc9bd9cafc] | 300.860 |\n| Entrada Glaciar Perito Moreno, 2 personas (precio desactualizado) [guia:el-calafate#007] | 24.000 |\n| **Total** | **1.916.864** |\n\n- **Alcanza:** no. Faltan **1.566.864 ARS**.\n- **Costo por día:** 273.838 ARS (136.919 por persona).\n- **Dólar usado:** tarjeta de $2.100 aprox. (US$72 ≈ 151.164 ARS) [mem-71caa0983bd4]. Las cotizaciones son de memoria, del 25/11/2026, no del día del viaje.\n\nSi el alojamiento estuviera en pesos, el total bajaría a unos 1.010.312 ARS, y aun así faltarían 660.312. Esa lectura es poco plausible para un hotel, así que no la tomaría como base.\n\n## Alternativas\n\n- **Subir el presupuesto:** a unos 1,0 millón de ARS (escenario en pesos) o unos 1,9 millones (escenario en USD).\n- **Reducir días:** con menos noches baja el alojamiento y la comida. Con 3 o 4 noches el costo se acerca más al presupuesto, aunque igual probablemente no alcance con pasajes de ~685.000 ARS.\n- **Bajar la comida:** cocinar en el alojamiento y comer en parrillas o pizzerías económicas de la Avenida Libertador [guia:el-calafate#010].\n- **Alojamiento compartido** (posadas o hosterías más económicas) [guia:el-calafate#012].\n- **Pasajes más baratos:** los de 213.421 ARS (Skyscanner) y de JetSmart tienen unidad dudosa. Si se confirman por persona e ida y vuelta, podrían cambiar el cálculo, pero hay que verificarlos con las fechas exactas.\n\n## Fuentes\n- [guía] Wikivoyage, «El Calafate» § Ver — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)\n- [guía] Wikivoyage, «El Calafate» § Hacer — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)\n- [guía] Wikivoyage, «El Calafate» § Dormir — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)\n- [guía] Wikivoyage, «El Calafate» § Entender > Clima — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)\n- [guía] Wikivoyage, «El Calafate» § Hacer > Otras excursiones — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)\n- [guía] Wikivoyage, «El Calafate» § Comer — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)\n- [guía] Wikivoyage, «El Calafate» § Llegar > En avión — https://es.wikivoyage.org/wiki/El_Calafate (CC BY-SA 4.0)\n- [memoria] mem-3ca774df28a8 → https://www.skyscanner.com.ar/rutas/cor/fte/cordoba-a-el-calafate.html — pasajes, buscado el 2026-11-25\n- [memoria] mem-724977e46ba6 → https://www.kayak.com.ec/El-Calafate-Hoteles-South-B-B-El-Calafate.575787.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-7fbc9bd9cafc → https://gotripzi.com/es/destinations/el-calafate-ar/cost — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [memoria] mem-3ca774df28a8 — pasajes, buscado el 2026-11-25\n- [memoria] mem-724977e46ba6 — alojamiento, buscado el 2026-11-25\n- [memoria] mem-7fbc9bd9cafc — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 — cambio, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+      "estado_grafo": "completo",
+      "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+      "turno": 1,
+      "thread_id": "c523e0fb319b41fab92dc5b4a5deb1ee",
+      "permiso_web": "sin_pedir",
+      "aprobaciones_hitl": [
+        {
+          "ronda": 1,
+          "turno": 1,
+          "temas_sin_memoria": [],
+          "temas_en_memoria": [
+            "pasajes",
+            "alojamiento",
+            "comida",
+            "cambio"
+          ],
+          "temas_en_guias": [
+            "actividades",
+            "clima",
+            "como_llegar"
+          ],
+          "pausa": false,
+          "resultado": "sin_pedir",
+          "origen": "memoria",
+          "comentario": "",
+          "timestamp": "2026-11-25T18:44:25.558+00:00"
+        }
+      ],
+      "metricas": {
+        "turno": 1,
+        "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+        "pasos_supervisor": 3,
+        "decision_forzada_por_freno": false,
+        "delegaciones": {
+          "investigador": 1,
+          "analista": 1
+        },
+        "refinamientos": 0,
+        "llamadas_por_herramienta": {
+          "consultar_guias": 3,
+          "buscar_en_memoria": 4,
+          "buscar_en_web": 1,
+          "validar_viaje": 1,
+          "calcular_presupuesto": 2
+        },
+        "busquedas_web": 0,
+        "consultas_guias": 3,
+        "fuentes_guia": 10,
+        "fuentes_memoria": 13,
+        "fuentes_web": 0,
+        "observaciones": [],
+        "validacion": "aprobada",
+        "presupuesto_entra": false,
+        "alternativa_calculada": true
+      },
+      "pedido": {
+        "origen": "Córdoba",
+        "destino": "El Calafate",
+        "fecha_ida": "2027-02-10",
+        "fecha_vuelta": "2027-02-16",
+        "dias": 7,
+        "personas": 2,
+        "presupuesto": 350000.0,
+        "moneda": "ARS",
+        "supuestos": [
+          "febrero sin día exacto: ida el 10/02/2027 (febrero de 2026 ya pasó), vuelta el 16/02/2027 según 7 días"
+        ]
+      },
+      "traza": "traces/api/api_c523e0fb_t1_real_20261125-184420.json"
+    },
+    "error": null,
+    "tramos": 1,
+    "duracion_s": 64.98,
+    "tiempo_ejecucion_s": 64.96,
+    "total_tokens": 108940,
+    "costo_usd": 0.016108,
+    "tokens": {
+      "claude-haiku-5-5": {
+        "total_tokens": 108940,
+        "output_token_details": {
+          "reasoning": 2540
+        },
+        "input_tokens": 95905,
+        "input_token_details": {
+          "cache_creation": 0,
+          "cache_read": 0,
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "output_tokens": 13035
+      }
+    }
+  },
+  "archivo": "4_no_alcanza.json",
+  "langsmith": {
+    "run_ids": [
+      "01a21405-e663-74da-98b1-f76793d4483b"
+    ],
+    "run_id": "01a21405-e663-74da-98b1-f76793d4483b",
+    "tramos": 1,
+    "latencia_s": 64.96,
+    "costo_usd": 0.016108,
+    "tokens": 108940,
+    "estados": [
+      "success"
+    ]
+  }
+}

@@ -1,52 +1,43 @@
-# Asesor de viajes multi-agente · Pre-entrega 7 — API de producción y monitoreo activo
+# Asesor de viajes multi-agente · Entrega final AI Engineering
 
-> Curso AI Engineering · Coderhouse. Continuación de la [Pre-entrega 6](https://github.com/anukvilarasau/pre-entrega-6): el orquestador **jerárquico** de LangGraph (supervisor + investigador + analista + síntesis) ahora corre detrás de una **API FastAPI asíncrona**, con el estado de cada job en **Redis**, checkpoints de LangGraph con **`AsyncRedisSaver`**, un nodo **human-in-the-loop** que pide permiso antes de gastar búsquedas web, y **trazas, costo y latencia en LangSmith**.
-
-```text
-POST /tasks  ──►  202 {job_id}  (al instante)        GET /tasks/{id}  ──►  PENDING → RUNNING → WAITING_APPROVAL → RUNNING → DONE | FAILED
-                                                     POST /tasks/{id}/approve {"aprobado": true|false}  ──►  el grafo sigue desde su checkpoint
-```
-
-Pregunta de demo: *"Quiero ir 7 días a Bariloche en enero, somos 2 personas, salimos desde Mendoza y tenemos 800.000 pesos. ¿Me armás el viaje y me decís si nos alcanza?"*
+**En 5 minutos, para un ingeniero senior.** Es un sistema de inteligencia de viajes por Argentina. Una **API FastAPI 100% async** recibe la pregunta, guarda el job en **Redis** y vuelve al instante. Un worker de asyncio corre un **grafo LangGraph jerárquico**: un **supervisor** con salida estructurada (`Literal`), una rúbrica y frenos anti-bucle decide quién trabaja. El **investigador** es un agente ReAct que resuelve lo estable con un **RAG propio** sobre 9 guías de Wikivoyage: chunking por tokens, búsqueda híbrida BM25 + vectorial con fusión RRF, re-ranking con cross-encoder y filtro por destino desde los metadatos. Lo que cambia (precios, tipo de cambio) lo saca de una memoria semántica de búsquedas y, solo si una **persona lo aprueba (human-in-the-loop con `interrupt()`)**, de la web con Tavily. El **analista** valida el viaje y calcula el presupuesto con herramientas determinísticas. Una **síntesis** redacta la respuesta; las **fuentes y la atribución las agrega el código**, nunca el LLM. Cada paso queda en un **checkpointer de LangGraph en Redis** (`AsyncRedisSaver`): las pausas y las **conversaciones de varios turnos sobreviven a un reinicio** de la API. Todo se traza en **LangSmith** con metadata `job_id` / `thread_id` / `turno`, y todas las entradas y salidas (API y herramientas) están validadas con **Pydantic**. Se levanta con **`docker compose up`**; hay modo mock sin claves y 188 tests que corren sin claves.
 
 ---
 
 ## Índice
 
-1. [Rúbrica → dónde se cumple](#1-rúbrica--dónde-se-cumple)
+1. [Qué resuelve y para quién](#1-qué-resuelve-y-para-quién)
 2. [Arquitectura](#2-arquitectura)
-3. [El grafo de producción (Mermaid generado desde el código)](#3-el-grafo-de-producción)
-4. [La API: endpoints y ejemplos con curl](#4-la-api-endpoints-y-ejemplos-con-curl)
-5. [Worker y estado en Redis](#5-worker-y-estado-en-redis)
-6. [Human-in-the-loop: aprobar la búsqueda web](#6-human-in-the-loop-aprobar-la-búsqueda-web)
-7. [Observabilidad con LangSmith y capturas](#7-observabilidad-con-langsmith-y-capturas)
-8. [Prueba de carga: 5 pedidos concurrentes y lectura del dashboard](#8-prueba-de-carga-5-pedidos-concurrentes-y-lectura-del-dashboard)
-9. [Instalación paso a paso (Docker y sin Docker)](#9-instalación-paso-a-paso)
-10. [Tests](#10-tests)
-11. [Cambios respecto de la PE6](#11-cambios-respecto-de-la-pe6)
-12. [Lo que aprendimos de las corridas reales](#12-lo-que-aprendimos-de-las-corridas-reales)
-13. [Estructura del repositorio](#13-estructura-del-repositorio)
-14. [Limitaciones](#14-limitaciones)
-- [Anexo A — El orquestador (de la PE6): topología, agentes, estado, supervisor](#anexo-a--el-orquestador-de-la-pe6)
+3. [El grafo (Mermaid generado desde el código)](#3-el-grafo-mermaid-generado-desde-el-código)
+4. [Cómo levantarlo: un comando](#4-cómo-levantarlo-un-comando)
+5. [Endpoints con ejemplos](#5-endpoints-con-ejemplos)
+6. [El RAG: corpus, ingesta, retriever y métricas](#6-el-rag-corpus-ingesta-retriever-y-métricas)
+7. [Conversaciones que sobreviven a un reinicio](#7-conversaciones-que-sobreviven-a-un-reinicio)
+8. [Las 5 pruebas de punta a punta, con capturas de LangSmith](#8-las-5-pruebas-de-punta-a-punta-con-capturas-de-langsmith)
+9. [Observabilidad](#9-observabilidad)
+10. [Async y Pydantic de punta a punta](#10-async-y-pydantic-de-punta-a-punta)
+11. [Decisiones de arquitectura y alternativas descartadas](#11-decisiones-de-arquitectura-y-alternativas-descartadas)
+12. [Rúbrica → dónde se cumple](#12-rúbrica--dónde-se-cumple)
+13. [Qué módulo del curso aporta qué capa](#13-qué-módulo-del-curso-aporta-qué-capa)
+14. [Devolución de la PE7 y fortalezas que se mantienen](#14-devolución-de-la-pe7-y-fortalezas-que-se-mantienen)
+15. [Lo que aprendimos en el camino](#15-lo-que-aprendimos-en-el-camino)
+16. [Tests](#16-tests)
+17. [Estructura del repositorio](#17-estructura-del-repositorio)
+18. [Limitaciones](#18-limitaciones)
+19. [Licencia del corpus](#19-licencia-del-corpus)
 
 ---
 
-## 1. Rúbrica → dónde se cumple
+## 1. Qué resuelve y para quién
 
-| Requisito (peso) | Cómo se cumple | Dónde |
-|---|---|---|
-| **API FastAPI asíncrona (30 %)**: `POST /tasks` encola y devuelve `job_id` sin bloquear; `GET /tasks/{id}` devuelve estado y resultado | `POST /tasks` guarda el job en Redis (`redis.asyncio`, una sola ida y vuelta) y crea una tarea de asyncio: responde **202 en milisegundos** (medido: 2 ms en mock, 166 ms contra Redis Cloud). Ningún endpoint espera al grafo ni hace I/O sync; lo sync al arrancar (ChromaDB, modelos) va por `run_in_threadpool`, y ChromaDB dentro del grafo por `asyncio.to_thread`. | [`app/main.py`](app/main.py) · tests `test_post_devuelve_job_id_al_instante_sin_esperar_al_grafo` (POST con un grafo que tarda 1 s: responde en < 0,3 s y `/health` sigue respondiendo) |
-| **Estado en Redis + checkpoints (25 %)**: PENDING → RUNNING → WAITING_APPROVAL → DONE / FAILED, `RedisSaver` async, toda excepción → FAILED | Un hash `job:<id>` con pregunta, estado, timestamps, ruta, pausa, resultado, error, tokens, costo y `thread_id` (= `job_id`). Checkpoints con **`AsyncRedisSaver`** (Redis 8). El worker envuelve todo en `try/except`: excepción del grafo, timeout y apagado → **FAILED con el error**. | [`app/worker.py`](app/worker.py), [`app/graph.py`](app/graph.py) · tests `test_una_excepcion_del_grafo_pasa_el_job_a_failed`, `test_timeout_pasa_a_failed`, `test_apagar_la_api_…`, `test_el_estado_del_job_vive_en_un_hash_de_redis`, `test_un_worker_nuevo_reanuda_el_job_pausado_por_otro`, `test_pausa_y_reanudacion_con_async_redis_saver_real` |
-| **Observabilidad con LangSmith (25 %)**: trazas de cada nodo + 5 peticiones concurrentes con costo por ejecución y latencia p95 en `/screenshots` | Tracing de LangChain/LangGraph con metadata `job_id`/`thread_id`/`tramo` y tags. Cada nodo es un run con nombre propio. LangSmith calcula el costo de `claude-haiku-5-5` (verificado: coincide al centavo con el costo local). Prueba de carga: 5/5 DONE, **p95 = 91,0 s**, US$ 0,0708 en total. | [`app/observability.py`](app/observability.py), [`scripts/carga_concurrente.py`](scripts/carga_concurrente.py), [`screenshots/`](screenshots/) ([`resultados_carga.md`](screenshots/resultados_carga.md)), §7 y §8 |
-| **Human-in-the-loop (15 %)**: el grafo se pausa hasta la aprobación externa (`POST /tasks/{id}/approve`) | Nodo `aprobacion_web` antes de que el investigador vaya a la web. Si la memoria responde, no hay pausa. Usa `interrupt()` y se reanuda con `Command(resume=...)`. `aprobado=false` sigue sin web y la síntesis lo aclara. `auto_aprobar` por request. | [`app/hitl.py`](app/hitl.py) · [`tests/test_hitl.py`](tests/test_hitl.py) (pausa, aprobado, rechazado, memoria, auto) |
-| **README + requirements (5 %)** | Este README (Redis + API con y sin Docker, curl, carga) y `requirements.txt` con versiones fijas. | §9, [`requirements.txt`](requirements.txt), [`docker-compose.yml`](docker-compose.yml) |
+**Para quién:** alguien que planea un viaje por Argentina y quiere, en una sola pregunta, un plan concreto, por ejemplo: *"7 días a Bariloche en enero, somos 2, salimos de Mendoza, tenemos $800.000: ¿nos alcanza?"*. También sirve para una agencia chica que quiere automatizar la primera respuesta sin perder control del gasto.
 
-**Mejoras que pidió el corrector en la PE6:**
+**Qué resuelve:**
 
-1. *Publicar DAGs/trazas de ejecución de `consultar()` como evidencia visual* → capturas de LangSmith en [`screenshots/`](screenshots/) (traza completa, pausa HITL, costo, latencia) + Mermaid **regenerado desde el código** con el nodo HITL (`python main.py --mermaid`, §3).
-2. *Backend/API que exponga `consultar()` y mostrar el orquestador interactuando en vivo desde el notebook* → esta API + [`demo.ipynb`](demo.ipynb) **ejecutado contra la API real**: hace `POST /tasks`, polling, la pausa HITL, `approve` aprobado y rechazado, el caso "la memoria responde" y la tabla de la carga, con las salidas guardadas.
-
-**Lo que se mantuvo de la PE6** (fortalezas marcadas): Mermaid generado desde el código; supervisor con `Literal`, rúbrica R1–R6 y frenos anti-bucle; herramientas reales por rol, con fuentes tomadas de los artifacts y no del LLM, inyectables, y errores devueltos como texto al LLM; `validar_actualizacion()` (ahora también para el nodo HITL); **los 128 tests de la PE6 siguen pasando**; la justificación de la topología ([Anexo A.2](#a2-por-qué-una-topología-jerárquica)).
+- **Lo estable** (qué ver y hacer, cómo llegar, barrios, clima típico del mes, consejos) sale de una **base de conocimiento propia** con fuente exacta (artículo + sección de Wikivoyage). Es gratis, instantáneo y no alucina URLs.
+- **Lo que cambia** (pasajes, alojamiento, comida, dólar oficial/tarjeta/MEP) sale de búsquedas recientes guardadas o de la web, **solo con permiso humano** cuando hay que gastar.
+- **Las cuentas** (noches, personas, conversión de moneda, si entra en el presupuesto y alternativas si no) las hacen herramientas determinísticas, no el LLM.
+- **La conversación sigue**: *"¿y si vamos en julio?"* mantiene destino, personas y presupuesto, y recalcula, aunque la API se haya reiniciado en el medio.
 
 ---
 
@@ -54,49 +45,55 @@ Pregunta de demo: *"Quiero ir 7 días a Bariloche en enero, somos 2 personas, sa
 
 ```mermaid
 flowchart LR
-    C([Cliente<br/>curl · notebook · carga_concurrente.py]) -- "POST /tasks<br/>GET /tasks/{id}<br/>POST /tasks/{id}/approve" --> API[FastAPI<br/>app/main.py<br/>endpoints async]
-    API -- "HSET job:id · WATCH/MULTI" --> R[(Redis 8<br/>hash job:id + eventos<br/>RedisJSON + RediSearch)]
-    API -- "asyncio.create_task" --> W[Worker<br/>app/worker.py<br/>semáforo · timeout · try/except → FAILED]
-    W -- "astream(thread_id = job_id)<br/>Command(resume=...)" --> G[Grafo LangGraph<br/>app/graph.py + graph.py<br/>supervisor · aprobacion_web · investigador · analista · sintesis]
-    G -- "checkpoint por paso<br/>AsyncRedisSaver" --> R
-    W -- "estado · ruta · pausa · resultado · tokens · costo" --> R
-    G -- "Claude haiku-5-5" --> A[(API de Anthropic)]
-    G -- "buscar_en_web (si se aprobó)" --> T[(Tavily)]
-    G -- "buscar_en_memoria" --> M[(ChromaDB local)]
-    G -. "trazas de cada nodo<br/>metadata job_id · costo · latencia" .-> LS[(LangSmith<br/>proyecto pre-entrega-7)]
+    cliente([Cliente / notebook<br/>httpx async]) -->|"POST /tasks · GET /tasks/{id}<br/>POST /approve · GET /threads/{id}"| api
+
+    subgraph app ["Contenedor app (Python 3.12)"]
+        api["API FastAPI<br/>api/main.py<br/>esquemas Pydantic"] -->|encola| worker["Worker asyncio<br/>api/worker.py<br/>semáforo · timeout · FAILED"]
+        worker -->|"astream(thread_id)"| grafo
+        subgraph grafo ["Grafo LangGraph · graph/"]
+            sup{{"Supervisor<br/>Literal + rúbrica R1–R7<br/>frenos anti-bucle"}}
+            hitl["aprobacion_web<br/>interrupt()"]
+            inv["Investigador<br/>ReAct"]
+            ana["Analista<br/>ReAct"]
+            sin["Síntesis<br/>fuentes por código"]
+            sup -->|investigador| hitl --> inv --> sup
+            sup -->|analista| ana --> sup
+            sup -->|FINALIZAR| sin
+        end
+        inv -->|"1. consultar_guias"| rag
+        inv -->|"2. buscar_en_memoria"| mem[("Memoria de búsquedas<br/>ChromaDB")]
+        inv -->|"3. buscar_en_web<br/>(solo con permiso)"| tavily[(Tavily)]
+        ana --> tools["validar_viaje<br/>calcular_presupuesto"]
+        subgraph rag ["RAG · rag/"]
+            bm25["BM25"] --> rrf["RRF"]
+            vec["Vectorial<br/>fastembed ONNX"] --> rrf
+            rrf --> rerank["Re-ranker<br/>cross-encoder"]
+            vs[("VectorStore<br/>Chroma ⇄ Pinecone")] --- vec
+        end
+    end
+
+    api <-->|"jobs (hash) · threads"| redis[("Redis 8<br/>RedisJSON + RediSearch")]
+    grafo <-->|"checkpoints AsyncRedisSaver"| redis
+    grafo -.->|"spans por nodo · metadata<br/>job_id / thread_id / turno"| ls[(LangSmith)]
+    sup & inv & ana & sin -.->|ainvoke| claude[(Claude Haiku)]
 ```
 
-**Recorrido de un job:**
-
-1. `POST /tasks` valida el cuerpo (Pydantic), crea el hash `job:<id>` en **PENDING** y llama a `worker.iniciar()`, que hace `asyncio.create_task(...)`, guarda la referencia y vuelve. Respuesta **202** con `job_id` y links.
-2. El worker toma un lugar del semáforo (`MAX_JOBS_CONCURRENTES=5`), pasa el job a **RUNNING** y corre `grafo.astream(estado_inicial, config)` con `thread_id = job_id`. Cada nodo que termina deja un evento en `job:<id>:eventos` y actualiza `nodo_actual` y `ruta`: `GET` muestra el progreso.
-3. Si el supervisor manda al investigador y la memoria no tiene los temas, el nodo `aprobacion_web` llama a `interrupt()`. El grafo se detiene, el checkpoint queda en Redis y el job pasa a **WAITING_APPROVAL** con `aprobacion_pendiente` (qué quiere buscar).
-4. `POST /approve` hace la transición WAITING_APPROVAL → RUNNING de forma **atómica** (WATCH/MULTI: un segundo approve recibe 409) y relanza el worker con `Command(resume={"aprobado": ...})`. LangGraph retoma desde el checkpoint, aunque la API se haya reiniciado en el medio.
-5. Al terminar: **DONE** con `resultado` (respuesta final, ruta, métricas, permisos, aprobaciones), tokens, costo y duraciones. Cualquier excepción: **FAILED** con `error`.
-
-**Decisiones de diseño:**
-
-| Decisión | Por qué |
-|---|---|
-| Worker = tareas de asyncio (sin Celery/Arq) | El grafo ya es async de punta a punta (`ainvoke`, `astream`, herramientas corrutina): no hace falta otro proceso ni otra cola. Las referencias quedan en un `set` hasta que la tarea termina (si no, el GC puede cortarla). El límite de concurrencia es un `asyncio.Semaphore`. |
-| Redis para el estado **y** para los checkpoints | Un solo servicio. El hash del job es lo que lee el cliente; los checkpoints son lo que necesita LangGraph para pausar y reanudar. Los dos sobreviven a un reinicio de la API. |
-| `thread_id = job_id` | Un hilo de LangGraph por job: reanudar es pasar el mismo `thread_id`, y LangSmith agrupa los dos tramos del job (antes y después de la pausa) en la vista *Threads*. |
-| Pool de conexiones **bloqueante** con tope | Redis Cloud gratis admite 30 clientes. Sin tope, la primera carga real dio `max number of clients reached` (§12). Con `BlockingConnectionPool`, un job espera una conexión libre en lugar de fallar. |
-| Modo mock con fakeredis + `InMemorySaver` | La API completa corre **sin claves y sin Redis** (LLM con guion + Tavily falso de la PE6). fakeredis no implementa RediSearch (`FT.*`), que necesita `RedisSaver`; por eso en mock el checkpointer es `InMemorySaver` (misma interfaz). Con `REDIS_URL` se usa Redis real y `AsyncRedisSaver`, también en mock. |
-| Recuperación al arrancar | Si la API se cae (kill -9) con jobs RUNNING, al arrancar se reanudan desde su último checkpoint. Sin checkpoints persistentes pasan a FAILED con el motivo. Los WAITING_APPROVAL siguen esperando su approve. |
+| Capa | Carpeta | Qué hace |
+|---|---|---|
+| Configuración | `config.py`, `.env.example` | Todas las variables (modelos, índices, URLs, límites) validadas con **pydantic-settings**. Nada hard-codeado. |
+| Agentes | `agents/` | Cliente LLM (`llm.py`), supervisor, investigador y analista con sus herramientas, síntesis y modo mock. |
+| Grafo | `graph/` | Estado (`state.py`), armado del grafo (`builder.py`), nodo HITL (`hitl.py`), checkpointer (`checkpointer.py`). |
+| RAG | `rag/` | Corpus, chunking, embeddings, vector store (Chroma/Pinecone), retriever híbrido, re-rankers, ingesta y evaluación. También la memoria de búsquedas. |
+| API | `api/` | FastAPI, esquemas Pydantic, `JobStore` en Redis y worker. |
+| Observabilidad | `observability/` | LangSmith (metadata, tags, costo) y la traza local versionada en `traces/`. |
 
 ---
 
-## 3. El grafo de producción
+## 3. El grafo (Mermaid generado desde el código)
 
-Generado por LangGraph desde el código con `python main.py --mock --mermaid` (el mismo grafo de la PE6 + el nodo HITL; `--sin-hitl` imprime el de la consola, idéntico al de la PE6):
+Este diagrama **no está dibujado a mano**: es la salida de `python main.py --mock --mermaid` (`graph.get_graph().draw_mermaid()`), guardada en [`docs/grafo.mmd`](docs/grafo.mmd).
 
 ```mermaid
----
-config:
-  flowchart:
-    curve: linear
----
 graph TD;
 	__start__([<p>__start__</p>]):::first
 	supervisor(supervisor)
@@ -118,586 +115,407 @@ graph TD;
 	classDef last fill:#bfb6fc
 ```
 
-La única diferencia con la PE6 está en `graph.construir_grafo(componentes, nodo_aprobacion=..., checkpointer=...)`. Si se le pasa el nodo HITL, la arista condicional `"investigador"` del supervisor apunta a `aprobacion_web`, y `aprobacion_web → investigador`. Sin esos argumentos (consola, escenarios y tests de la PE6), el grafo es exactamente el de antes. `app/graph.py` arma la versión de producción:
-
-```python
-def construir_grafo_api(componentes, checkpointer, max_pasos=None):
-    return construir_grafo(componentes, max_pasos=max_pasos,
-                           nodo_aprobacion=crear_nodo_aprobacion(componentes.memoria),
-                           checkpointer=checkpointer)          # AsyncRedisSaver o InMemorySaver
-```
-
----
-
-## 4. La API: endpoints y ejemplos con curl
-
-| Método y ruta | Qué hace | Respuestas |
+| Nodo | Qué hace | Qué escribe en el estado (lo controla `validar_actualizacion()`) |
 |---|---|---|
-| `POST /tasks` | Encola una pregunta: `{"pregunta": "...", "auto_aprobar": false}` | **202** `{job_id, estado: PENDING, links}` · 422 si el cuerpo es inválido |
-| `GET /tasks/{job_id}` | Estado, progreso (`nodo_actual`, `ruta`), pausa (`aprobacion_pendiente`), `resultado`, `error`, tokens, costo, duraciones | 200 · 404 |
-| `POST /tasks/{job_id}/approve` | Responde la pausa: `{"aprobado": true, "comentario": "opcional"}` | **202** `{estado: RUNNING}` · 404 · **409** si no está esperando aprobación |
-| `GET /tasks?limite=20` | Los últimos jobs | 200 |
-| `GET /health` | Redis (ping), tipo de checkpointer, modo, modelo, LangSmith, jobs activos | 200 |
-| `GET /docs` | Swagger generado por FastAPI | |
+| `supervisor` | En el primer paso de cada turno extrae el `PedidoViaje` (en un seguimiento lo combina con el del turno anterior). Después decide `investigador` / `analista` / `FINALIZAR` con salida estructurada y una rúbrica (R1 cobertura, R2 fuentes, R3 precios, R4 cálculo, R5 observaciones, R6 coherencia, **R7 economía**). Reglas duras por código y freno `MAX_PASOS_SUPERVISOR`. | `pedido`, `decisiones`, `siguiente`, `instruccion_actual`, `temas_pedidos` |
+| `aprobacion_web` | Human-in-the-loop sin LLM. Para cada tema pedido mira si lo responden **las guías** (tema estable + destino con guía) o **la memoria** (datos vigentes). Solo si queda algo sin cubrir llama a `interrupt()` y el job pasa a `WAITING_APPROVAL`. | `permiso_web`, `aprobaciones` |
+| `investigador` | ReAct con `consultar_guias` → `buscar_en_memoria` → `buscar_en_web`. Contexto acotado: solo la instrucción y el pedido. Un chequeo por código anota observaciones (sin fuentes, sin precios, web caída). | `aportes` (con `fuentes` de los artifacts) |
+| `analista` | ReAct con `validar_viaje` y `calcular_presupuesto` (determinísticas). Si no entra, calcula una alternativa. | `aportes` |
+| `sintesis` | Redacta la respuesta. El código agrega la lista de fuentes, el aviso de precios y la atribución CC BY-SA, y registra el turno. | `respuesta_final`, `turnos` |
 
-Ejemplos (bash; en Windows conviene mandar el cuerpo desde un archivo UTF-8, como [`scripts/ejemplo_task.json`](scripts/ejemplo_task.json), para que no se rompan las tildes):
+Frenos contra el "supervisor infinito": `MAX_PASOS_SUPERVISOR=6`, `RECURSION_LIMIT=20` en el grafo, `RECURSION_LIMIT_ESPECIALISTA=12` en cada ReAct, y como máximo 2 rondas del investigador.
+
+---
+
+## 4. Cómo levantarlo: un comando
+
+**Con Docker (recomendado), en una máquina limpia:**
 
 ```bash
-curl -s localhost:8000/health
-
-# 1. Encolar (vuelve enseguida con el job_id)
-curl -s -X POST localhost:8000/tasks -H "Content-Type: application/json" --data-binary @scripts/ejemplo_task.json
-# {"job_id":"a4be1ccdf4694ac9861baa8a9731eeee","estado":"PENDING","links":{"estado":"/tasks/a4be…","aprobar":"/tasks/a4be…/approve"}}
-
-# 2. Consultar el estado (polling)
-curl -s localhost:8000/tasks/a4be1ccdf4694ac9861baa8a9731eeee
-# {"estado":"WAITING_APPROVAL","nodo_actual":"aprobacion_web","ruta":["supervisor"],
-#  "aprobacion_pendiente":{"tipo":"aprobacion_busqueda_web","destino":"Bariloche",
-#     "temas_sin_memoria":["pasajes","alojamiento","comida","actividades","cambio"],"temas_en_memoria":[],
-#     "consultas_previstas":["precio de pasajes Mendoza → Bariloche","precio de alojamiento por noche en Bariloche", …],
-#     "instruccion_del_supervisor":"Buscar datos actuales con fuente … para un viaje de Mendoza a Bariloche …"}, …}
-
-# 3. Aprobar (o rechazar con {"aprobado": false})
-curl -s -X POST localhost:8000/tasks/a4be1ccdf4694ac9861baa8a9731eeee/approve \
-     -H "Content-Type: application/json" -d '{"aprobado": true, "comentario": "ok"}'
-# {"job_id":"a4be…","estado":"RUNNING","aprobado":true}
-
-# 4. Polling hasta DONE
-curl -s localhost:8000/tasks/a4be1ccdf4694ac9861baa8a9731eeee
-# {"estado":"DONE","tramos":2,"duracion_s":86.92,"tiempo_ejecucion_s":68.34,"total_tokens":87518,"costo_usd":0.013759,
-#  "resultado":{"ruta":"supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
-#               "permiso_web":"aprobada","respuesta_final":"## Presupuesto: no alcanza …","metricas":{…}}, …}
+git clone https://github.com/anukvilarasau/entrega-final.git && cd entrega-final
+cp .env.example .env        # completá ANTHROPIC_API_KEY, TAVILY_API_KEY y (opcional) LANGSMITH_API_KEY
+docker compose up --build   # app + Redis 8; la ingesta del RAG corre sola al arrancar
 ```
 
-PowerShell: `Invoke-RestMethod -Method Post localhost:8000/tasks -ContentType "application/json; charset=utf-8" -InFile scripts\ejemplo_task.json`.
+- API en <http://localhost:8000/docs> (OpenAPI con ejemplos).
+- **Sin claves:** `MODO_MOCK=1 docker compose up --build`. El LLM y Tavily quedan simulados con políticas que reaccionan a lo que devuelven las herramientas reales.
+- La imagen (~3,6 GB) trae **horneados** los modelos ONNX (embeddings, re-ranker y el embedding de la memoria): al arrancar no descarga nada. El índice de las guías, la memoria de búsquedas y Redis viven en **volúmenes**, así que sobreviven a `docker compose restart` / `down` / `up`.
 
-Los números de arriba son de la corrida real del 18/11/2026 (job `a4be1ccd`). La traza completa está en [`traces/api/api_a4be1ccd_real_20261118-142852.log`](traces/api/).
+**Sin Docker (Python 3.12):**
 
----
+```bash
+./run.sh            # Linux / macOS / Git Bash: crea .venv, instala, ingesta, uvicorn
+./run.sh --mock     # sin claves
+./run.sh --tests    # los tests
+```
+```powershell
+.\run.ps1           # Windows PowerShell (también -Mock y -Tests)
+```
 
-## 5. Worker y estado en Redis
+Sin `REDIS_URL` se usan fakeredis e `InMemorySaver` (sirve para probar, pero nada persiste). Con Redis 8 / Redis Stack o Redis Cloud, los checkpoints persisten.
 
-**El hash `job:<job_id>`** (más `job:<job_id>:eventos`, una lista con lo que hizo cada nodo, y el sorted set `jobs` por fecha):
-
-| Campo | Contenido |
-|---|---|
-| `id`, `thread_id` | El `job_id` (uuid4 hex); `thread_id` es el mismo: el hilo del checkpoint de LangGraph |
-| `pregunta`, `auto_aprobar`, `modo` | Lo que mandó el cliente y si la API está en mock o real |
-| `estado` | `PENDING` · `RUNNING` · `WAITING_APPROVAL` · `DONE` · `FAILED` |
-| `creado`, `iniciado`, `actualizado`, `terminado` | Timestamps ISO con milisegundos y zona horaria |
-| `nodo_actual`, `ruta`, `tramos` | Progreso; `tramos` = cuántas veces corrió el grafo (1 + una por cada reanudación) |
-| `aprobacion_pendiente`, `aprobaciones` | La solicitud del nodo HITL mientras espera; el historial de respuestas humanas |
-| `resultado` | Respuesta final, ruta, `permiso_web`, aprobaciones del grafo, métricas de la PE6, pedido y archivo de traza |
-| `error` | `Tipo: mensaje` (los errores típicos de Claude se traducen; por ejemplo, clave inválida → "La ANTHROPIC_API_KEY del .env es inválida") |
-| `tokens`, `total_tokens`, `costo_usd` | Uso por modelo sumado entre tramos, y costo estimado con `PRECIOS_USD_POR_MTOK` |
-| `duracion_s`, `tiempo_ejecucion_s` | De la creación al final (incluye la espera humana) / solo el tiempo que corrió el grafo |
-
-**Qué garantiza el worker** (`app/worker.py`):
-
-- `lanzar()` hace `asyncio.create_task`, guarda la tarea en un `set` y le pone `add_done_callback(discard)`: la tarea no se pierde y el endpoint vuelve enseguida.
-- `_ejecutar()` = semáforo + `asyncio.wait_for(…, JOB_TIMEOUT_S)` + `except Exception → FAILED`, `except TimeoutError → FAILED`, `except CancelledError → FAILED y re-raise` (apagado). Los tokens del tramo que falló **también se guardan**, así el costo de un FAILED coincide con LangSmith.
-- `GraphRecursionError` no es una falla: como en la PE6, el job termina DONE con el aviso controlado de `RECURSION_LIMIT`.
-- Después de `astream`, `aget_state()` dice si el grafo quedó con `interrupts` (→ WAITING_APPROVAL) o terminó (→ DONE).
-- En modo real, cada job DONE deja su traza `.json` + `.log` en [`traces/api/`](traces/api/) (el mismo formato de la PE6, con el evento del nodo HITL).
-
-**Serialización de los checkpoints.** `RedisSaver` guarda el estado como JSON (RedisJSON) y al leerlo **solo revive las clases de una allowlist**. Sin ella, `PedidoViaje`, `Aporte`, etc. volvían del checkpoint como `dict`, y el grafo se rompía al reanudar (`'dict' object has no attribute 'destino'`). `InMemorySaver` no lo mostraba; lo encontró el test contra Redis real. `app/graph.py` declara `TIPOS_DEL_ESTADO` en `allowed_json_modules` y `allowed_msgpack_modules`, y el test verifica que los modelos vuelvan como modelos.
+**Utilidades:** `python -m rag.ingesta [--forzar]` · `python -m rag.evaluate` · `python main.py "pregunta"` (consola) · `python scripts/pruebas_finales.py` (las 5 pruebas).
 
 ---
 
-## 6. Human-in-the-loop: aprobar la búsqueda web
+## 5. Endpoints con ejemplos
 
-**Dónde está el punto crítico:** el investigador es el único agente que gasta plata y cuota de terceros (cada búsqueda en Tavily). Por eso la pausa va **antes de que busque en la web**, y solo si hace falta.
+| Método | Ruta | Para qué | Respuesta |
+|---|---|---|---|
+| POST | `/tasks` | Encolar una pregunta, o un **seguimiento** con `thread_id` | `202 TaskCreada` (`job_id`, `thread_id`, `turno`) |
+| GET | `/tasks/{job_id}` | Estado, progreso (`ruta`, `nodo_actual`), pausa HITL, resultado, error, tokens y costo | `JobInfo` |
+| POST | `/tasks/{job_id}/approve` | Responder la pausa: `{"aprobado": true\|false}` | `202 AprobacionAceptada` |
+| GET | `/tasks` | Últimos jobs | `list[JobInfo]` |
+| GET | `/threads/{thread_id}` | Historial de la conversación, leído del **checkpoint** | `ConversacionInfo` |
+| GET | `/rag/buscar?q=&destino=&k=` | El retriever solo (diagnóstico, sin LLM) | `ResultadoBusqueda` |
+| GET | `/health` | Redis, checkpointer, RAG, LangSmith, jobs activos | `HealthInfo` |
 
-Qué hace el nodo `aprobacion_web` ([`app/hitl.py`](app/hitl.py)), por código y sin LLM:
+Errores controlados: `404` (job o conversación inexistente), `409` (el job no espera aprobación, o la conversación tiene un job sin terminar) y `422` (validación Pydantic: pregunta corta, campo desconocido, `thread_id` mal formado).
 
-| Situación | Resultado (`permiso_web`) | ¿Pausa? |
+```bash
+# 1. Encolar (vuelve al instante)
+curl -s -X POST localhost:8000/tasks -H 'Content-Type: application/json' \
+  -d '{"pregunta":"Quiero ir 7 días a Bariloche en enero, somos 2, salimos de Mendoza y tenemos 800.000 pesos. ¿Nos alcanza?"}'
+# {"job_id":"…","thread_id":"…","turno":1,"estado":"PENDING","links":{…}}
+
+# 2. Polling: si queda en WAITING_APPROVAL, "aprobacion_pendiente" dice qué temas iría a buscar a la web
+#    (y cuáles ya responden las guías o la memoria)
+curl -s localhost:8000/tasks/<job_id>
+
+# 3. Aprobar (o {"aprobado": false}: sigue solo con guías y memoria)
+curl -s -X POST localhost:8000/tasks/<job_id>/approve -H 'Content-Type: application/json' -d '{"aprobado": true}'
+
+# 4. Seguir la conversación, aunque la API se haya reiniciado
+curl -s -X POST localhost:8000/tasks -H 'Content-Type: application/json' \
+  -d '{"pregunta":"¿Y si vamos en julio?","thread_id":"<thread_id>"}'
+curl -s localhost:8000/threads/<thread_id>
+
+# El RAG solo
+curl -s 'localhost:8000/rag/buscar?q=dónde%20esquiar&destino=Bariloche&k=3'
+```
+
+El notebook [`demo.ipynb`](demo.ipynb) hace todo esto contra la API real y quedó **ejecutado, con sus salidas**.
+
+---
+
+## 6. El RAG: corpus, ingesta, retriever y métricas
+
+### Corpus propio: guías de Wikivoyage en español
+
+[`data/guias/`](data/guias/) tiene 9 guías: Bariloche, Mendoza, Salta, Ushuaia, Puerto Madryn, Mar del Plata, Córdoba, Iguazú y El Calafate. Suman ~267.000 caracteres en **markdown versionado en el repo**, así que la ingesta es reproducible sin internet. Las descarga [`scripts/descargar_guias.py`](scripts/descargar_guias.py) desde la API de MediaWiki, con la revisión exacta de cada artículo.
+
+- **Por qué un conversor propio** ([`rag/wikitexto.py`](rag/wikitexto.py)): el "texto plano" de la API descarta las **fichas de lugares** (`{{ver|name=Cerro Catedral|content=…}}`, `{{comer}}`, `{{dormir}}`) y la tabla **`{{Clima}}`** con máximas, mínimas y lluvias por mes, que son justo lo más útil. El conversor las transforma en ítems y en una tabla markdown, y tira banners, mapas e imágenes.
+- **Licencia y atribución:** cada archivo tiene un encabezado YAML con `url`, `revision`, `licencia: CC BY-SA 4.0` y la atribución. [`data/guias/_ATRIBUCION.md`](data/guias/_ATRIBUCION.md) las lista todas con el enlace al historial (los autores). Ver §19.
+
+### Ingesta idempotente ([`rag/ingesta.py`](rag/ingesta.py))
+
+1. **Limpieza y secciones:** un fragmento nunca mezcla dos secciones; la ruta (`Hacer > Senderismo`) va en los metadatos.
+2. **Chunking por tokens:** hasta **500 tokens con 60 de solapamiento**, medidos con el **tokenizer del propio modelo de embeddings**. El corte se corre al último fin de párrafo, ítem u oración. El texto se toma del original con los *offsets* del tokenizer, así no se pierden tildes.
+3. **Metadatos:** `destino`, `slug`, `seccion`, `url`, `titulo`, `licencia`, `tokens`, `doc_hash`.
+4. **Embeddings** con `EMBEDDINGS_MODELO` (por defecto `paraphrase-multilingual-MiniLM-L12-v2` vía fastembed ONNX, sin torch). Ese modelo **trunca en 128 tokens**, así que cada fragmento se embebe por ventanas de 120 tokens que se promedian: el vector representa el fragmento entero.
+5. **Idempotencia:** `doc_hash` = hash del documento + "huella" (modelo, tamaño, overlap). Si nada cambió, no se recalcula ningún embedding (la segunda corrida tarda 0,35 s). Si cambia una guía, se reindexa **solo esa**; si se borra, se borran sus fragmentos. Si cambia el modelo o el tamaño de chunk, se reindexa todo. Los tests lo verifican.
+
+Resultado: **246 fragmentos** en el índice real, en ~12 s la primera vez. La API corre la ingesta sola al arrancar (`INGESTA_AL_ARRANCAR=true`).
+
+### Retriever híbrido ([`rag/retriever.py`](rag/retriever.py))
+
+```
+consulta ─┬─► embedding ─► VectorStore.buscar(slug) ─ top 20 ─┐
+          │                                                     ├─► RRF (k=60) ─► top 12 ─► re-ranker ─► top 4
+          └─► BM25 (mismos fragmentos, mismo slug)    ─ top 20 ─┘
+```
+
+- **Filtro por destino desde los metadatos:** "Cataratas", "Puerto Iguazú" o "San Carlos de Bariloche" se resuelven al `slug` por los alias del corpus. Si el destino no tiene guía, `destino_sin_guia=True` y el investigador pasa a la memoria o la web.
+- **Vector store detrás de una interfaz** (`VectorStore`): **ChromaDB** persistente por defecto (corre en Docker sin claves) y **Pinecone** serverless (cliente async nativo) con `VECTOR_STORE=pinecone`. Ningún agente se entera del cambio. Pinecone está probado con un índice falso en los tests.
+- **Re-ranking configurable** (`RERANKER`): `cross_encoder` por defecto (`jinaai/jina-reranker-v2-base-multilingual`, ONNX), `llm` (Claude puntúa con salida Pydantic) o `ninguno`.
+- **Las fuentes salen siempre de los metadatos del fragmento** (`Fuente(origen="guia", ref="guia:bariloche#014", url, seccion, licencia)`), nunca del texto que escribe el LLM.
+
+### Métricas ([`rag/evaluate.py`](rag/evaluate.py), golden set de 15 preguntas en [`data/golden_set.json`](data/golden_set.json))
+
+Cada pregunta tiene su guía esperada y qué fragmentos son relevantes (por sección o por palabras clave). Se mide en dos niveles: **documento** (sin filtro, sobre las 9 guías) y **fragmento** (con el filtro de destino que usa el agente). Resultado completo en [`docs/evaluacion/evaluacion_rag.md`](docs/evaluacion/evaluacion_rag.md).
+
+| Modo (k = 4) | Recall@1 doc | Precision@4 doc | Recall@4 frag | Precision@4 frag | MRR | ms/consulta |
+|---|---|---|---|---|---|---|
+| Solo vectorial | 0,80 | 0,63 | 0,59 | 0,35 | 0,62 | 9 |
+| Solo BM25 | 0,80 | 0,80 | 0,73 | 0,47 | 0,72 | 1 |
+| Híbrido (RRF) | 0,93 | 0,82 | 0,58 | 0,37 | 0,73 | 10 |
+| **Híbrido + re-ranker** | **1,00** | **0,93** | **0,78** | **0,48** | **0,82** | 2.446 |
+
+**Lectura honesta:**
+- El **re-ranker es lo que más suma**: +0,20 de recall y +0,09 de MRR sobre el híbrido, y lleva a 1,00 el acierto de la guía en el primer puesto.
+- El **RRF solo no le gana a BM25** en recall de fragmentos, porque el embedding multilingüe chico es el eslabón débil (0,59). Sí mejora el acierto del documento (0,80 → 0,93).
+- **El costo es latencia:** ~2,4 s de CPU por consulta.
+
+Comparación de re-rankers (mismos datos, en [`docs/evaluacion/`](docs/evaluacion/)):
+
+| Re-ranker | Candidatos · caracteres | Recall@4 frag | MRR | ms/consulta |
+|---|---|---|---|---|
+| **jina-reranker-v2-base-multilingual** (elegido) | 12 · 1.200 | **0,78** | **0,82** | 2.404 |
+| jina-reranker-v2-base-multilingual | 8 · 800 | 0,64 | 0,80 | 1.258 |
+| bge-reranker-v2-m3 (int8) | 8 · 800 | 0,68 | 0,80 | 1.558 |
+
+---
+
+## 7. Conversaciones que sobreviven a un reinicio
+
+- **Un thread = una conversación.** El primer `POST /tasks` crea el thread (`thread_id = job_id`). Cada seguimiento (`POST /tasks` con `thread_id`) es un **job nuevo en el mismo thread** de LangGraph.
+- **Entrada de un turno** (`entrada_turno`): solo se reinician los campos "de la corrida" (pregunta, pedido, contadores, permiso web). `aportes`, `decisiones`, `aprobaciones` y `turnos` tienen reductores que **suman**, así que quedan como historial. Cada registro lleva su `turno` y los nodos solo miran el turno actual.
+- **El pedido se arrastra:** el supervisor recibe el `PedidoViaje` del turno anterior y el LLM devuelve el pedido completo actualizado. Lo que deje en `null` lo completa **el código** (`combinar_pedidos`): si cambió la ida y no la vuelta, la vuelta se recalcula con los días.
+- **Persistencia:** el checkpoint vive en Redis (`AsyncRedisSaver` + RedisJSON/RediSearch, TTL configurable). Después de `docker compose restart app`, `GET /threads/{id}` y el turno siguiente leen el estado guardado (prueba 3 de §8 y los tests `test_conversaciones.py`, también contra Redis real).
+- **Reglas:** un solo job activo por conversación (409 si no), y 404 si el thread no existe en el checkpointer.
+
+---
+
+## 8. Las 5 pruebas de punta a punta, con capturas de LangSmith
+
+Corridas con [`scripts/pruebas_finales.py`](scripts/pruebas_finales.py) contra el stack de **`docker compose up` en modo real** (Claude Haiku + Tavily + LangSmith, Redis 8 del compose, memoria e índice en volúmenes). Cada fila enlaza el job completo (respuesta, ruta, eventos, tokens) en [`traces/pruebas_finales/`](traces/pruebas_finales/). El resumen está en [`resultados.md`](traces/pruebas_finales/resultados.md).
+
+| # | Escenario (qué demuestra) | Estado · turno | Pausa HITL → permiso web | Ruta del grafo | Fuentes guía / memoria / web | Búsquedas web | ¿Entra? · validación | Latencia LangSmith | Tokens | Costo US$ (LangSmith = propio) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | [solo_guias](traces/pruebas_finales/1_solo_guias.json) — RAG sin pausa: lo estable sale de las guías (0 búsquedas web, sin analista) | DONE · 1 | no → sin_pedir | sup → HITL → inv → sup → sín | 6 / 0 / 0 | 0 | — · — | 23.25 s (1 tramo) | 25.846 | 0.0041 = 0.0041 |
+| 2 | [flujo_completo](traces/pruebas_finales/2_flujo_completo.json) — Flujo completo: guías + pausa HITL + web + analista + síntesis | DONE · 1 | sí → aprobada | sup → HITL → inv → sup → ana → sup → sín | 17 / 0 / 12 | 4 | sí · válido | 74.02 s (2 tramos) | 104.767 | 0.0163 = 0.0163 |
+| 3 | [seguimiento_tras_reinicio](traces/pruebas_finales/3_seguimiento_tras_reinicio.json) — Follow-up después de `docker compose restart app`: recuerda el pedido (checkpoint en Redis) | DONE · 2 | sí → aprobada | sup → HITL → inv → sup → ana → sup → sín | 7 / 9 / 3 | 1 | sí · válido | 62.46 s (2 tramos) | 102.004 | 0.0152 = 0.0152 |
+| 4 | [no_alcanza](traces/pruebas_finales/4_no_alcanza.json) — Presupuesto insuficiente: el analista lo detecta y propone una alternativa | DONE · 1 | no → sin_pedir | sup → HITL → inv → sup → ana → sup → sín | 10 / 13 / 0 | 0 | **no** (+ alternativa) · válido | 64.96 s (1 tramo) | 108.940 | 0.0161 = 0.0161 |
+| 5 | [error_controlado](traces/pruebas_finales/5_error_controlado.json) — Error controlado: fechas imposibles + web rechazada → DONE pidiendo corregir | DONE · 1 | sí → rechazada | sup → HITL → inv → sup → HITL → inv → sup → ana → sup → sín | 12 / 3 / 0 | 0 | — · **INVÁLIDO** | 67.13 s (2 tramos) | 108.354 | 0.0154 = 0.0154 |
+| | **Total** | | | | | | | 291.8 s | 449.911 | **0.0671** |
+
+`sup` = supervisor, `HITL` = aprobacion_web, `inv` = investigador, `ana` = analista, `sín` = síntesis. **Latencia** es el tiempo del grafo según LangSmith, sumando los tramos (sin la espera humana). **Costo** es el de LangSmith, que coincide exactamente con el que calcula el sistema en `GET /tasks/{id}`.
+
+**Qué se ve en cada una:**
+
+1. **Solo guías.** El supervisor pidió solo `actividades` y `clima` (R7: economía). El HITL vio que las guías cubren todo y **no pausó** (`sin_pedir`). El investigador usó solo `consultar_guias`: 6 fuentes de Wikivoyage (incluida la tabla de clima de julio), 0 búsquedas web y sin analista. Fue la más barata (US$0,004).
+2. **Flujo completo con HITL.** La pausa pidió permiso **solo** por `pasajes, alojamiento, comida, cambio`; `actividades, como_llegar, barrios, clima, consejos` ya los cubrían las guías. Después del approve: 4 búsquedas web, el analista validó y calculó (entra en el presupuesto), y la síntesis citó 17 fragmentos de guía y 12 URLs.
+3. **Seguimiento después de `docker compose restart app`** (16 s de reinicio). "¿Y si vamos en julio, en temporada de esquí?" en el **mismo thread** es el turno 2: recordó Ushuaia, Buenos Aires, 2 personas y $2.000.000, y solo cambió las fechas a 10–14/07. La **memoria de búsquedas del volumen** ya tenía alojamiento, comida y cambio, así que la pausa pidió permiso **solo por pasajes** (1 búsqueda web). El itinerario pasó a esquí en el Glaciar Martial y trineos con huskies.
+4. **Presupuesto que no alcanza.** Con $350.000 para El Calafate, el pasaje solo ya cuesta casi el doble: el analista dio **NO ENTRA** y calculó una alternativa más corta, que tampoco entra. Esta es la segunda corrida (ver abajo), y salió **sin pausa ni web**: los precios estaban en la memoria del volumen desde la primera.
+5. **Error controlado.** Fechas imposibles ("del 20 al 12 de marzo") y la persona **rechazó** la web. El grafo no se rompe: termina en `DONE`, `validar_viaje` da **INVÁLIDO**, no se suponen otras fechas, y la síntesis avisa que la web no fue autorizada y pide corregir. La misma prueba verifica los errores HTTP controlados: 404 (job y thread inexistentes) y 422 (pregunta corta, campo desconocido).
+
+**Dos corridas que no quedaron en la tabla, y por qué** (las dos son evidencia de cosas que se corrigieron):
+- **Prueba 1, primer intento:** FAILED con `credit balance is too low`, porque la cuenta de Anthropic no tenía saldo. El job terminó en FAILED con el error completo y su traza llegó a LangSmith (fila roja en la captura 5). Evidencia: [`_corrida_sin_saldo_anthropic.json`](traces/pruebas_finales/_corrida_sin_saldo_anthropic.json).
+- **Prueba 4, primer intento** (US$0,0245): la respuesta decía bien "no alcanza", pero la **métrica** `presupuesto_entra` daba `True`. La traza guarda los primeros 600 caracteres de cada resultado de herramienta, y la línea `RESULTADO: NO ENTRA` del primer cálculo, con 6 renglones, había quedado después del corte. Se corrigió `resumir_resultado()` para que el veredicto no se pierda nunca, se agregó un test de regresión y se repitió la prueba.
+
+**Costo real total de la etapa de pruebas:** US$0,0671 por las 5 de la tabla, más US$0,0245 del primer intento de la prueba 4 y ~US$0,043 del notebook ejecutado. En total, **~US$0,135 de Claude Haiku y ~15 búsquedas de Tavily**.
+
+
+
+### Capturas del dashboard de LangSmith (proyecto `entrega-final`)
+
+**Traza completa de la prueba 2 (tramo después de la aprobación):** el árbol de spans del grafo (`aprobacion_web → investigador → supervisor → analista → supervisor → sintesis`) y la **metadata** de cada run (`job_id`, `thread_id`, `turno`, `tramo`, `modelo`, `embeddings`, `reranker`, `vector_store`).
+
+![Traza completa: árbol de spans y metadata job_id / thread_id / turno](screenshots/02_flujo_completo_arbol_y_metadata.jpg)
+
+**Pausa HITL (prueba 2, tramo 1):** el grafo se detiene en `aprobacion_web` con `interrupt()`. El valor del interrupt dice qué iría a la web (`temas_sin_memoria`) y qué ya cubren las guías (`temas_en_guias`), sin gastar.
+
+![Pausa human-in-the-loop: GraphInterrupt con los temas que irían a la web y los que cubren las guías](screenshots/03_pausa_hitl_interrupt.jpg)
+
+**El RAG en la traza (prueba 1):** el investigador solo llamó a `consultar_guias`. Cada fragmento trae su ID (`guia:salta#011`), el artículo, la sección y la URL de Wikivoyage, sacados de los metadatos.
+
+![consultar_guias: fragmentos de la guía con ID, sección y URL](screenshots/01_solo_guias_consultar_guias.jpg)
+
+**Costo y latencia por ejecución:** cada traza (un tramo de un job) con su latencia, tokens y costo, incluida la corrida fallida por falta de saldo (en rojo, `AnthropicInvalidRequestError`).
+
+![Costo, tokens y latencia por ejecución](screenshots/05_costo_y_latencia_por_ejecucion.jpg)
+
+**Threads: latencia P50/P99 y costo por conversación.** El thread `99a2f1f6…` tiene 4 ejecuciones: los 2 tramos del turno 1 (pausa y reanudación) y los 2 del seguimiento después del reinicio.
+
+![Vista Threads con P50/P99 de latencia, tokens y costo por conversación](screenshots/06_threads_latencia_p50_p99_costo.jpg)
+
+**El seguimiento después del reinicio (prueba 3):** turno 2 del mismo thread. La entrada es "¿Y si vamos en julio, en temporada de esquí?" y el estado trae los mensajes del turno 1, restaurados del checkpoint de Redis.
+
+![Seguimiento en el mismo thread después de docker compose restart app](screenshots/04_seguimiento_tras_reinicio_thread.jpg)
+
+**Error controlado (prueba 5):** `validar_viaje` responde INVÁLIDO (la vuelta es anterior a la ida), con `tramo-2` después del rechazo humano.
+
+![validar_viaje INVÁLIDO dentro de la traza](screenshots/07_error_controlado_validar_viaje.jpg)
+
+**Costo y tokens agregados del proyecto (Monitoring):**
+
+![Dashboard de LangSmith: costo total, costo por traza y tokens](screenshots/08_dashboard_costo_y_tokens.jpg)
+
+> El banner amarillo ("1 deprecated endpoint in the last 7 days") corresponde a **un** llamado de esta misma mañana con el `list_runs()` del SDK. Ya se reemplazó por `client.runs.query_v2()` (§9), así que el aviso desaparece solo cuando pasen los 7 días.
+
+
+---
+
+## 9. Observabilidad
+
+- **Trazas por nodo:** LangGraph abre un span por nodo (`supervisor`, `aprobacion_web`, `investigador`, `analista`, `sintesis`) y, adentro, el subagente ReAct, cada herramienta y cada llamada a Claude. [`observability/monitoreo.py`](observability/monitoreo.py) les pone **metadata** (`job_id`, `thread_id`, `turno`, `tramo`, `modo`, `modelo`, `embeddings`, `reranker`, `vector_store`) y **tags** (`api`, `real|mock`, `tramo-N`, `turno-N`). La vista *Threads* de LangSmith agrupa los tramos de una pausa HITL y los turnos de una conversación.
+- **Costo por ejecución, doble:** LangSmith lo calcula con su tabla de precios, y cada job guarda su propio costo (tokens × precios configurados) en `GET /tasks/{id}`, para que se vea sin abrir el dashboard.
+- **Traza local versionada:** cada job real deja `traces/api/*.json|.log` (ruta, decisiones con su evaluación, llamadas a herramientas con argumentos y resultado, fuentes, cobertura por tema, métricas). Las pruebas finales quedan en `traces/pruebas_finales/`.
+- **SDK actualizado:** `langsmith==0.16.2`. El SDK anterior usaba `list_runs()`, que **deja de funcionar el 31/01/2027**: es el aviso que mostraba LangSmith. Los scripts consultan con `client.runs.query_v2()`.
+
+---
+
+## 10. Async y Pydantic de punta a punta
+
+| Componente | Cliente | Cómo no bloquea el event loop |
 |---|---|---|
-| La memoria (ChromaDB) tiene datos vigentes de **todos** los temas pedidos (`MemoriaBusquedas.hay_vigentes`, por destino y tema, de 7 días o menos) | `sin_pedir`: la web queda cerrada, el investigador usa la memoria | **No** |
-| El request vino con `auto_aprobar: true` (prueba de carga) | `aprobada` (origen `auto_aprobar`) | No |
-| Una persona ya respondió en este job (2.ª ronda del investigador) | Se respeta esa respuesta (`decision_previa`) | No |
-| Faltan temas en memoria | `interrupt({...})` con destino, temas sin memoria y en memoria, consultas previstas e instrucción del supervisor → el job queda en **WAITING_APPROVAL** | **Sí** |
+| Claude | `ChatAnthropic.ainvoke` | Async nativo |
+| Tavily | `TavilySearch.ainvoke` | Async nativo (aiohttp) |
+| Redis (jobs) | `redis.asyncio` | Async nativo, pool bloqueante con tope de conexiones |
+| Checkpointer | `AsyncRedisSaver` | Async nativo |
+| Pinecone | `PineconeAsyncio` / `IndexAsyncio` | Async nativo |
+| ChromaDB (índice y memoria) | `PersistentClient` (sync) | `asyncio.to_thread` en cada llamada |
+| fastembed (embeddings y cross-encoder) | ONNX Runtime (CPU, sync) | `asyncio.to_thread` |
+| BM25 (`rank-bm25`) | CPU, sync | `asyncio.to_thread` |
+| Arranque (cargar modelos, Chroma) | sync | `run_in_threadpool` en el lifespan |
+| Trazas locales (disco) | sync | `asyncio.to_thread` |
+| Herramientas del analista | funciones puras (µs) | LangChain las corre en un executor |
 
-Al reanudar con `Command(resume={"aprobado": …})`, el nodo vuelve a correr desde el principio (así funciona `interrupt`). Los pasos previos son determinísticos y baratos, e `interrupt()` esta vez devuelve la respuesta. Cualquier respuesta que no sea un sí explícito cuenta como **no**, porque no gasta.
+**No queda ningún `requests`**: [`tests/test_auditoria.py`](tests/test_auditoria.py) recorre el AST de toda la app y falla si aparece `requests`/`urllib`, o un `time.sleep` dentro de un `async def`. El único `urllib` está en `scripts/descargar_guias.py`, un script de descarga única fuera de la API, dentro de `asyncio.to_thread` y documentado (httpx recibe 403 del filtro anti-bots de Wikimedia).
 
-**Cómo se aplica el permiso:** el nodo investigador fija un `ContextVar` (`PERMISO_WEB`) con el permiso del estado. `buscar_en_web` lo lee **después** de su guarda de memoria de la PE6 y **antes** de llamar a Tavily. Sin permiso, devuelve los datos vigentes de la memoria (con el filtro de parecido aflojado) o el texto `WEB NO AUTORIZADA… No inventes datos`: el mismo criterio de la PE6, **errores como texto para el LLM**. Al ser un `ContextVar`, cada job (una tarea de asyncio) tiene el suyo: los permisos de 5 jobs concurrentes no se mezclan. Sin HITL (consola, tests de la PE6), el valor es `"libre"` y todo funciona como antes.
+**Pydantic en todo:**
+- **API:** entradas (`TaskRequest`, `AprobacionRequest`, con `extra="forbid"`) y `response_model` en todos los endpoints, con ejemplos en OpenAPI ([`api/schemas.py`](api/schemas.py)).
+- **Herramientas:** `args_schema` en todas, y su salida pasa por `SalidaHerramienta` / `ResultadoValidacion` antes de volver al LLM.
+- **Estado del grafo:** `Aporte`, `Fuente`, `DecisionSupervisor`, `PedidoViaje`, `TurnoConversacion`...
+- **Configuración:** `config.Ajustes` (pydantic-settings).
+- **RAG:** `Fragmento`, `ResultadoBusqueda`, `ReporteIngesta`.
 
-**`{"aprobado": false}`:** el viaje no se corta. El investigador sigue sin web, el chequeo por código anota lo que falta, el supervisor finaliza y la síntesis empieza con *"⚠️ La búsqueda web no fue autorizada: esta respuesta usa solo los datos que ya estaban en la memoria local…"* (agregado por código) y explica qué no se pudo averiguar. Corrida real en el notebook: job `1dbd949a`, 0 búsquedas web, US$ 0,0053.
+El test de auditoría también verifica que todo endpoint declare `response_model`, que toda herramienta tenga `args_schema` y que `.env.example` documente **todas** las variables de `config.Ajustes`.
 
 ---
 
-## 7. Observabilidad con LangSmith y capturas
+## 11. Decisiones de arquitectura y alternativas descartadas
 
-**Configuración** (`.env`): `LANGSMITH_API_KEY`, `LANGSMITH_TRACING=true`, `LANGSMITH_PROJECT=pre-entrega-7`. LangChain y LangGraph mandan solos cada corrida. `app/observability.py` le agrega a cada ejecución del grafo:
+| Decisión | Por qué | Alternativa descartada |
+|---|---|---|
+| **El RAG como herramienta del investigador** (`consultar_guias`), no como nodo aparte | El agente decide cuándo consultar, igual que con la memoria y la web; el supervisor y la rúbrica no cambian de forma. | Un nodo "retriever" fijo antes del supervisor: recupera aunque la pregunta sea solo de precios. |
+| **Estable → guías; volátil → memoria/web con HITL** | Las guías no gastan ni requieren permiso, y la web se reserva para lo que cambia. El HITL pausa solo por lo que nadie cubre. | Buscar todo en la web (caro, y la PE7 pausaba casi siempre). |
+| **Fuentes desde los metadatos** | Imposible inventar una URL: el LLM cita IDs y el código arma la lista. | Pedirle al LLM que liste las fuentes. |
+| **Corpus versionado en el repo** | Ingesta reproducible sin internet, en Docker y en CI. | Descargar en cada arranque. |
+| **Conversor de wikitexto propio** | Conserva fichas y tabla de clima. | Texto plano de TextExtracts (las pierde). |
+| **Chunking por tokens del modelo, respetando secciones** | Metadatos de sección precisos y fragmentos que entran en la ventana del re-ranker. | Chunking por caracteres o por párrafos sin tope. |
+| **fastembed (ONNX) en lugar de sentence-transformers** | Sin torch: la imagen no lleva ~2 GB extra y arranca rápido. | sentence-transformers (como en la PE4). |
+| **Cross-encoder multilingüe configurable** | Mejor métrica, gratis y determinístico; `evaluate.py` no gasta. | Re-ranker con LLM por defecto (gasta y suma 1–2 s de red); cross-encoders en inglés (~80 MB, malos en español). |
+| **Chroma por defecto, Pinecone por variable** | Docker sin claves ni servicios externos; Pinecone para escalar sin tocar agentes. | Solo Pinecone (como la PE4): obliga a tener cuenta para correr. |
+| **Thread ≠ job; reductores que suman + `turno`** | Historial auditable completo y reinicio seguro. | Reiniciar listas con un reductor especial: los *pending writes* del checkpoint en JSON pueden perder el marcador. |
+| **`combinar_pedidos` por código** | El seguimiento no depende de que el LLM copie bien todos los campos. | Confiar en que el LLM devuelva el pedido completo. |
+| **Modelos horneados en la imagen** | `docker compose up` arranca sin descargar nada. | Descargar al primer arranque (la primera consulta tardaría minutos). |
+| **Un proceso con worker asyncio** | Lo pide la consigna (sin Celery/Arq); estado y checkpoints ya están en Redis. | Cola externa (Celery/Arq/RQ). |
 
-- `run_name="asesor_de_viajes"`; los nodos aparecen con su nombre (`supervisor`, `aprobacion_web`, `investigador`, `analista`, `sintesis`) y adentro el subagente ReAct, cada herramienta (`buscar_en_memoria`, `buscar_en_web`, `tavily_search`, `validar_viaje`, `calcular_presupuesto`) y cada llamada a `ChatAnthropic`;
-- metadata `job_id`, `thread_id` (= `job_id`), `modo`, `tramo` (1 = inicio, 2 = después de la pausa) y `modelo`; tags `pre-entrega-7`, `api`, `real`/`mock` y `tramo-N`.
+---
 
-**Costo:** LangSmith ya conoce el precio de `claude-haiku-5-5` (US$ 0,10 / 0,50 por millón de tokens de entrada / salida), así que no hubo que cargarlo. Verificado: los 12 runs LLM de la primera corrida real tienen costo, y la suma de los dos tramos (US$ 0,000817 + 0,012942 = **0,013759**) coincide exactamente con el costo que calcula la API (`costo_usd` de `GET /tasks/{id}`). En la prueba de carga coinciden los 5 jobs (§8).
+## 12. Rúbrica → dónde se cumple
 
-### Capturas (`screenshots/`)
-
-| Archivo | Qué muestra |
+| Criterio (peso) | Dónde se cumple |
 |---|---|
-| [`01_traza_completa_job.png`](screenshots/01_traza_completa_job.png) | Traza completa de un job real (tramo 2 del job `3e7a2827`, después de aprobar): el árbol `asesor_de_viajes → aprobacion_web → investigador (agent/tools, buscar_en_memoria, buscar_en_web, tavily_search) → supervisor → analista → supervisor → sintesis`, con latencia, tokens y costo |
-| [`02_traza_pausa_hitl.png`](screenshots/02_traza_pausa_hitl.png) | Tramo 1 del mismo job: `supervisor → aprobacion_web` y el grafo detenido por el `interrupt` (GraphInterrupt), con la metadata `job_id` / `tramo: 1` |
-| [`03_costo_por_ejecucion.png`](screenshots/03_costo_por_ejecucion.png) | Los 5 jobs de la prueba de carga con su costo total, tokens y latencia (vista *Threads*: un thread por `job_id`) |
-| [`04_latencia_p95.png`](screenshots/04_latencia_p95.png) | LangSmith → Monitoring → *Trace Latency* y *Trace Count* de la hora de las corridas reales. **El gráfico de LangSmith muestra P50 y P99, no P95**, y mide **por traza**: un job pausado son dos trazas (tramo 1 y tramo 2). La **p95 por job** (de POST a DONE) está calculada en [`resultados_carga.md`](screenshots/resultados_carga.md) por `scripts/carga_concurrente.py` (§8). El pico rojo de *Trace Count* son los 2 FAILED de la primera carga (§12). |
-| [`resultados_carga.md`](screenshots/resultados_carga.md) | La tabla de la prueba de carga que genera el script (costo local y de LangSmith por job, p50 y p95) |
+| **Arquitectura y coherencia (30%)**: LLMs + RAG + agentes en un flujo unificado | §2–§3, §6. RAG propio (`rag/`) como herramienta del investigador (`agents/research_tools.py`), supervisor con rúbrica R1–R7 (`agents/supervisor.py`), HITL que mira guías y memoria (`graph/hitl.py`), síntesis con fuentes por código (`agents/synthesizer.py`). Métricas del RAG en §6 y pruebas en §8. |
+| **Asincronía y validación Pydantic (25%)** | §10. Tabla de clientes async, `asyncio.to_thread` donde el cliente es sync, `api/schemas.py`, `SalidaHerramienta`, `config.Ajustes`. Verificado por `tests/test_auditoria.py`. |
+| **Checkpointers y observabilidad (20%)** | §7 y §9. `graph/checkpointer.py` (`AsyncRedisSaver`), conversaciones por `thread_id`, reinicio probado (prueba 3 y tests contra Redis real), metadata `job_id`/`thread_id`/`turno` en LangSmith y capturas en §8. |
+| **README, diagrama y facilidad de ejecución (15%)** | Este README: diagrama de arquitectura (§2), grafo Mermaid generado desde el código (§3), `docker compose up` / `run.sh` / `run.ps1` (§4), endpoints con ejemplos (§5), [`demo.ipynb`](demo.ipynb) ejecutado. |
+| **Python 3.12, dependencias y variables de entorno (10%)** | `Dockerfile` (`python:3.12-slim`), `run.sh`/`run.ps1` exigen 3.12, `requirements.txt` con versiones fijas, `.env.example` completo y comentado, nada hard-codeado (lo verifica `test_sin_modelos_ni_urls_hardcodeados_fuera_de_config`). |
 
-![Traza completa de un job](screenshots/01_traza_completa_job.png)
-![Pausa HITL](screenshots/02_traza_pausa_hitl.png)
-![Costo por ejecución](screenshots/03_costo_por_ejecucion.png)
-![Latencia p95](screenshots/04_latencia_p95.png)
+**Pasos obligatorios de la consigna:** estructura unificada M6 + M7 (§2) · async de punta a punta (§10) · checkpointer que sobrevive al reinicio (§7) · Pydantic en API y herramientas (§10) · 5 pruebas con trazas en LangSmith (§8) · README con el grafo dibujado (§3) · un comando (§4).
 
 ---
 
-## 8. Prueba de carga: 5 pedidos concurrentes y lectura del dashboard
+## 13. Qué módulo del curso aporta qué capa
 
-**Cómo lanzarla** (con la API levantada, §9):
-
-```bash
-python scripts/carga_concurrente.py                       # 5 POST en paralelo con auto_aprobar=true
-python scripts/carga_concurrente.py --aprobar script      # sin auto_aprobar: cada job se pausa y el script lo aprueba
-python scripts/carga_concurrente.py --aprobar script --langsmith   # + costo y latencia leídos de LangSmith
-```
-
-El script manda los 5 `POST /tasks` a la vez con `httpx.AsyncClient`: son 5 viajes distintos (Bariloche, Salta, Mendoza, Ushuaia solo clima, Puerto Madryn en USD). Hace polling de todos en paralelo, aprueba las pausas si corresponde y muestra la tabla final (job_id, estado, duración, aprobaciones, tokens, costo). En modo real la guarda en [`screenshots/resultados_carga.md`](screenshots/resultados_carga.md) y el detalle en `traces/carga/`.
-
-**Resultado de la corrida real** (18/11/2026, `--aprobar script --langsmith`, API real + Redis Cloud + `AsyncRedisSaver`):
-
-| job_id | viaje | estado | duración (s) | ejecución (s) | tokens | costo API | costo LangSmith | búsquedas web | HITL |
-|---|---|---|---:|---:|---:|---:|---:|---:|---|
-| `17d521cf` | Bariloche, 7 días, ARS | DONE | 79,3 | 73,1 | 111.905 | $0,0164 | $0,0164 | 1 | pausa → aprobada |
-| `abf031f5` | Salta, 5 días, ARS | DONE | 85,7 | 82,6 | 105.389 | $0,0165 | $0,0165 | 0 | memoria (sin pausa) |
-| `9c06a718` | Mendoza, 4 días, ARS | DONE | 92,3 | 89,2 | 143.798 | $0,0214 | $0,0214 | 0 | memoria (sin pausa) |
-| `1ec8b191` | Ushuaia, solo clima | DONE | 35,3 | 32,4 | 29.096 | $0,0048 | $0,0048 | 0 | memoria (sin pausa) |
-| `f996b969` | Puerto Madryn, USD | DONE | 70,4 | 62,6 | 71.031 | $0,0117 | $0,0117 | 0 | pausa → aprobada |
-
-**5/5 DONE · tiempo total 92,8 s · latencia por job p50 = 79,3 s · p95 = 91,0 s · costo total US$ 0,0708** (≈ 92.000 tokens y US$ 0,014 por job en promedio). La memoria estaba cargada por una carga anterior (la que falló por conexiones, §12): por eso 3 de los 5 no se pausaron. Es justo el comportamiento pedido: *si la memoria responde, no hay pausa*.
-
-> **Sobre la p95:** el dashboard de LangSmith ([`04_latencia_p95.png`](screenshots/04_latencia_p95.png)) solo ofrece P50 y P99, y por traza (cada tramo de un job es una traza). La p95 de arriba la calcula `scripts/carga_concurrente.py` por job completo, de POST a DONE, con interpolación lineal sobre las 5 duraciones (`app/observability.percentil`), y queda guardada en [`resultados_carga.md`](screenshots/resultados_carga.md).
-
-### Lectura del dashboard: dónde se concentra la latencia y qué nodo consume más tokens
-
-Datos de LangSmith de los 5 jobs: suma de los runs de cada nodo (hijos directos de `asesor_de_viajes`).
-
-| Nodo | Latencia (s) | % | Tokens | % | Costo |
-|---|---:|---:|---:|---:|---:|
-| `investigador` | 140,5 | **46,2 %** | 160.597 | 34,8 % | $0,0263 |
-| `analista` | 67,1 | 22,0 % | **167.195** | **36,3 %** | $0,0228 |
-| `supervisor` | 61,9 | 20,4 % | 100.455 | 21,8 % | $0,0152 |
-| `sintesis` | 34,5 | 11,4 % | 32.972 | 7,1 % | $0,0066 |
-| `aprobacion_web` | 0,1 | 0,0 % | 0 | 0 % | $0 |
-
-- **La latencia se concentra en el investigador (46 %)** y, en general, **en las llamadas a Claude**: los 63 runs LLM suman 274 s de los 304 s de los nodos (≈ 90 %). Tavily es rápido (`tavily_search` 1,4 s en total). Sorpresa: `buscar_en_memoria` suma **74,7 s**. Con 5 jobs a la vez, las consultas a ChromaDB (embeddings ONNX en `asyncio.to_thread`, más la carga del modelo en el primer uso) compiten por el mismo proceso. Es el primer cuello de botella que no es el LLM.
-- **El que más tokens consume es el analista (36 %)**, apenas por encima del investigador (35 %). Recibe todos los hallazgos del investigador como contexto y hace dos o tres vueltas ReAct (`validar_viaje` + `calcular_presupuesto`, a veces dos opciones), con argumentos largos. El supervisor consume 22 %: lee la tabla de cobertura y los resúmenes en cada una de sus 3 decisiones.
-- **El nodo HITL no cuesta nada** (0,1 s y 0 tokens: es código) y la espera humana no cuenta como ejecución. La diferencia entre `duración` y `ejecución` en la tabla es esa espera (3 a 8 s con el script aprobando).
-- **Costo fuera del dashboard:** cada checkpoint va a Redis Cloud por internet. La misma carga en modo mock (LLM instantáneo) tardó 20–30 s por job contra Redis Cloud y menos de 1 s con fakeredis. Parte de la latencia real es I/O de checkpoints, que no aparece como nodo en LangSmith (ver §14).
+| Módulos | Capa en este sistema | Archivos |
+|---|---|---|
+| M1–M2: cliente LLM y cadenas | Cliente de Claude async, salida estructurada, prompts por rol, LLM mock | `agents/llm.py`, prompts en `agents/*.py` |
+| M3–M4: RAG | Corpus, chunking por tokens, embeddings, vector store (Chroma/Pinecone), búsqueda híbrida + RRF + re-ranking, evaluación Recall/Precision@k | `rag/`, `data/guias/`, `data/golden_set.json` |
+| M5–M6: agentes y supervisor | Grafo jerárquico, ReAct con herramientas acotadas, rúbrica, frenos, estado Pydantic con `validar_actualizacion()` | `graph/`, `agents/` |
+| M7: producción | FastAPI async, worker, Redis, HITL con `interrupt()`, checkpointer, LangSmith, Docker | `api/`, `graph/hitl.py`, `graph/checkpointer.py`, `observability/`, `docker-compose.yml` |
 
 ---
 
-## 9. Instalación paso a paso
+## 14. Devolución de la PE7 y fortalezas que se mantienen
 
-Requisitos: **Python 3.12** y, para el modo real, claves de Anthropic, Tavily y LangSmith y un **Redis 8+** (o Redis Stack: necesita RedisJSON + RediSearch).
+**Único pedido de la devolución (Federico Gravina, 19/11):** que las capturas del dashboard de LangSmith se vean **dentro del README**, no solo en la carpeta. Están embebidas en §8 con `![...](screenshots/...)`: traza completa, pausa HITL, costo por ejecución y latencia, junto a la tabla de resultados.
 
-### Opción A — Docker Compose (API + Redis 8)
-
-```bash
-git clone https://github.com/anukvilarasau/pre-entrega-7.git
-cd pre-entrega-7
-cp .env.example .env            # completar ANTHROPIC_API_KEY, TAVILY_API_KEY, LANGSMITH_API_KEY
-docker compose up --build       # Redis 8.2 (con JSON + Search) + la API en http://localhost:8000
-curl localhost:8000/health      # {"status":"ok","modo":"real","redis":{"ok":true,"tipo":"redis"},"checkpointer":"AsyncRedisSaver",…}
-```
-
-`docker-compose.yml` usa `redis:8.2`, que desde Redis 8 trae RedisJSON y RediSearch de fábrica (lo que pide `langgraph-checkpoint-redis`), con `appendonly` y volumen, así los jobs y checkpoints sobreviven a un reinicio. Adentro de compose, `REDIS_URL` apunta al servicio `redis`. Para probar sin claves: `MODO_MOCK=1` en el `.env`.
-
-### Opción B — Sin Docker
-
-```powershell
-# 1. Clonar y crear el entorno (Windows PowerShell; en macOS/Linux: python3.12 -m venv .venv && source .venv/bin/activate)
-git clone https://github.com/anukvilarasau/pre-entrega-7.git
-cd pre-entrega-7
-py -3.12 -m venv .venv
-.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-
-# 2. Tests (sin claves ni Redis)
-python -m pytest -q
-
-# 3. API en modo mock: sin claves y sin Redis (fakeredis + InMemorySaver)
-$env:MODO_MOCK="1"; uvicorn app.main:app --port 8000
-```
-
-Para el **modo real** sin Docker hace falta un Redis 8 accesible:
-
-- **Redis Cloud gratis** (lo que se usó para las corridas de este repo): crear una base en redis.io/cloud (trae JSON + Search) y copiar la URL `redis://default:<password>@<host>:<puerto>`. Ojo: **solo la URL**, no el comando `redis-cli -u …` que muestra la consola.
-- o un Redis 8 local (Linux/macOS/WSL: paquete oficial `redis` 8.x; o `docker run -p 6379:6379 redis:8.2`) → `REDIS_URL=redis://localhost:6379/0`.
-
-```powershell
-copy .env.example .env      # completar las 3 claves y REDIS_URL; MODO_MOCK=0
-uvicorn app.main:app --port 8000
-python scripts/carga_concurrente.py --aprobar script --langsmith     # la prueba de carga (§8)
-```
-
-La consola de la PE6 sigue igual: `python main.py --mock "…"`, `python main.py --chat`, `python escenarios.py`. `python main.py --mermaid` imprime el grafo de producción. El notebook se reejecuta, con la API levantada, con `python -m jupyter nbconvert --to notebook --execute --inplace demo.ipynb`.
-
-Variables de la API (en `.env`): `REDIS_URL`, `MODO_MOCK`, `MAX_JOBS_CONCURRENTES` (5), `JOB_TIMEOUT_S` (900), `REDIS_MAX_CONEXIONES` (20, repartidas 1/3 para los jobs y 2/3 para los checkpoints).
-
-> El `.env` está en `.gitignore`: **las claves nunca se suben**. Tampoco la memoria local (`data/memoria_chroma/`).
+**Fortalezas que se mantienen (de las devoluciones de la PE6 y la PE7):**
+- HITL y persistencia en Redis como piezas centrales.
+- Supervisor con `Literal` y rúbrica.
+- Frenos anti-bucle.
+- `validar_actualizacion()`.
+- Fuentes armadas por código.
+- Herramientas inyectables.
+- Mermaid generado desde el código.
+- Modo mock completo sin claves.
+- Tests sin claves (los 155 de la PE7 siguen pasando, más 35 nuevos).
+- Evidencia de corridas reales en el repo.
+- Notebook ejecutado contra la API.
 
 ---
 
-## 10. Tests
+## 15. Lo que aprendimos en el camino
+
+| Qué pasó | Qué se cambió |
+|---|---|
+| El texto plano de la API de Wikivoyage (TextExtracts) **pierde las fichas de lugares y la tabla de clima** (Bariloche: 45 KB de wikitexto → 14 KB de texto). | Conversor de wikitexto propio, con tests. |
+| Una línea que empezaba en negrita (`'''Importante'''`) se convertía en ítem de lista. | La negrita se convierte después de las listas; se regeneró el corpus (mismas revisiones). |
+| httpx recibe **403** del filtro anti-bots de Wikimedia, con el mismo User-Agent con el que urllib y curl reciben 200. | El script de descarga usa urllib en `asyncio.to_thread` (fuera de la API). |
+| El modelo de embeddings multilingüe **trunca en 128 tokens** y los chunks son de 500. | Embedding por ventanas de 120 tokens promediadas. |
+| El re-ranking tardaba **9–10 s** por consulta (12 candidatos de ~520 tokens en CPU). | `RERANKER_MAX_CARACTERES=1200`: ~2,4 s con la mejor métrica (se compararon 3 configuraciones). |
+| Con los modelos dentro de una carpeta de **OneDrive**, la ingesta tardó más de 10 minutos (sincronizaba 1,9 GB). | Caché de modelos en `~/.cache/asesor-viajes/modelos` (en Docker, horneados en la imagen). |
+| Al mover `state.py` a `graph/state.py`, los modelos volvían del checkpoint de Redis **como dict** (el mismo bug de la PE7). La allowlist JSON de RedisSaver usa la ruta completa `["graph","state","Clase"]` y msgpack usa `(módulo, clase)`. | Dos allowlists separadas; solo lo detectó el test contra **Redis real**, por eso se corre aparte con `REDIS_URL_TESTS`. |
+| pydantic-settings lee el `.env` pero **no lo exporta a `os.environ`**, y LangChain lee `LANGSMITH_*` desde ahí. | `configurar_langsmith()` exporta esas variables sin pisar las del entorno. |
+| La primera prueba real falló con **"credit balance is too low"** (cuenta de Anthropic sin saldo, como en la PE7). El job terminó en FAILED con el error completo y su traza llegó a LangSmith. | `explicar_error` lo traduce a un mensaje accionable; evidencia en `traces/pruebas_finales/_corrida_sin_saldo_anthropic.json`. |
+| En la prueba 4, la respuesta decía bien "no alcanza", pero la métrica `presupuesto_entra` daba `True`: la traza guarda 600 caracteres de cada resultado y el veredicto `RESULTADO: NO ENTRA` quedó después del corte. | `resumir_resultado()` siempre conserva la línea del veredicto; test de regresión y prueba repetida. |
+| En el notebook, "¿Cómo llego del aeropuerto al centro de Mendoza…?" **pausaba para pedir la web** por dos temas estables: el pedido se extrajo **sin destino** (no es un viaje con origen) y, sin destino, el HITL no podía ver que había guía. | El HITL usa el destino con guía mencionado en la pregunta (`destino_mencionado`, con límites de palabra) y el prompt de extracción aclara el caso; test de regresión. Después: sin pausa, 9 fuentes de guía y 0 búsquedas web. |
+| `list_runs()` de la SDK de LangSmith está deprecado y deja de funcionar el **31/01/2027** (el banner del dashboard). | Consultas con `client.runs.query_v2(..., include_subtree_usage=True)`: sin `include_subtree_usage`, el costo de la raíz vuelve en 0. |
+
+Las lecciones de la PE6 y la PE7 siguen en [`docs/pe7/README_pe7.md`](docs/pe7/README_pe7.md) (§12 y Anexo A).
+
+---
+
+## 16. Tests
 
 ```bash
-python -m pytest -q          # 155 tests, sin claves ni Redis: 154 pasan y 1 se saltea (el de Redis real)
-REDIS_URL_TESTS=redis://… python -m pytest -q tests/test_api.py -k redis_saver_real   # + AsyncRedisSaver real
+python -m pytest -q          # 188 passed, 2 skipped — sin claves ni servicios
+REDIS_URL_TESTS=redis://… python -m pytest -q -k redis_saver_real   # los 2 contra Redis 8 real
 ```
-
-Son los **128 de la PE6, sin cambios**, más 27 nuevos:
 
 | Archivo | Qué cubre |
 |---|---|
-| [`tests/test_api.py`](tests/test_api.py) (18) | POST devuelve `job_id` al instante (con un grafo lento, y `/health` responde mientras tanto) · GET refleja PENDING/RUNNING → WAITING_APPROVAL → RUNNING → DONE · approve aprobado y rechazado · `auto_aprobar` · 404/409/422 · dos approve a la vez: uno 202 y otro 409 · excepción del grafo → FAILED con el error · error de la API de Claude explicado · timeout → FAILED · apagar la API → FAILED · el hash en Redis (campos, eventos, sorted set, otra instancia lo lee, checkpoint del mismo thread) · **un worker nuevo reanuda el job pausado por otro** (reinicio) · huérfanos al arrancar · 5 concurrentes · health · costo, percentiles y metadata de LangSmith · **pausa y reanudación con `AsyncRedisSaver` real, con los modelos revividos como modelos** (si hay `REDIS_URL_TESTS`) |
-| [`tests/test_hitl.py`](tests/test_hitl.py) (9) | El grafo intercala `aprobacion_web` · pausa antes de la web sin ninguna búsqueda hecha · reanudar aprobado (busca y termina) · reanudar rechazado (Tavily nunca se llama, aviso de la síntesis, no se vuelve a preguntar) · si la memoria responde no hay pausa · `auto_aprobar` · respuestas raras = rechazo · la herramienta web no llama a Tavily sin permiso · `hay_vigentes` (destino, tema, antigüedad, cotización global) |
-
-En los tests, LangSmith está apagado siempre (`conftest.py`), aunque el `.env` tenga `LANGSMITH_TRACING=true`.
-
----
-
-## 11. Cambios respecto de la PE6
-
-| Archivo | Cambio |
-|---|---|
-| `app/` (nuevo) | `main.py` (FastAPI), `graph.py` (grafo + checkpointer), `worker.py` (JobStore + Worker), `observability.py` (LangSmith, costo, p95), `hitl.py` (nodo `aprobacion_web`) |
-| `graph.py` | `construir_grafo(…, nodo_aprobacion=None, checkpointer=None)`: sin argumentos nuevos es idéntico al de la PE6 |
-| `state.py` | Campos `permiso_web`, `aprobaciones` (reductor `operator.add`) y `auto_aprobar`; modelo `RegistroAprobacion`; el nodo `aprobacion_web` en `CAMPOS_POR_NODO` (solo puede escribir sus campos); `estado_inicial(pregunta, auto_aprobar=False)` |
-| `agents/research_tools.py` | `PERMISO_WEB` (ContextVar): `buscar_en_web` no llama a Tavily sin permiso y devuelve memoria o un aviso como texto |
-| `agents/research_agent.py` | Fija `PERMISO_WEB` con el permiso del estado mientras corre el ReAct |
-| `agents/memory.py` | `hay_vigentes(destino, tema)`; `buscar(…, max_distancia=)` para aflojar el filtro de parecido sin permiso web; la cotización del dólar (`cambio`) vale para cualquier destino |
-| `agents/synthesizer.py` | Aviso por código cuando la web fue rechazada |
-| `tracing.py` | Evento del nodo HITL en la traza; una búsqueda bloqueada no cuenta como búsqueda web |
-| `main.py` | `--mermaid` imprime el grafo de producción (`--sin-hitl`, el de la consola) |
-| `demo.ipynb` | Reescrito: la API en vivo (POST, polling, approve sí/no, memoria, carga) + apéndice mock de la PE6 |
-| `scripts/carga_concurrente.py`, `docker-compose.yml`, `Dockerfile`, `.env.example`, `requirements.txt` | Nuevos o ampliados |
-| `docs/pe6/` | La consigna y las devoluciones de la PE6 (antes en la raíz) |
+| `test_rag.py` (21) | Conversor de wikitexto, corpus con licencia, chunking (tope, overlap, secciones), ingesta idempotente (cambia una guía, se borra otra, cambia el chunk), filtro por destino, alias, BM25, RRF, re-rankers, Pinecone con índice falso, `consultar_guias` con fuentes desde metadatos, la web no se usa para temas estables, HITL con guías y con el destino mencionado en la pregunta, `evaluate` |
+| `test_conversaciones.py` (7) | `combinar_pedidos`, entrada de un turno, seguimiento por API, 404/409/422, `/rag/buscar` y `/health`, "reinicio" con worker y grafo nuevos, y AsyncRedisSaver real entre dos conexiones |
+| `test_auditoria.py` (6) | Sin `requests`/`urllib`, sin `time.sleep` en `async def`, herramientas async con `args_schema`, `response_model` en todos los endpoints, sin modelos ni URLs hard-codeados, `.env.example` completo |
+| PE6 + PE7 (155 + 1) | Supervisor, investigador, analista, síntesis, estado, grafo, HITL, API, worker, memoria, LLM mock (+1: el veredicto del presupuesto no se pierde en la traza) |
 
 ---
 
-## 12. Lo que aprendimos de las corridas reales
-
-| Corrida | Qué pasó | Qué se cambió |
-|---|---|---|
-| Test contra Redis real (antes de la primera corrida) | Con `AsyncRedisSaver`, al reanudar después de la pausa: `'dict' object has no attribute 'destino'`. RedisSaver guarda JSON y solo revive las clases de una allowlist. `InMemorySaver` (mock) no lo mostraba. | `allowed_json_modules` con los tipos del estado; el test verifica que `PedidoViaje`, `DecisionRegistrada` y `Aporte` vuelvan como modelos. |
-| Primera consulta real | FAILED: `Your credit balance is too low` (cuenta de Anthropic sin saldo). El job pasó a FAILED con el error completo y la traza de error llegó a LangSmith: el camino de fallas funcionó en vivo. | Nada en el código (se cargó saldo). |
-| Primera prueba de carga ([`carga_real_20261118-143451.json`](traces/carga/carga_real_20261118-143451.json)) | 3/5 DONE; 2 FAILED con `ConnectionError: max number of clients reached`. Redis Cloud gratis admite 30 clientes, y el pool del store + el del checkpointer + redisvl abrían conexiones sin tope. Los FAILED quedaron bien informados (nadie en polling infinito). El costo local de esos FAILED no incluía los tokens del tramo que falló. | `BlockingConnectionPool` con tope (`REDIS_MAX_CONEXIONES=20`): los jobs esperan una conexión libre. Los tokens del tramo fallido se guardan igual. Verificado gratis en mock contra Redis Cloud: 5/5 DONE con 20 clientes como máximo; después, la carga real dio 5/5. |
-| Puerto Madryn en la carga | El HITL pidió permiso por `cambio` (no había cotización con destino "Puerto Madryn"), pero el LLM buscó la cotización con destino "Buenos Aires", que ya estaba en memoria: aprobada, 0 búsquedas web. | El dólar no depende del destino: `cambio` es un tema global en la memoria (chequeo del HITL y búsqueda). Test nuevo. |
-
----
-
-## 13. Estructura del repositorio
+## 17. Estructura del repositorio
 
 ```
-pre-entrega-7/
-├── app/                       # PE7: la API de producción
-│   ├── main.py                # FastAPI: POST/GET /tasks, /approve, /health (todo async)
-│   ├── graph.py               # grafo de producción (PE6 + HITL) + AsyncRedisSaver / InMemorySaver
-│   ├── worker.py              # JobStore (hash en Redis) + Worker (asyncio.create_task, FAILED, timeout, recuperación)
-│   ├── observability.py       # LangSmith (metadata job_id, tags), costo por job, percentiles
-│   └── hitl.py                # nodo aprobacion_web: interrupt() / Command(resume=...)
-├── scripts/
-│   ├── carga_concurrente.py   # 5 POST concurrentes + polling + tabla + p95 (+ LangSmith)
-│   └── ejemplo_task.json      # cuerpo de ejemplo para curl
-├── screenshots/               # capturas de LangSmith + resultados_carga.md
-├── docker-compose.yml         # app + redis:8.2
-├── Dockerfile
-├── .env.example               # claves + REDIS_URL + LangSmith (el .env real no se sube)
-├── requirements.txt           # versiones fijas
-├── demo.ipynb                 # el orquestador en vivo vía la API (ejecutado, con salidas)
-├── state.py · graph.py · main.py · config.py · llm.py · tracing.py · escenarios.py   # PE6 (ver §11)
-├── agents/                    # PE6: supervisor, investigador, analista, síntesis, herramientas, memoria, mock
-├── data/mock_busquedas.json   # Tavily ficticio del modo mock
-├── tests/                     # 155 tests (128 de la PE6 + 27 de la API y el HITL)
-├── traces/                    # PE6: escenarios · api/: un job real por archivo · carga/: pruebas de carga
-└── docs/pe6/                  # consigna y devoluciones de la PE6
+entrega-final/
+├── config.py                 # configuración validada (pydantic-settings)
+├── agents/                   # llm.py, supervisor, investigador (+ herramientas), analista (+ herramientas), síntesis, mock
+├── graph/                    # state.py, builder.py, hitl.py, checkpointer.py
+├── rag/                      # documentos, wikitexto, chunking, embeddings, vectorstore, retriever, reranker,
+│                             # ingesta, base (fachada), evaluate, memoria (búsquedas web)
+├── api/                      # main.py (FastAPI), schemas.py (Pydantic), worker.py (JobStore + Worker)
+├── observability/            # monitoreo.py (LangSmith, costo), traza.py (traza local)
+├── data/guias/               # 9 guías de Wikivoyage (CC BY-SA 4.0) + _ATRIBUCION.md
+├── data/golden_set.json      # 15 preguntas para evaluate.py
+├── scripts/                  # descargar_guias, descargar_modelos, pruebas_finales, armar_notebook, escenarios, carga
+├── tests/                    # 190 tests (2 requieren Redis real)
+├── traces/pruebas_finales/   # evidencia de las 5 pruebas reales · traces/api/ · traces/pe6-pe7/
+├── screenshots/              # capturas de LangSmith (pe7/: las de la PE7)
+├── docs/                     # evaluacion/, grafo.mmd, pe6/, pe7/ (README y notebook de la PE7)
+├── demo.ipynb                # demo contra la API real, ejecutado
+├── Dockerfile · docker-compose.yml · run.sh · run.ps1
+├── requirements.txt          # versiones fijas, Python 3.12
+└── .env.example              # todas las variables, comentadas
 ```
 
 ---
 
-## 14. Limitaciones
+## 18. Limitaciones
 
-**De la API (PE7):**
-
-- **Un solo proceso.** El worker vive en el mismo proceso que la API (así lo pide la consigna, sin Celery/Arq). Escalar a varias réplicas necesitaría una cola compartida: el estado y los checkpoints ya están en Redis, pero cada réplica solo corre los jobs que recibió (la recuperación al arrancar no reparte trabajo entre réplicas).
-- **Checkpoints por internet.** Con Redis Cloud, cada paso del grafo (y de los subagentes ReAct, que heredan el checkpointer) se escribe en un servidor remoto: en mock eso solo ya son 20–30 s por job. Con Redis en la misma máquina o en la misma red (docker compose) baja mucho. Otra mejora posible: compilar los subagentes sin checkpointer propio, porque la pausa está en el grafo principal.
-- **ChromaDB bajo concurrencia.** Con 5 jobs a la vez, `buscar_en_memoria` sumó 75 s (§8). Para más carga convendría un Chroma en modo servidor o calcular los embeddings fuera del proceso de la API.
-- **El HITL decide por destino y tema, no por la consulta exacta.** Si la memoria tiene algo vigente del tema, no se pausa, aunque el LLM después pida algo más específico. En ese caso `buscar_en_web` **no** va a la web: usa lo que haya en memoria o avisa que falta, y nunca gasta sin permiso.
-- **Una sola decisión humana por job.** Si el supervisor vuelve a mandar al investigador, se respeta la primera respuesta (aprobada o rechazada) y no se pregunta de nuevo.
-- **Sin autenticación.** Cualquiera que llegue al puerto puede crear y aprobar jobs; en producción iría detrás de un API gateway o con una API key.
-- **La p95 se mide sobre 5 corridas:** con tan pocas muestras, el p95 queda casi igual que el máximo.
-
-**Del orquestador (PE6, siguen vigentes):**
-
-- **Los precios son de referencia:** salen de la web (rangos, valores "desde", fechas cercanas), y muchas veces la fuente no aclara la unidad. El analista aclara qué supuso.
-- **El LLM no es determinístico:** dos corridas de la misma pregunta pueden tomar rutas distintas; las reglas duras y los frenos acotan cuánto puede variar. Cerca del límite del presupuesto, el veredicto ("entra / no entra") puede cambiar entre corridas.
-- **El bloqueo de `forzar` trabaja por tema:** si la memoria ya tiene precios de "pasajes" (por ejemplo, del micro), no deja buscar precios de vuelos en la web.
-- **"Enero" sin día exacto** se interpreta como del 10 al 16 de enero del próximo año (queda como supuesto en la respuesta).
-- **Costo:** una pregunta completa en vivo usa unos 30.000–145.000 tokens de `claude-haiku-5-5` (US$ 0,005–0,022 medidos en la carga) y entre 0 y 8 búsquedas de Tavily (0 si todo sale de la memoria).
+- **Latencia del re-ranker en CPU (~2,4 s por consulta).** Un investigador que consulta 3–4 temas suma ~10 s; con GPU o un re-ranker más chico baja mucho.
+- **Embedding multilingüe chico:** es el eslabón débil del retriever (Recall@4 vectorial 0,59). Un modelo más grande (`multilingual-e5-large`, 2,2 GB) mejoraría, a costa de la imagen.
+- **Corpus de 9 destinos:** fuera de ellos, lo estable va a la web (con permiso). Las guías de Wikivoyage tienen calidad desigual (Mar del Plata y Puerto Madryn son cortas) y sus precios son viejos (el sistema no los usa como precios actuales).
+- **Golden set de 15 preguntas:** alcanza para comparar configuraciones, no para afirmar diferencias chicas.
+- **Un proceso:** el worker vive en el proceso de la API. Varias réplicas necesitarían una cola compartida (estado y checkpoints ya están en Redis).
+- **Una decisión humana por turno:** si el supervisor vuelve al investigador dentro del mismo turno, se respeta la primera respuesta.
+- **El HITL decide por destino y tema, no por la consulta exacta;** si no hay permiso, `buscar_en_web` nunca gasta.
+- **Memoria de búsquedas en mock:** vive en una carpeta temporal (en modo real está en el volumen).
+- **Sin autenticación** en la API: en producción iría detrás de un gateway o con API key.
+- **El LLM no es determinístico:** dos corridas iguales pueden tomar rutas distintas; las reglas duras y los frenos acotan cuánto.
 
 ---
 
-# Anexo A — El orquestador (de la PE6)
+## 19. Licencia del corpus
 
-> Lo que sigue es la documentación del orquestador que la PE7 expone como API. No cambió, salvo lo listado en el §11. Las referencias "§A.n" son a este anexo. Los escenarios y trazas son de la PE6 (`traces/`), corridos desde la consola.
-
-## A.2 Por qué una topología jerárquica
-
-| Alternativa | Por qué no |
-|---|---|
-| **Cadena fija** (investigador → analista → síntesis) | No puede saltear pasos (una pregunta solo de clima no necesita al analista), ni repetir uno cuando el resultado no sirve (una búsqueda sin precios). |
-| **Red de agentes que se hablan entre sí** | Nadie es responsable de cortar: es justo donde aparece el "supervisor infinito" o los agentes que se corrigen mutuamente sin fin. Además, cada agente necesitaría conocer a los demás. |
-| **Jerárquica (la elegida)** | Un solo punto de decisión. Los especialistas solo hacen su trabajo y le devuelven el control al supervisor, que **valida con una rúbrica** antes de seguir o de terminar. |
-
-Ventajas concretas en este proyecto:
-
-- **Delegación dinámica:** la ruta depende de la pregunta y de lo que va saliendo. Por ejemplo: "¿qué clima hace?" → solo investigador; "¿nos alcanza?" → investigador y analista; búsqueda sin precios → investigador de nuevo.
-- **Un único lugar para validar y frenar:** la rúbrica, las reglas duras y el contador de pasos viven en el supervisor.
-- **Especialistas simples y reemplazables:** cada uno tiene **solo sus herramientas**. Si mañana el investigador usa otra fuente, el resto no cambia.
-- **Trazabilidad:** cada decisión queda registrada con su evaluación de la rúbrica (`decisiones` en el estado y en las trazas).
-
----
-
-## A.3 Los agentes y sus herramientas
-
-| Agente | Archivo | Qué hace | Herramientas (solo estas) | Qué recibe |
-|---|---|---|---|---|
-| **Supervisor** | `agents/supervisor.py` | La primera vez extrae el pedido (`PedidoViaje`). En cada turno decide quién trabaja, qué tiene que hacer y qué temas buscar, o si se termina. | Ninguna (salida estructurada) | La pregunta, el pedido, la **cobertura por tema** calculada por código y un resumen de cada aporte con las observaciones del chequeo |
-| **Investigador** | `agents/research_agent.py` | Consigue datos actuales con fuente: pasajes, alojamiento, comida, clima, actividades y dólar. Busca primero en la memoria y va a la web solo si hace falta. | `buscar_en_memoria`, `buscar_en_web` (`agents/research_tools.py`) | Su instrucción + `TEMAS A BUSCAR` + `DATOS DEL PEDIDO` |
-| **Analista** | `agents/analyst_agent.py` | Valida el viaje y calcula el presupuesto; si no alcanza, calcula una alternativa. No busca datos. | `validar_viaje`, `calcular_presupuesto` (`agents/analyst_tools.py`) | Su instrucción + `DATOS DEL PEDIDO` + el texto final de los hallazgos del investigador |
-| **Síntesis** | `agents/synthesizer.py` | Escribe la respuesta: itinerario día por día, presupuesto desglosado, alternativas y lo que no se pudo averiguar. | Ninguna | La pregunta, el pedido y los aportes validados |
-
-Los dos especialistas son agentes ReAct armados con **`create_react_agent`** de LangGraph, con su propio ciclo (pensar → herramienta → observar) y su propio techo de pasos.
-
-#### Herramientas del investigador
-
-- **`buscar_en_memoria(consulta, destino, tema)`** consulta la memoria local (ChromaDB). Un dato guardado sirve solo si pasa **tres filtros**:
-  1. mismo destino y tema (filtro por metadatos);
-  2. buscado hace **7 días o menos** (`MEMORIA_MAX_DIAS`, filtro por metadatos sobre la fecha);
-  3. parecido a la consulta: distancia coseno ≤ 0,55. El umbral está calibrado con el modelo real: las consultas parecidas dieron 0,24–0,44 y las de otro tema, 0,64–0,72.
-
-  Si ninguno pasa, responde `SIN RESULTADOS EN MEMORIA` y explica por qué (vencido, poco parecido o nada guardado).
-- **`buscar_en_web(consulta, destino, tema, forzar)`** busca con Tavily y **guarda todo en la memoria**, con destino, tema, URL y fecha. Tiene una guarda por código: si la memoria ya tiene datos vigentes, no gasta una búsqueda. `forzar=true` permite ir igual a la web **solo si lo guardado no trae precios**; si los trae, también se bloquea.
-
-Las dos devuelven texto para el LLM **y** la lista de `Fuente` (Pydantic) como *artifact*. El aporte del investigador se arma con esas fuentes, no con lo que diga el LLM: **las URLs no se pueden inventar**.
-
-#### Herramientas del analista (determinísticas, sin LLM adentro)
-
-- **`validar_viaje`** aplica el modelo Pydantic `ViajeValidado`:
-  - origen y destino distintos;
-  - **vuelta después de la ida**;
-  - ida en el futuro;
-  - como máximo 60 días;
-  - las fechas coinciden con los días pedidos;
-  - 1 a 20 personas, presupuesto positivo y moneda ARS o USD.
-
-  Junta **todos** los errores juntos, para que el usuario corrija todo de una vez.
-- **`calcular_presupuesto`** suma, renglón por renglón y mostrando la fórmula de cada uno:
-  - pasajes por persona (×2 si el precio es por tramo);
-  - alojamiento: la **unidad es obligatoria**. Por habitación: precio × noches × habitaciones (redondeadas para arriba). Por persona: precio × noches × personas. Nunca se aplican las dos;
-  - comida y actividades por persona por día;
-  - extras.
-
-  Si hay precios en otra moneda, convierte e **informa qué dólar usó y de qué fuente salió**: con tarjeta, el **dólar tarjeta**; en efectivo, el **MEP** (y, si no está, el oficial). Si falta la cotización necesaria, devuelve un error claro en vez de inventarla. Al final dice si **entra o no**, cuánto sobra o falta y el costo por día y por persona.
-
----
-
-## A.4 Estado compartido (`state.py`)
-
-```python
-class OrquestadorState(MessagesState):          # hereda literalmente de MessagesState
-    pregunta: str
-    pedido: PedidoViaje | None                   # lo escribe el supervisor UNA vez
-    aportes: Annotated[list[Aporte], operator.add]          # se SUMAN, nunca se pisan
-    pasos_supervisor: int                        # contador del freno
-    siguiente: Literal["investigador", "analista", "FINALIZAR"]
-    instruccion_actual: str
-    temas_pedidos: list[Tema]                    # temas que tiene que buscar el investigador
-    decisiones: Annotated[list[DecisionRegistrada], operator.add]
-    respuesta_final: str
-    # PE7: permiso_web, aprobaciones (operator.add) y auto_aprobar → nodo aprobacion_web (§6)
-```
-
-- **Quién aportó qué información:** cada intervención de un especialista queda como un `Aporte`, un modelo Pydantic con `extra="forbid"` y `frozen=True`. Registra el agente, la ronda, la instrucción que recibió, su contenido, sus **fuentes** (`Fuente`: URL o ID de memoria, si salió de la **memoria** o de la **web**, el tema y la fecha), cada **llamada a herramienta** con sus argumentos y resultado, la **cobertura por tema** y las **observaciones** del chequeo por código.
-- **Validación Pydantic estricta:** los IDs de memoria tienen formato `mem-` + 12 caracteres hexadecimales, las URLs se validan, un especialista **no puede figurar usando herramientas de otro rol** y el supervisor no puede delegar sin instrucción, ni mandar al investigador sin temas.
-- **Cada agente escribe solo su parte:** `validar_actualizacion(nodo, ...)` revisa todo lo que devuelve cada nodo antes de que entre al estado. Si el investigador intenta tocar `siguiente`, o firmar un aporte como "analista", da error (`ErrorDeEstado`). Hay tests para cada caso.
-- **`PedidoViaje` no valida reglas de negocio, a propósito:** guarda lo que dijo el usuario, aunque sea imposible. Si validara "vuelta después de la ida", un pedido mal hecho ni siquiera se podría registrar y nadie le avisaría al usuario qué corregir. Esa validación la hace `validar_viaje`.
-
----
-
-## A.5 El supervisor: rúbrica, reglas duras y frenos
-
-**Salida estructurada.** El LLM está obligado a responder con `DecisionSupervisor`:
-
-```python
-class DecisionSupervisor(BaseModel):
-    evaluacion: str                                        # repasa la rúbrica punto por punto
-    siguiente: Literal["investigador", "analista", "FINALIZAR"]
-    instruccion: str                                       # autocontenida: el especialista no ve la pregunta
-    temas: list[Tema]                                      # obligatoria si va al investigador
-```
-
-**Rúbrica de su prompt.** Para FINALIZAR se tienen que cumplir todos estos puntos:
-
-| | Punto | Qué exige |
-|---|---|---|
-| R1 | Cobertura | cada parte de la pregunta tiene datos |
-| R2 | Fuentes | cada aporte del investigador tiene URL o `mem-…` |
-| R3 | Precios | pasajes y alojamiento tienen al menos un monto de referencia (no exactos por fecha) |
-| R4 | Cálculo | si hay presupuesto, el analista validó y calculó |
-| R5 | Observaciones | no quedan observaciones del chequeo por código sin resolver; si las hay, se devuelve el trabajo al **mismo** especialista con la corrección exacta |
-| R6 | Coherencia | no hay contradicciones entre aportes |
-
-**Validación por código.** Para no depender solo del criterio del LLM:
-
-1. **Chequeo de cada especialista**, que anota `observaciones`:
-   - *investigador:* no usó herramientas, no hay fuentes, falló la web, un tema pedido no se buscó, pasajes o alojamiento sin precios, no cita sus fuentes;
-   - *analista:* no validó, validó pero no calculó, una herramienta dio error, no dice si entra.
-2. **Cobertura por tema**, calculada por código: fuentes, cuántas de memoria y cuántas de la web, y si hay precios. El supervisor la ve como tabla antes que los textos.
-3. **Reglas duras** que corrigen decisiones imposibles:
-   - analista sin datos del investigador → investigador;
-   - FINALIZAR sin ningún aporte → investigador;
-   - **FINALIZAR con presupuesto y sin el cálculo del analista → analista** (R4 por código);
-   - el investigador trabaja como máximo 2 veces (la búsqueda original + una corrección);
-   - **pedido imposible** (`validar_viaje` rechazó las fechas del usuario) → no se vuelve al analista ni se suponen otras fechas: FINALIZAR.
-4. **Respaldo:** si el LLM devuelve dos veces una decisión inválida, decide por reglas fijas y lo anota.
-
-**Frenos contra el "supervisor infinito".** Son tres, de afuera hacia adentro:
-
-| Freno | Valor | Qué hace |
-|---|---|---|
-| `MAX_PASOS_SUPERVISOR` | 6 | La decisión número 6 es **siempre FINALIZAR, forzado por código**, sin preguntarle al LLM. La síntesis avisa que la información es parcial (escenario 8). |
-| `RECURSION_LIMIT` | 20 | Techo de LangGraph para el grafo principal. Si se supera, la corrida termina con un aviso controlado. |
-| `RECURSION_LIMIT_ESPECIALISTA` | 12 | Techo del ciclo ReAct de cada especialista. Si se corta, se rescata lo que alcanzó a hacer y queda anotado. |
-
----
-
-## A.6 Cómo se manejan los conflictos entre agentes
-
-1. **Los especialistas no se hablan entre ellos.** No pueden discutir ni corregirse mutuamente: todo pasa por el supervisor, que tiene la última palabra.
-2. **El supervisor arbitra con la rúbrica y con datos objetivos.** No depende de "quién suena más convincente": ve las observaciones del chequeo por código y la cobertura por tema. Si un aporte tiene problemas, se lo devuelve **al mismo especialista** con una instrucción que dice exactamente qué corregir. Por ejemplo: *"rehacer la búsqueda de pasajes con forzar=true porque no trajo precios"*.
-3. **Cada dato tiene dueño y procedencia.** Los aportes se acumulan (nunca se pisan) y cada uno dice quién lo hizo, con qué instrucción y de qué fuente salió. Si dos aportes no coinciden, se ve de dónde viene cada versión.
-4. **Los números los decide una herramienta, no un LLM.** Si el investigador trae precios distintos, el analista los pasa por `calcular_presupuesto` y la síntesis **copia** ese resultado, sin recalcular. Si las fuentes se contradicen (pasó con el clima en vivo: una decía máximas de 19 °C y otra de 28 °C), la síntesis lo dice en vez de elegir una en silencio.
-5. **Desacuerdos que no se resuelven:** con como máximo una corrección por especialista y el freno de pasos, el sistema siempre termina. La síntesis aclara qué faltó ("Lo que no pudimos averiguar").
-6. **Nadie puede escribir lo de otro:** `validar_actualizacion` bloquea, por código, que un nodo modifique campos ajenos o firme como otro.
-
----
-
-## A.7 Contaminación de contexto
-
-Ningún especialista recibe el historial ni la pregunta original:
-
-- **Investigador:** su instrucción + `TEMAS A BUSCAR` + `DATOS DEL PEDIDO` (origen, destino, fechas, personas y presupuesto, armados por código desde `PedidoViaje`).
-- **Analista:** lo mismo + **solo el texto final** de los hallazgos del investigador. No ve sus búsquedas internas ni los resultados crudos de Tavily.
-- **Supervisor:** resúmenes de cada aporte (no las llamadas internas) + la tabla de cobertura.
-
-Así **no se depende de que el supervisor se acuerde de copiar todos los datos en la instrucción**, y cada agente ve lo mínimo necesario. Hay tests que lo verifican: meten un "SECRETO" en el historial y la pregunta original marcada, y comprueban que ningún especialista los ve (`test_contexto_acotado_*`).
-
----
-
-## A.8 Tavily, ChromaDB y decisiones técnicas
-
-#### Qué es Tavily y por qué la web es la fuente correcta para viajes
-
-**Tavily** es un buscador web pensado para agentes de IA. Devuelve resultados ya limpios (título, URL y extracto de contenido) en vez de páginas HTML, así que el LLM puede leerlos directo.
-
-Para un viaje, **la web es la única fuente razonable**: los precios de pasajes y alojamiento, la cotización del dólar y las tarifas de excursiones cambian todo el tiempo. Una base de documentos propia (como el Pinecone de las pre-entregas anteriores) quedaría desactualizada enseguida. Por eso cada dato lleva su **URL y su fecha de búsqueda**, y la respuesta aclara que los precios son aproximados.
-
-#### `langchain-tavily` en lugar de `TavilySearchResults`
-
-La consigna nombra `TavilySearchResults` (de `langchain-community`). Esa clase está **deprecada**; su reemplazo oficial es **`TavilySearch`**, del paquete **`langchain-tavily`**, que es el que se usa acá (`agents/research_tools.py`, clase `BuscadorTavily`). La función es la misma: buscar en la web y devolver resultados con URL.
-
-#### Por qué ChromaDB y no Pinecone para la memoria
-
-| | ChromaDB (elegido) | Pinecone (pre-entregas 4 y 5) |
-|---|---|---|
-| Dónde vive | Local, en `data/memoria_chroma/` | Servicio en la nube |
-| Claves | Ninguna | API key |
-| Uso | Memoria de **una** persona en **su** máquina | Pensado para índices grandes y compartidos |
-| Evaluación | **El evaluador lo puede correr** sin cuentas ni claves (modo mock) | Necesitaría nuestra clave |
-
-La memoria es un caché de búsquedas web con vencimiento de 7 días, no una base de conocimiento: no hace falta un servicio administrado. Además se usan los embeddings ONNX que trae ChromaDB por defecto (all-MiniLM-L6-v2, **sin torch**, unos 80 MB que se descargan una sola vez). En modo mock y en los tests se usa un embedding por hashing que no descarga nada.
-
-#### `create_react_agent`
-
-La consigna pide `create_react_agent` de LangGraph y se usa tal cual. En LangGraph 1.x esa función sigue funcionando, pero muestra un aviso de que el reemplazo nuevo es `create_agent` (de `langchain.agents`). Se mantuvo el nombre literal de la consigna y el aviso se silencia en `pytest.ini`.
-
-#### Otras decisiones
-
-- **Asíncrono de punta a punta:** todos los nodos son `async`, las herramientas son corrutinas y lo bloqueante (ChromaDB) corre en `asyncio.to_thread`. Se usan `ainvoke` y `astream`. La consigna no lo exige; se eligió porque las búsquedas en paralelo del investigador lo aprovechan.
-- **Claude vía `ChatAnthropic`:** `claude-haiku-5-5`, con `effort="low"` en lugar de `temperature` (la API actual no acepta `temperature` en los modelos nuevos), 3 reintentos y un tope de 8000 tokens de salida (ver sección 10).
-- **Modo mock:** un `LLMMock` cuyas "políticas" por rol **reaccionan** a lo que devuelven las herramientas reales (memoria, validación, cálculo), más un Tavily simulado con datos ficticios en `data/mock_busquedas.json` (dominio reservado `.example`). **El grafo es el mismo** que en vivo.
-- **Fuentes y avisos los agrega el código:** la síntesis no puede inventar URLs. La lista final muestra solo las fuentes citadas, sin repetir la misma página como "web" y "memoria".
-
----
-
-## A.9 Resultados: escenarios en vivo y en mock
-
-`python escenarios.py` corre los 8 escenarios y arma [`traces/resultados.md`](traces/resultados.md) **leyendo las trazas guardadas**: cada fila tiene su evidencia en `traces/`. Cada traza viene en dos formatos: `.json` (estructurado) y `.log` (legible, con cada decisión del supervisor, su evaluación de la rúbrica, cada llamada a herramienta y la cobertura por tema).
-
-| # | Escenario | Qué demuestra |
-|---|---|---|
-| 1 | Flujo completo (pregunta de demo) | Delegación supervisor → investigador → analista → síntesis |
-| 2 | "¿Qué clima hace en Bariloche en enero?" | El supervisor **no** llama al analista si no hace falta |
-| 3 | Presupuesto de $400.000 | El analista detecta que no alcanza y calcula una alternativa |
-| 4 | "Del 16 al 10 de enero" | `validar_viaje` rechaza la vuelta antes de la ida; no se arma itinerario |
-| 5 | La pregunta del 1, otra vez | Los datos salen de la memoria (ChromaDB) |
-| 6 | "¿Cómo llegar… y cuánto sale el pasaje?" | El supervisor rechaza una búsqueda sin precios y pide rehacerla |
-| 7 | Tavily caído (solo mock) | La herramienta devuelve el error, el flujo termina y avisa qué faltó |
-| 8 | `max_pasos=2` | El freno fuerza FINALIZAR y la respuesta avisa que es parcial |
-
-| # | Escenario | Modo | Ruta del supervisor | Decisiones | Refin. | Validación | ¿Entra? | Datos (memoria · web) | Búsquedas web | Traza |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | flujo completo | real | sup → inv → sup → ana → sup → síntesis | 3 | 0 | aprobada | no | 0 · 18 | 6 | [1_flujo_completo_real_20261110-150904.json](traces/1_flujo_completo_real_20261110-150904.json) |
-| 1 | flujo completo | mock | sup → inv → sup → ana → sup → síntesis | 3 | 0 | aprobada | sí | 0 · 6 | 5 (simuladas) | [1_flujo_completo_mock_20261110-151409.json](traces/1_flujo_completo_mock_20261110-151409.json) |
-| 2 | solo clima | real | sup → inv → sup → síntesis | 2 | 0 | no se validó | — | 3 · 0 | 0 | [2_solo_clima_real_20261110-151106.json](traces/2_solo_clima_real_20261110-151106.json) |
-| 2 | solo clima | mock | sup → inv → sup → síntesis | 2 | 0 | no se validó | — | 1 · 0 | 0 (simuladas) | [2_solo_clima_mock_20261110-151410.json](traces/2_solo_clima_mock_20261110-151410.json) |
-| 3 | no alcanza | real | sup → inv → sup → ana → sup → síntesis | 3 | 0 | aprobada | no | 17 · 0 | 0 | [3_no_alcanza_real_20261110-151120.json](traces/3_no_alcanza_real_20261110-151120.json) |
-| 3 | no alcanza | mock | sup → inv → sup → ana → sup → síntesis | 3 | 0 | aprobada | no | 6 · 0 | 0 (simuladas) | [3_no_alcanza_mock_20261110-151410.json](traces/3_no_alcanza_mock_20261110-151410.json) |
-| 4 | fechas invalidas | real | sup → inv → sup → ana → sup → síntesis | 3 | 0 | rechazada | — | 15 · 0 | 0 | [4_fechas_invalidas_real_20261110-151218.json](traces/4_fechas_invalidas_real_20261110-151218.json) |
-| 4 | fechas invalidas | mock | sup → inv → sup → ana → sup → síntesis | 3 | 0 | rechazada | — | 6 · 0 | 0 (simuladas) | [4_fechas_invalidas_mock_20261110-151410.json](traces/4_fechas_invalidas_mock_20261110-151410.json) |
-| 5 | memoria | real | sup → inv → sup → ana → sup → síntesis | 3 | 0 | aprobada | no | 17 · 0 | 0 | [5_memoria_real_20261110-151006.json](traces/5_memoria_real_20261110-151006.json) |
-| 5 | memoria | mock | sup → inv → sup → ana → sup → síntesis | 3 | 0 | aprobada | sí | 6 · 0 | 0 (simuladas) | [5_memoria_mock_20261110-151409.json](traces/5_memoria_mock_20261110-151409.json) |
-| 6 | refinamiento | real | sup → inv → sup → inv → sup → síntesis | 3 | 1 | no se validó | — | 6 · 0 | 0 | [6_refinamiento_real_20261110-151258.json](traces/6_refinamiento_real_20261110-151258.json) |
-| 6 | refinamiento | mock | sup → inv → sup → inv → sup → síntesis | 3 | 1 | no se validó | — | 2 · 1 | 1 (simuladas) | [6_refinamiento_mock_20261110-151410.json](traces/6_refinamiento_mock_20261110-151410.json) |
-| 7 | tavily falla | mock | sup → inv → sup → inv → sup → ana → sup → síntesis | 4 | 1 | aprobada | — | 0 · 0 | 6 (simuladas) | [7_tavily_falla_mock_20261110-151410.json](traces/7_tavily_falla_mock_20261110-151410.json) |
-| 8 | freno de pasos | real | sup → inv → sup → síntesis | 2 (freno) | 0 | no se validó | — | 17 · 0 | 0 | [8_freno_de_pasos_real_20261110-151330.json](traces/8_freno_de_pasos_real_20261110-151330.json) |
-| 8 | freno de pasos | mock | sup → inv → sup → síntesis | 2 (freno) | 0 | no se validó | — | 6 · 0 | 0 (simuladas) | [8_freno_de_pasos_mock_20261110-151410.json](traces/8_freno_de_pasos_mock_20261110-151410.json) |
-
-**Cómo leer la tabla:** "Datos (memoria · web)" son las fuentes distintas que usó el investigador; "Búsquedas web" son las llamadas reales a Tavily (en mock, simuladas). El escenario 1 corrió con la memoria vacía y los siguientes reutilizan lo que guardó: por eso del 2 en adelante casi no hay búsquedas en Tavily.
-
-**Pregunta de demo en vivo (escenario 1):** el supervisor delegó al investigador (6 búsquedas en Tavily, 18 fuentes), después al analista (`validar_viaje` → VÁLIDO; `calcular_presupuesto`) y finalizó. Resultado: **no alcanza por poco: total $826.720 contra $800.000 (faltan $26.720)**, con itinerario día por día, alternativas y fuentes. La respuesta completa está en [`traces/1_flujo_completo_real_*.log`](traces/).
-
-**Notas por escenario:**
-
-- **5 · memoria:** en vivo, la segunda vez salieron **17 datos de la memoria y 0 búsquedas en Tavily** (antes de los arreglos del §A.10 todavía forzaba 3 búsquedas).
-- **4 · fechas inválidas:** `validar_viaje` rechazó "del 16 al 10"; la síntesis explica el error y pide corregir la fecha, sin itinerario ni presupuesto.
-- **6 · refinamiento:** en vivo el supervisor **rechazó el primer aporte** porque cubría el micro pero no tenía precios de vuelos, y pidió rehacerlo con `forzar`. Como la memoria ya tenía precios del tema "pasajes" (los del micro), el bloqueo de `forzar` no lo dejó ir a la web y la segunda ronda no agregó datos (ver §14). En mock, el rechazo por "búsqueda sin precios" y la nueva búsqueda se ven completos.
-- **7 · Tavily caído (solo mock):** el investigador devuelve el error, el supervisor reintenta una vez, el analista valida el viaje pero **no inventa un presupuesto sin precios** (¿entra? = —) y la síntesis lista "Lo que no pudimos averiguar".
-- **8 · freno:** la decisión 2 es FINALIZAR **forzado por código** y la respuesta empieza con el aviso de información parcial.
-
-Las trazas de antes de cada arreglo quedaron en [`traces/anteriores/`](traces/anteriores/), para comparar.
-
----
-
-## A.10 Lo que aprendimos de las corridas reales
-
-Las primeras corridas en vivo mostraron problemas que el modo mock no podía mostrar. Cada uno quedó corregido **por código y con test**, y las trazas de antes del arreglo están en [`traces/anteriores/`](traces/anteriores/).
-
-| Corrida | Qué pasó | Qué se cambió |
-|---|---|---|
-| [`0_primera_corrida_real_antes_del_ajuste`](traces/anteriores/) | El supervisor pidió tres veces "precios exactos por fecha" (la web no los publica) y **finalizó sin pasar por el analista**, en contra de su propia rúbrica. Respuesta: "no podemos confirmar", con 75 fuentes. | Rúbrica con precios **de referencia**; regla dura "no se finaliza con presupuesto sin el analista"; como máximo 2 rondas del investigador; solo se listan las fuentes citadas; como máximo una búsqueda web por tema. |
-| [`0b_segunda_corrida_real_tope_de_tokens`](traces/anteriores/) | Las llamadas a `calcular_presupuesto` llegaban vacías (`kwargs {}`) y la síntesis quedaba cortada. Causa: el tope de 2500 tokens de salida. El chequeo por código lo detectó y el supervisor devolvió el trabajo. | Tope de 8000 tokens; el analista calcula una opción por vez; síntesis más breve; aviso si igual se corta. |
-| Escenario 5 (primera versión) | Con la memoria llena, el investigador **igual forzó 3 búsquedas en Tavily** (aunque lo guardado tenía precios); el supervisor veía el informe cortado y volvió a pedir temas ya cubiertos; y el chequeo leyó "no repitas pasajes" como si se pidiera buscar pasajes. | `forzar` **bloqueado por código** si la memoria tiene precios vigentes; **tabla de cobertura por tema** calculada por código para el supervisor; campo estructurado `temas` en la decisión (el chequeo usa ese campo, no palabras sueltas). |
-| Escenario 4 (primera versión) | Con "del 16 al 10 de enero", `validar_viaje` rechazó el pedido, pero el **supervisor le pidió al analista que supusiera otra fecha** (vuelta el 22) y la métrica figuró como "validación aprobada". La respuesta final igual fue correcta (pedía corregir las fechas), pero con dos vueltas de más del analista. | La validación que cuenta es la **del pedido real** (`validacion_del_pedido`), no la de fechas supuestas; regla dura "pedido inválido → no se vuelve al analista, se finaliza"; el analista no puede inventar fechas. |
-| Itinerario en vivo | Repitió "Cerro Catedral" en dos días. | Chequeo por código de lugares repetidos en la síntesis: pide **una** corrección al LLM y, si sigue, avisa. Se activó en vivo y la corrección salió sin repeticiones. |
+Las guías de `data/guias/` son texto de **[Wikivoyage en español](https://es.wikivoyage.org/)**, de sus colaboradores, bajo licencia **[Creative Commons Atribución-CompartirIgual 4.0 (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/deed.es)**. Se convirtieron a markdown y se limpiaron de formato, sin cambios de contenido. La URL, la revisión y el enlace al historial (los autores) de cada artículo están en su encabezado y en [`data/guias/_ATRIBUCION.md`](data/guias/_ATRIBUCION.md). Las respuestas del asesor citan cada fragmento usado con su artículo, sección, URL y licencia. El resto del repositorio es trabajo del curso.

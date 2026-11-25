@@ -62,6 +62,8 @@ todavía no pasó) y anotalo en "supuestos".
 - Si dice la cantidad de días y la ida, calculá la vuelta como ida + (días − 1). Ej.: 7 días desde el 10/01 → vuelta 16/01.
 - NO corrijas los errores del usuario: si da fechas imposibles (vuelta antes que la ida), copialas tal cual.
 - Lo que el usuario no dijo queda en null.
+- Si la pregunta es sobre una ciudad o lugar (aunque no sea un viaje con origen, por ejemplo "cómo llego del aeropuerto \
+al centro de Mendoza"), ese lugar es el destino.
 - Si hay un PEDIDO ANTERIOR (la conversación sigue), el mensaje nuevo lo MODIFICA: devolvé el pedido COMPLETO \
 actualizado. Mantené todo lo que no cambió (origen, destino, personas, presupuesto, días...) y cambiá solo lo que \
 dice el mensaje nuevo. Ej.: "¿y si vamos en julio?" → mismas condiciones, ida el 10 de julio y la vuelta según los \

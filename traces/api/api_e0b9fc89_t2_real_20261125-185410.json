@@ -1,0 +1,724 @@
+{
+  "pregunta": "¿Y si en vez de 2 somos 4?",
+  "escenario": "api_e0b9fc89_t2",
+  "modo": "real",
+  "modelo": "claude-haiku-5-5",
+  "max_pasos": 6,
+  "recursion_limit": 20,
+  "inicio": "2026-11-25T18:54:10.309+00:00",
+  "fin": "2026-11-25T18:55:12.350+00:00",
+  "duracion_s": 62.04,
+  "estado": "completo",
+  "ruta": [
+    "supervisor",
+    "aprobacion_web",
+    "investigador",
+    "supervisor",
+    "analista",
+    "supervisor",
+    "aprobacion_web",
+    "investigador",
+    "supervisor",
+    "sintesis"
+  ],
+  "pedido": {
+    "origen": "Buenos Aires",
+    "destino": "Puerto Madryn",
+    "fecha_ida": "2027-09-10",
+    "fecha_vuelta": "2027-09-13",
+    "dias": 4,
+    "personas": 4,
+    "presupuesto": 1200000.0,
+    "moneda": "ARS",
+    "supuestos": [
+      "septiembre sin día exacto: ida el 10/09/2027 (septiembre de 2026 ya pasó)",
+      "vuelta calculada como ida + 3 días (4 días de viaje)"
+    ]
+  },
+  "eventos": [
+    {
+      "n": 1,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:54:14.980+00:00",
+      "detalle": {
+        "pedido_extraido": {
+          "origen": "Buenos Aires",
+          "destino": "Puerto Madryn",
+          "fecha_ida": "2027-09-10",
+          "fecha_vuelta": "2027-09-13",
+          "dias": 4,
+          "personas": 4,
+          "presupuesto": 1200000.0,
+          "moneda": "ARS",
+          "supuestos": [
+            "septiembre sin día exacto: ida el 10/09/2027 (septiembre de 2026 ya pasó)",
+            "vuelta calculada como ida + 3 días (4 días de viaje)"
+          ]
+        },
+        "paso": 1,
+        "turno": 2,
+        "siguiente": "investigador",
+        "instruccion": "Buscá precios de referencia para un viaje de Buenos Aires a Puerto Madryn, ida el 2027-09-10 y vuelta el 2027-09-13 (4 días, 3 noches), para 4 personas. Temas a buscar: pasajes (aéreos o de micro Buenos Aires–Puerto Madryn, ida y vuelta, por persona y total para 4 personas), alojamiento (precio por noche para 4 personas, rangos o valores 'desde' están bien), comida (costo diario aproximado), y cambio (cotización del dólar oficial, tarjeta y MEP, no el blue). Actividades de avistaje de ballenas en septiembre también son útiles. Indicá la moneda de cada precio y la fuente (mem-... o URL). Los precios de referencia alcanzan; no hace falta que sean exactos para las fechas.",
+        "temas": [
+          "pasajes",
+          "alojamiento",
+          "comida",
+          "cambio",
+          "actividades"
+        ],
+        "evaluacion": "Seguimiento del turno 1: cambia solo la cantidad de personas (2 → 4), con mismo destino, fechas, origen y presupuesto. No hay aportes todavía (APORTES HASTA AHORA: ninguno), así que ninguna parte de la rúbrica está cubierta: falta R1 (pasajes, alojamiento, comida/actividades), R2 (fuentes), R3 (precios de referencia de pasajes y alojamiento) y R4 (cálculo con validar_viaje y calcular_presupuesto para 4 personas). Los aportes del turno anterior no cuentan. Hay presupuesto, así que hace falta precios del investigador antes que el analista. Corresponde pedir al investigador los precios de pasajes y alojamiento (y comida/actividades) para 4 personas, además de la cotización del dólar, y luego al analista el cálculo.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 2,
+      "nodo": "aprobacion_web",
+      "timestamp": "2026-11-25T18:54:14.993+00:00",
+      "detalle": {
+        "ronda": 1,
+        "turno": 2,
+        "temas_sin_memoria": [],
+        "temas_en_memoria": [
+          "pasajes",
+          "alojamiento",
+          "comida",
+          "cambio"
+        ],
+        "temas_en_guias": [
+          "actividades"
+        ],
+        "pausa": false,
+        "resultado": "sin_pedir",
+        "origen": "memoria",
+        "comentario": ""
+      }
+    },
+    {
+      "n": 3,
+      "nodo": "investigador",
+      "timestamp": "2026-11-25T18:54:35.620+00:00",
+      "detalle": {
+        "ronda": 1,
+        "turno": 2,
+        "instruccion": "Buscá precios de referencia para un viaje de Buenos Aires a Puerto Madryn, ida el 2027-09-10 y vuelta el 2027-09-13 (4 días, 3 noches), para 4 personas. Temas a buscar: pasajes (aéreos o de micro Buenos Aires–Puerto Madryn, ida y vuelta, por persona y total para 4 personas), alojamiento (precio por noche para 4 personas, rangos o valores 'desde' están bien), comida (costo diario aproximado), y cambio (cotización del dólar oficial, tarjeta y MEP, no el blue). Actividades de avistaje de ballenas en septiembre también son útiles. Indicá la moneda de cada precio y la fuente (mem-... o URL). Los precios de referencia alcanzan; no hace falta que sean exactos para las fechas.",
+        "contenido": "## Hallazgos\n\n### Actividades (avistaje de ballenas en septiembre)\n- Entre mayo y diciembre llega la ballena franca austral al Golfo Nuevo para reproducirse y parir, así que septiembre cae dentro de la temporada. Los barcos de avistaje salen desde Puerto Pirámides, en la Península Valdés. También se las ve desde la costa y el muelle de Puerto Madryn. [guia:puerto-madryn#000] y [guia:puerto-madryn#007] (guía)\n- Otras actividades de la guía: snorkel con lobos marinos cerca del puerto, buceo en el Golfo Nuevo, avistaje de orcas en Punta Norte (la guía indica que es caro y poco práctico), Punta Loma (reserva de lobos marinos, a 17 km) y paseos a caballo. [guia:puerto-madryn#007] y [guia:puerto-madryn#006] (guía)\n- Punta Tombo (pingüinos) se visita entre octubre y marzo, así que en septiembre no aplica. La guía también menciona la pingüinera Cabo Dos Bahías como alternativa gratuita. [guia:puerto-madryn#006] (guía)\n- Precio de tours: la guía menciona \"alrededor de AR$2.200 en febrero de 2019\" para Punta Tombo. Es un dato viejo, no un precio actual. [guia:puerto-madryn#006] (guía)\n\n### Pasajes (Buenos Aires – Puerto Madryn)\n- Expedia menciona precios de ida o vuelta desde \"$291\" y \"$237\" hacia Puerto Madryn (PMY). No indica moneda, tramo ni si es por persona. [mem-ba08bd28cd71] (memoria)\n- Skyscanner menciona tarifas redondas \"desde $113\" para el próximo mes. La URL es en USD, así que probablemente sea dólares, pero la fuente no lo confirma. [mem-0fe4922e8859] (memoria)\n- Google Flights muestra precios en UAH (grivnas ucranianas), que no sirven para este viaje. [mem-a77910cb693b] (memoria)\n- No hay precios en ARS por persona ni totales para 4 personas.\n\n### Alojamiento (Puerto Madryn)\n- KAYAK indica que los hoteles son más baratos en septiembre, con un precio promedio de \"$45\". No dice moneda ni si es por persona o por habitación. [mem-2227095dbfb3] (memoria)\n- KAYAK reporta una habitación económica \"desde $49 por noche\" y habitaciones de 4 estrellas \"desde $65 por noche\". No dice moneda ni la capacidad de la habitación. [mem-54d9e60f3af6] (memoria)\n- Una versión de KAYAK en Colombia muestra \"desde $132.564/noche\", probablemente en pesos colombianos, así que no sirve para ARS. [mem-93e5c25f555d] (memoria)\n- No hay un precio confiable por noche para 4 personas en ARS.\n\n### Comida (costo diario aproximado)\n- Una publicación de Facebook menciona \"$44.400 por día\", pero el contexto parece ser de otro viaje y no está claro el destino ni la moneda. [mem-4ce25e8f1ba9] (memoria)\n- Un servicio de viandas ofrece \"5 viandas por $40.000\" (una vianda diaria). Es una oferta de un particular, no un costo de comida de un viajero. [mem-ad0d068f9d8f] (memoria)\n- El blog de Flybondi recomienda restaurantes económicos (Almas Patagónicas, Cara de Perro), pero no da precios. [mem-d7a8a9cb94c0] (memoria)\n\n### Cambio (cotización del dólar, sin blue)\n- Infobae: oficial $1.615; tarjeta $2.099,50; MEP $1.693,68 (ARS por USD). [mem-71caa0983bd4] (memoria)\n- La Nación: oficial venta $1.579,00; tarjeta venta $2.052,70; MEP venta $1.572,90 (ARS por USD). [mem-118a59bdea75] (memoria)\n- Dolarito: tarjeta $2.067; MEP $1.646,44 (ARS por USD). Tiene además referencias de CCL de $1.750,59. [mem-d041e707b47c] (memoria)\n- Las cotizaciones de las tres fuentes difieren entre sí, por lo que conviene tomar un rango y confirmar el día de la compra.\n\n## Datos que faltan\n- Pasajes: no hay precio en ARS por persona, ida y vuelta, ni total para 4 personas. Las cifras de Expedia y Skyscanner no tienen moneda confirmada.\n- Alojamiento: no hay precio por noche en ARS para 4 personas, ni la unidad (por habitación o por persona).\n- Comida: no hay un costo diario confiable por persona en ARS. Los datos son de publicaciones sueltas.\n- Búsqueda web: no se pudo traer información nueva porque el sistema indicó que la memoria ya tenía datos vigentes con precios. Los datos faltantes podrían conseguirse con una búsqueda web específica si el supervisor lo autoriza.",
+        "fuentes": [
+          {
+            "ref": "guia:puerto-madryn#007",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Puerto_Madryn",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Puerto Madryn",
+            "seccion": "Hacer",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:puerto-madryn#000",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Puerto_Madryn",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Puerto Madryn",
+            "seccion": "Comprender",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:puerto-madryn#006",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Puerto_Madryn",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Puerto Madryn",
+            "seccion": "Ver",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:puerto-madryn#012",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Puerto_Madryn",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Puerto Madryn",
+            "seccion": "Turismo Aventura",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "mem-ba08bd28cd71",
+            "origen": "memoria",
+            "tema": "pasajes",
+            "url": "https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-0fe4922e8859",
+            "origen": "memoria",
+            "tema": "pasajes",
+            "url": "https://www.skyscanner.com/us/es-mx/usd/rutas/buea/pmy/buenos-aires-a-puerto-madryn.html",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-a77910cb693b",
+            "origen": "memoria",
+            "tema": "pasajes",
+            "url": "https://www.google.com/travel/flights?tfs=CBwQARoeag0IAxIJL20vMDFseTVtcg0IAxIJL20vMDRicGZ6Gh5qDQgDEgkvbS8wNGJwZnpyDQgDEgkvbS8wMWx5NW1AAUgBcAGCAQsI____________AZgBAQ&tfu=KgIIAw&hl=es",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-2227095dbfb3",
+            "origen": "memoria",
+            "tema": "alojamiento",
+            "url": "https://www.es.kayak.com/Hoteles-en-Puerto-Madryn.5374.hotel.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-54d9e60f3af6",
+            "origen": "memoria",
+            "tema": "alojamiento",
+            "url": "https://www.kayak.com.sv/Hoteles-en-Puerto-Madryn.5374.hotel.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-93e5c25f555d",
+            "origen": "memoria",
+            "tema": "alojamiento",
+            "url": "https://www.kayak.com.co/Hoteles-en-Puerto-Madryn.5374.hotel.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-4ce25e8f1ba9",
+            "origen": "memoria",
+            "tema": "comida",
+            "url": "https://www.facebook.com/groups/724633018682127/posts/737466967398732",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-d7a8a9cb94c0",
+            "origen": "memoria",
+            "tema": "comida",
+            "url": "https://blog.flybondi.com/post/donde-comer-en-puerto-madryn-barato",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-ad0d068f9d8f",
+            "origen": "memoria",
+            "tema": "comida",
+            "url": "https://www.facebook.com/masenmadryn/posts/-organiz%C3%A1-tus-comidas-y-ahorr%C3%A1-todos-los-d%C3%ADas-vas-a-comer-rico-y-variado-y-como-/1561478349343106",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-71caa0983bd4",
+            "origen": "memoria",
+            "tema": "cambio",
+            "url": "https://www.infobae.com/economia/divisas/dolar-hoy",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-118a59bdea75",
+            "origen": "memoria",
+            "tema": "cambio",
+            "url": "https://www.lanacion.com.ar/dolar-hoy",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-d041e707b47c",
+            "origen": "memoria",
+            "tema": "cambio",
+            "url": "https://www.dolarito.ar",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          }
+        ],
+        "herramientas": [
+          "consultar_guias",
+          "buscar_en_memoria",
+          "buscar_en_web"
+        ],
+        "llamadas": [
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "actividades",
+              "consulta": "avistaje de ballenas en septiembre, qué hacer y ver"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'avistaje de ballenas en septiembre, qué hacer y ver' [destino=Puerto Madryn, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:puerto-madryn#007] origen=guia | Puerto Madryn § Hacer | url=https://es.wikivoyage.org/wiki/Puerto_Madryn\n- **Avistaje de ballenas**, la ballena franca austral utiliza las aguas del Golfo Nuevo para su reproducción y parto. Se pueden ver fácilmente desde la costa y el muelle. Los barcos para el avistaje de ballenas salen desde Puerto Pir...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "pasajes",
+              "consulta": "pasajes avión o micro Buenos Aires a Puerto Madryn ida y vuelta precio por persona"
+            },
+            "resultado": "MEMORIA — 3 datos vigentes para 'pasajes avión o micro Buenos Aires a Puerto Madryn ida y vuelta precio por persona':\n\n[mem-ba08bd28cd71] origen=memoria | tema=pasajes | buscado hace 0.0 días (2026-11-25) | url=https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn\nbaratos de ida o vuelta de Buenos Aires … con precio de $291. a Puerto Madryn (PMY - El Tehuelche) fue de $237. Los boletos a buenos precios duran poco tiempo,\n\n[mem-0fe4922e8859] origen=memoria | tema=pasajes | buscado hace 0.0 días (2026-11-25) | url=https://www.skyscanner.com/us/es-mx/usd/rutas/buea/pmy/buenos-...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "alojamiento",
+              "consulta": "precio por noche alojamiento hotel o cabaña para 4 personas"
+            },
+            "resultado": "MEMORIA — 3 datos vigentes para 'precio por noche alojamiento hotel o cabaña para 4 personas':\n\n[mem-2227095dbfb3] origen=memoria | tema=alojamiento | buscado hace 0.0 días (2026-11-25) | url=https://www.es.kayak.com/Hoteles-en-Puerto-Madryn.5374.hotel.ksp\n## KAYAK busca hoteles en Puerto Madryn en cientos de webs de viajes a la vez ## Filtros populares de hoteles en Puerto Madryn ## Información de KAYAK sobre los hoteles en Puerto Madryn ### ¿En qué mes es más barato quedarse en un hotel en Puerto Madryn? #### Los hoteles son más baratos en Puerto Madryn en septiembre, con un precio promedio ...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "comida",
+              "consulta": "costo diario comida restaurantes precio promedio"
+            },
+            "resultado": "MEMORIA — 3 datos vigentes para 'costo diario comida restaurantes precio promedio':\n\n[mem-4ce25e8f1ba9] origen=memoria | tema=comida | buscado hace 0.0 días (2026-11-25) | url=https://www.facebook.com/groups/724633018682127/posts/737466967398732\npromedio desde 100 reales. promedio 40 reales ・ $44.400 por día ・ precio promedio $5.0000. El promedio por persona en dolares fue: desayuno 4\n\n[mem-d7a8a9cb94c0] origen=memoria | tema=comida | buscado hace 0.0 días (2026-11-25) | url=https://blog.flybondi.com/post/donde-comer-en-puerto-madryn-barato\nAlmas Patagónicas se destaca por ofrecer platos típic...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "cambio",
+              "consulta": "cotización dólar oficial tarjeta MEP"
+            },
+            "resultado": "MEMORIA — 3 datos vigentes para 'cotización dólar oficial tarjeta MEP':\n\n[mem-71caa0983bd4] origen=memoria | tema=cambio | buscado hace 0.0 días (2026-11-25) | url=https://www.infobae.com/economia/divisas/dolar-hoy\nFuente: Reuters - Real Time\n\nDólar oficial\n\n$1.615\n\nDólar tarjeta\n\n$2.099,50\n\nDólar blue\n\n$1.700\n\nDólar MEP\n\n$1.693,68\n\nCONTADO CON LIQUI\n\n$1.797,51\n\nRiesgo País \n\n1.094\n\nFuente: Reuters - Real Time\n\n# Cotización del dólar hoy en Argentina [...] Conocé las diferentes cotizaciones disponibles en el mercado: oficial, solidario, MEP, CCL y blue. Estas tasas se actualizan varias veces a...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          },
+          {
+            "herramienta": "buscar_en_web",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "pasajes",
+              "consulta": "precio vuelo o micro Buenos Aires a Puerto Madryn ida y vuelta por persona en pesos argentinos",
+              "forzar": true
+            },
+            "resultado": "NO SE BUSCÓ EN LA WEB: la memoria ya tiene datos vigentes CON PRECIOS sobre esto: forzar=true no aplica, usá estos.\n\nMEMORIA — 3 datos vigentes para 'precio vuelo o micro Buenos Aires a Puerto Madryn ida y vuelta por persona en pesos argentinos':\n\n[mem-ba08bd28cd71] origen=memoria | tema=pasajes | buscado hace 0.0 días (2026-11-25) | url=https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn\nbaratos de ida o vuelta de Buenos Aires … con precio de $291. a Puerto Madryn (PMY - El Tehuelche) fue de $237. Los boletos a buenos precios duran poco tiempo,\n\n[mem-0fe4922e8859] origen...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          },
+          {
+            "herramienta": "buscar_en_web",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "alojamiento",
+              "consulta": "precio por noche hotel o cabaña Puerto Madryn en pesos argentinos para 4 personas",
+              "forzar": true
+            },
+            "resultado": "NO SE BUSCÓ EN LA WEB: la memoria ya tiene datos vigentes CON PRECIOS sobre esto: forzar=true no aplica, usá estos.\n\nMEMORIA — 3 datos vigentes para 'precio por noche hotel o cabaña Puerto Madryn en pesos argentinos para 4 personas':\n\n[mem-2227095dbfb3] origen=memoria | tema=alojamiento | buscado hace 0.0 días (2026-11-25) | url=https://www.es.kayak.com/Hoteles-en-Puerto-Madryn.5374.hotel.ksp\n## KAYAK busca hoteles en Puerto Madryn en cientos de webs de viajes a la vez ## Filtros populares de hoteles en Puerto Madryn ## Información de KAYAK sobre los hoteles en Puerto Madryn ### ¿En qué mes es...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          },
+          {
+            "herramienta": "buscar_en_web",
+            "argumentos": {
+              "destino": "Puerto Madryn",
+              "tema": "comida",
+              "consulta": "precio promedio comida restaurante Puerto Madryn en pesos por persona",
+              "forzar": true
+            },
+            "resultado": "NO SE BUSCÓ EN LA WEB: la memoria ya tiene datos vigentes CON PRECIOS sobre esto: forzar=true no aplica, usá estos.\n\nMEMORIA — 3 datos vigentes para 'precio promedio comida restaurante Puerto Madryn en pesos por persona':\n\n[mem-d7a8a9cb94c0] origen=memoria | tema=comida | buscado hace 0.0 días (2026-11-25) | url=https://blog.flybondi.com/post/donde-comer-en-puerto-madryn-barato\nAlmas Patagónicas se destaca por ofrecer platos típicos de la región a precios muy convenientes, especialmente durante la campaña de descuentos turísticos. Este restaurante familiar se especializa en cocina patagónica t...",
+            "timestamp": "2026-11-25T18:54:35.614+00:00"
+          }
+        ],
+        "cobertura": [
+          {
+            "tema": "actividades",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "pasajes",
+            "fuentes": 3,
+            "memoria": 3,
+            "web": 0,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "alojamiento",
+            "fuentes": 3,
+            "memoria": 3,
+            "web": 0,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "comida",
+            "fuentes": 3,
+            "memoria": 3,
+            "web": 0,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "cambio",
+            "fuentes": 3,
+            "memoria": 3,
+            "web": 0,
+            "guia": 0,
+            "con_precios": true
+          }
+        ],
+        "observaciones": []
+      }
+    },
+    {
+      "n": 4,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:54:39.263+00:00",
+      "detalle": {
+        "paso": 2,
+        "turno": 2,
+        "siguiente": "analista",
+        "instruccion": "Validá el viaje con los datos del pedido (Buenos Aires → Puerto Madryn, ida 2027-09-10, vuelta 2027-09-13, 4 días/3 noches, 4 personas, presupuesto 1.200.000 ARS). Ejecutá validar_viaje y calcular_presupuesto usando los precios de referencia del investigador (pasajes y alojamiento de la memoria mem-ba08bd28cd71, mem-0fe4922e8859, mem-54d9e60f3af6, mem-2227095dbfb3, y comida y cambio de sus hallazgos). Aclará las unidades dudosas (USD vs ARS, por persona vs total) y explicitá los supuestos. Decí si entra en 1.200.000 ARS para 4 personas, y si no se puede calcular, decilo claramente con el motivo.",
+        "temas": [],
+        "evaluacion": "R1 Cobertura: faltan precios utilizables de pasajes y alojamiento en ARS para 4 personas; comida sin monto confiable; cambio tiene fuentes de memoria pero no se distingue dólar oficial/tarjeta/MEP. R2 Fuentes: todos los aportes tienen fuentes (guía o mem-). R3 Precios: pasajes y alojamiento tienen montos de referencia en moneda dudosa (USD/desconocida), lo que alcanza como referencia si el analista aclara unidades, pero el investigador debe precisar moneda y precio por persona/total. R4 Cálculo: el analista todavía no calculó nada. R5 Observaciones: ninguna pendiente. R6 Coherencia: el aporte #1 pide 4 personas y el turno anterior era 2; hay que recalcular con 4 personas. R7 Economía: la pregunta pide presupuesto, así que corresponden pasajes, alojamiento, comida, cambio y actividades ya cubiertas por guía. Como el investigador ya trajo precios de referencia de todos los temas, el siguiente paso es el analista para validar y calcular con 4 personas.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 5,
+      "nodo": "analista",
+      "timestamp": "2026-11-25T18:54:49.004+00:00",
+      "detalle": {
+        "ronda": 2,
+        "turno": 2,
+        "instruccion": "Validá el viaje con los datos del pedido (Buenos Aires → Puerto Madryn, ida 2027-09-10, vuelta 2027-09-13, 4 días/3 noches, 4 personas, presupuesto 1.200.000 ARS). Ejecutá validar_viaje y calcular_presupuesto usando los precios de referencia del investigador (pasajes y alojamiento de la memoria mem-ba08bd28cd71, mem-0fe4922e8859, mem-54d9e60f3af6, mem-2227095dbfb3, y comida y cambio de sus hallazgos). Aclará las unidades dudosas (USD vs ARS, por persona vs total) y explicitá los supuestos. Decí si entra en 1.200.000 ARS para 4 personas, y si no se puede calcular, decilo claramente con el motivo.",
+        "contenido": "## Validación\n**VÁLIDO:** Buenos Aires → Puerto Madryn, del 2027-09-10 al 2027-09-13 (4 días, 3 noches), 4 personas, presupuesto $1.200.000 ARS.\n\nSupuestos del pedido:\n- \"Septiembre\" sin día exacto: se toma la ida el 10/09/2027, porque septiembre de 2026 ya pasó.\n- La vuelta es ida + 3 días (4 días de viaje).\n\n## Presupuesto\n**No calculado.** La herramienta `calcular_presupuesto` necesita precios confiables de pasajes, alojamiento y comida en ARS para 4 personas. Con los hallazgos actuales no se puede armar ningún escenario sin inventar cifras.\n\nMotivos, por rubro:\n\n- **Pasajes:** Expedia muestra \"$291\" y \"$237\" sin moneda, sin tramo y sin aclarar si es por persona. Skyscanner da \"desde $113\", que probablemente sea USD, pero la fuente no lo confirma. Google Flights está en UAH, que no sirve. No hay un precio por persona en ARS.\n- **Alojamiento:** KAYAK da \"$45\" promedio, \"desde $49\" (habitación económica) y \"desde $65\" (4 estrellas). No dicen moneda ni si el precio es por habitación o por persona. Con esas dos variables abiertas, el total para 4 personas puede variar varias veces. El precio de Colombia (\"$132.564\") no sirve para ARS.\n- **Comida:** no hay un costo diario confiable por persona. La cifra de Facebook (\"$44.400 por día\") no tiene destino ni moneda. La oferta de viandas (\"5 viandas por $40.000\") es de un particular y no representa el gasto de un viajero. Como la comida es imprescindible para el cálculo, no la estimé.\n- **Tipo de cambio (para referencia):** las tres fuentes dan valores distintos. Oficial (Infobae $1.615; La Nación $1.579), tarjeta (Infobae $2.099,50; La Nación $2.052,70; Dolarito $2.067) y MEP (Infobae $1.693,68; La Nación $1.572,90; Dolarito $1.646,44). Esto no alcanza para convertir nada sin confirmar qué moneda tienen los precios.\n- **Actividades (no bloquean el cálculo):** la guía indica avistaje de ballenas en septiembre desde Puerto Pirámides, pero no da precio actual. El único precio citado es de 2019 y no sirve.\n\n## Conclusión\n**No se puede determinar si entra en $1.200.000 ARS para 4 personas.** Falta un precio confiable de pasajes por persona en ARS, un precio de alojamiento con unidad y moneda claras, y un costo diario de comida. Con los datos actuales, cualquier cifra sería una suposición.\n\n## Datos que faltan\n- **Pasajes:** precio ida y vuelta por persona, en ARS o con moneda confirmada (Expedia y Skyscanner no lo aclaran).\n- **Alojamiento:** precio por noche, con moneda, y si es por habitación o por persona. Para 4 personas se necesita la capacidad de la habitación.\n- **Comida:** costo diario por persona en ARS, de una fuente de viajero o de la guía.\n- **Actividades (opcional):** precio actual del avistaje de ballenas en Puerto Pirámides para septiembre 2027.\n- **Tipo de cambio:** confirmar qué cotización usar (tarjeta o MEP) una vez que se sepa la moneda de los precios.\n\nPara completar el análisis hace falta una búsqueda web específica de estos rubros. El supervisor debe autorizarla, porque la memoria no tiene esos datos en forma utilizable.",
+        "fuentes": [],
+        "herramientas": [
+          "validar_viaje"
+        ],
+        "llamadas": [
+          {
+            "herramienta": "validar_viaje",
+            "argumentos": {
+              "origen": "Buenos Aires",
+              "destino": "Puerto Madryn",
+              "fecha_ida": "2027-09-10",
+              "fecha_vuelta": "2027-09-13",
+              "personas": 4,
+              "presupuesto": 1200000,
+              "moneda": "ARS",
+              "dias_pedidos": 4
+            },
+            "resultado": "VÁLIDO: Buenos Aires → Puerto Madryn, del 2027-09-10 al 2027-09-13 (4 días, 3 noches), 4 personas, presupuesto $ 1.200.000.",
+            "timestamp": "2026-11-25T18:54:48.999+00:00"
+          }
+        ],
+        "cobertura": [],
+        "observaciones": [
+          "El viaje es válido y hay presupuesto, pero no se calculó el presupuesto con éxito."
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:54:53.721+00:00",
+      "detalle": {
+        "paso": 3,
+        "turno": 2,
+        "siguiente": "investigador",
+        "instruccion": "Hay presupuesto para 4 personas (Buenos Aires → Puerto Madryn, ida 2027-09-10, vuelta 2027-09-13, 4 noches/días según pedido, 1.200.000 ARS). Los hallazgos anteriores no sirven para calcular porque no tienen moneda ni unidad claras. Buscá en memoria (y web solo si hace falta y con permiso) precios de referencia en ARS: (1) comida: costo diario aproximado por persona en Puerto Madryn en ARS; (2) pasajes: precio ida y vuelta Buenos Aires–Puerto Madryn en ARS, por persona o total; (3) alojamiento: precio por noche en Puerto Madryn en ARS, indicando si es por habitación o por persona. Para cada precio indicá moneda, unidad y fuente (mem-... o URL). Si no encontrás ARS, decilo explícitamente con la fuente. No busques de nuevo cambio ni actividades: ya están cubiertos.",
+        "temas": [
+          "comida",
+          "pasajes",
+          "alojamiento"
+        ],
+        "evaluacion": "R1 Cobertura: pasajes, alojamiento, comida y cambio tienen fuentes de memoria, y actividades de guía; pero los precios no son utilizables en ARS. R2 Fuentes: todos los aportes citan fuentes (guía o mem-...). R3 Precios: pasajes y alojamiento tienen montos, aunque sin moneda ni unidad clara (Expedia \"$291\"/\"$237\", KAYAK \"$45\"/\"$49\"/\"$65\"); son de referencia, pero la moneda y si son por persona no están aclarados. Comida no tiene un costo diario confiable. R4 Cálculo: el analista validó el viaje (VÁLIDO) pero NO ejecutó calcular_presupuesto con éxito; no dijo si entra. R5 Observaciones: el aporte del analista tiene una observación sin resolver (\"no se pudo calcular el presupuesto con éxito\"). R6 Coherencia: el investigador buscó para 4 personas, pero los datos del turno anterior y la memoria no aclaran unidades; no hay contradicción directa entre aportes. R7: la pregunta sí requiere presupuesto, así que corresponde seguir. Falta resolver: la comida (costo diario en ARS) y la unidad/moneda de pasajes y alojamiento. Como es la primera corrección posible para el investigador, pido una búsqueda acotada de comida y de aclaración de moneda/unidad, sin repetir cambio ni actividades que ya tienen fuentes. Luego el analista recalcula.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 7,
+      "nodo": "aprobacion_web",
+      "timestamp": "2026-11-25T18:54:53.731+00:00",
+      "detalle": {
+        "ronda": 3,
+        "turno": 2,
+        "temas_sin_memoria": [],
+        "temas_en_memoria": [
+          "comida",
+          "pasajes",
+          "alojamiento"
+        ],
+        "temas_en_guias": [],
+        "pausa": false,
+        "resultado": "sin_pedir",
+        "origen": "memoria",
+        "comentario": ""
+      }
+    },
+    {
+      "n": 8,
+      "nodo": "investigador",
+      "timestamp": "2026-11-25T18:55:04.184+00:00",
+      "detalle": {
+        "ronda": 3,
+        "turno": 2,
+        "instruccion": "Hay presupuesto para 4 personas (Buenos Aires → Puerto Madryn, ida 2027-09-10, vuelta 2027-09-13, 4 noches/días según pedido, 1.200.000 ARS). Los hallazgos anteriores no sirven para calcular porque no tienen moneda ni unidad claras. Buscá en memoria (y web solo si hace falta y con permiso) precios de referencia en ARS: (1) comida: costo diario aproximado por persona en Puerto Madryn en ARS; (2) pasajes: precio ida y vuelta Buenos Aires–Puerto Madryn en ARS, por persona o total; (3) alojamiento: precio por noche en Puerto Madryn en ARS, indicando si es por habitación o por persona. Para cada precio indicá moneda, unidad y fuente (mem-... o URL). Si no encontrás ARS, decilo explícitamente con la fuente. No busques de nuevo cambio ni actividades: ya están cubiertos.",
+        "contenido": "## Hallazgos\n\n### Comida\n- Ninguno de los datos en memoria sirve como costo diario por persona en ARS. Ver \"Datos que faltan\".\n- Referencia descartada: \"$40.000\" por 5 viandas, de un servicio de viandas caseras. No dice si es por persona ni por día, y no es un costo diario de comidas — [https://www.facebook.com/masenmadryn/posts/-organiz%C3%A1-tus-comidas-y-ahorr%C3%A1-todos-los-d%C3%ADas-vas-a-comer-rico-y-variado-y-como-/1561478349343106] (memoria, mem-ad0d068f9d8f)\n- Referencia descartada: \"$44.400 por día\" y \"promedio 40 reales\". La moneda es real (BRL) o no está clara, y el texto menciona dólares. No es ARS en Puerto Madryn — [https://www.facebook.com/groups/724633018682127/posts/737466967398732] (memoria, mem-4ce25e8f1ba9)\n\n### Pasajes (Buenos Aires – Puerto Madryn, ida y vuelta)\n- No hay precio confirmado en ARS. Los valores encontrados no indican moneda:\n  - \"$237\" y \"$291\", ida o vuelta, sin moneda — [https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn] (memoria, mem-ba08bd28cd71)\n  - \"desde $113\" para tarifas redondas, en una URL con `usd` — [https://www.skyscanner.com/us/es-mx/usd/rutas/buea/pmy/buenos-aires-a-puerto-madryn.html] (memoria, mem-0fe4922e8859). Lo más probable es que sea USD, pero no está confirmado.\n- Precio en UAH (hryvnia), no sirve: ida y vuelta desde 4.375 UAH, sin unidad de pasajero clara — [https://www.google.com/travel/flights?tfs=CBwQARoeag0IAxIJL20vMDFseTVtcg0IAxIJL20vMDRicGZ6Gh5qDQgDEgkvbS8wNGJwZnpyDQgDEgkvbS8wMWx5NW1AAUgBcAGCAQsI____________AZgBAQ&tfu=KgIIAw&hl=es] (memoria, mem-a77910cb693b)\n\n### Alojamiento (Puerto Madryn, por noche)\n- Los precios de KAYAK no tienen moneda confirmada ni indican si son por habitación o por persona:\n  - \"$49 por noche\" (habitación más barata, 3 estrellas desde $49; 4 estrellas desde $65). Dominio .sv, así que podría ser USD — [https://www.kayak.com.sv/Hoteles-en-Puerto-Madryn.5374.hotel.ksp] (memoria, mem-54d9e60f3af6)\n  - \"$45 de promedio en septiembre\" y \"$39\" de oferta, sin moneda — [https://www.es.kayak.com/Hoteles-en-Puerto-Madryn.5374.hotel.ksp] (memoria, mem-2227095dbfb3)\n  - \"desde $132.564/noche\" — dominio .co, así que podría ser COP y no ARS — [https://www.kayak.com.co/Hoteles-en-Puerto-Madryn.5374.hotel.ksp] (memoria, mem-93e5c25f555d)\n- Ningún dato confirma ARS ni la unidad (por habitación o por persona).\n\n## Datos que faltan\n- **Comida:** no hay costo diario por persona en ARS en memoria. Hace falta una búsqueda web.\n- **Pasajes:** no hay precio ida y vuelta en ARS confirmado. Los valores de memoria están en USD, UAH o sin moneda.\n- **Alojamiento:** no hay precio por noche en ARS confirmado ni unidad clara (por habitación o por persona). Los valores de memoria son de moneda incierta.\n- **Recomendación:** no busqué en la web porque el supervisor pidió hacerlo solo con permiso. Si lo autorizan, hago una búsqueda web por cada tema (comida, pasajes y alojamiento), pidiendo explícitamente precios en pesos argentinos, con la unidad indicada.",
+        "fuentes": [
+          {
+            "ref": "mem-ad0d068f9d8f",
+            "origen": "memoria",
+            "tema": "comida",
+            "url": "https://www.facebook.com/masenmadryn/posts/-organiz%C3%A1-tus-comidas-y-ahorr%C3%A1-todos-los-d%C3%ADas-vas-a-comer-rico-y-variado-y-como-/1561478349343106",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-4ce25e8f1ba9",
+            "origen": "memoria",
+            "tema": "comida",
+            "url": "https://www.facebook.com/groups/724633018682127/posts/737466967398732",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-d7a8a9cb94c0",
+            "origen": "memoria",
+            "tema": "comida",
+            "url": "https://blog.flybondi.com/post/donde-comer-en-puerto-madryn-barato",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-ba08bd28cd71",
+            "origen": "memoria",
+            "tema": "pasajes",
+            "url": "https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-0fe4922e8859",
+            "origen": "memoria",
+            "tema": "pasajes",
+            "url": "https://www.skyscanner.com/us/es-mx/usd/rutas/buea/pmy/buenos-aires-a-puerto-madryn.html",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-a77910cb693b",
+            "origen": "memoria",
+            "tema": "pasajes",
+            "url": "https://www.google.com/travel/flights?tfs=CBwQARoeag0IAxIJL20vMDFseTVtcg0IAxIJL20vMDRicGZ6Gh5qDQgDEgkvbS8wNGJwZnpyDQgDEgkvbS8wMWx5NW1AAUgBcAGCAQsI____________AZgBAQ&tfu=KgIIAw&hl=es",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-54d9e60f3af6",
+            "origen": "memoria",
+            "tema": "alojamiento",
+            "url": "https://www.kayak.com.sv/Hoteles-en-Puerto-Madryn.5374.hotel.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-2227095dbfb3",
+            "origen": "memoria",
+            "tema": "alojamiento",
+            "url": "https://www.es.kayak.com/Hoteles-en-Puerto-Madryn.5374.hotel.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "mem-93e5c25f555d",
+            "origen": "memoria",
+            "tema": "alojamiento",
+            "url": "https://www.kayak.com.co/Hoteles-en-Puerto-Madryn.5374.hotel.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          }
+        ],
+        "herramientas": [
+          "buscar_en_memoria"
+        ],
+        "llamadas": [
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "consulta": "costo diario comida por persona en pesos argentinos",
+              "destino": "Puerto Madryn",
+              "tema": "comida"
+            },
+            "resultado": "MEMORIA — 3 datos vigentes para 'costo diario comida por persona en pesos argentinos':\n\n[mem-ad0d068f9d8f] origen=memoria | tema=comida | buscado hace 0.0 días (2026-11-25) | url=https://www.facebook.com/masenmadryn/posts/-organiz%C3%A1-tus-comidas-y-ahorr%C3%A1-todos-los-d%C3%ADas-vas-a-comer-rico-y-variado-y-como-/1561478349343106\nNo tenés ganas de cocinar? Yo te cocino 5 viandas , por $40.000 Una vianda diaria , o todas juntas ✨❤️ Hago envíos diariamente ✨ Pedidos\n\n[mem-4ce25e8f1ba9] origen=memoria | tema=comida | buscado hace 0.0 días (2026-11-25) | url=https://www.facebook.com/groups/7246...",
+            "timestamp": "2026-11-25T18:55:04.179+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "consulta": "precio pasaje ida y vuelta Buenos Aires Puerto Madryn en pesos por persona",
+              "destino": "Puerto Madryn",
+              "tema": "pasajes"
+            },
+            "resultado": "MEMORIA — 3 datos vigentes para 'precio pasaje ida y vuelta Buenos Aires Puerto Madryn en pesos por persona':\n\n[mem-ba08bd28cd71] origen=memoria | tema=pasajes | buscado hace 0.0 días (2026-11-25) | url=https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn\nbaratos de ida o vuelta de Buenos Aires … con precio de $291. a Puerto Madryn (PMY - El Tehuelche) fue de $237. Los boletos a buenos precios duran poco tiempo,\n\n[mem-0fe4922e8859] origen=memoria | tema=pasajes | buscado hace 0.0 días (2026-11-25) | url=https://www.skyscanner.com/us/es-mx/usd/rutas/buea/pmy/buenos-aires-a-...",
+            "timestamp": "2026-11-25T18:55:04.179+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "consulta": "precio por noche alojamiento hotel en pesos por habitación",
+              "destino": "Puerto Madryn",
+              "tema": "alojamiento"
+            },
+            "resultado": "MEMORIA — 3 datos vigentes para 'precio por noche alojamiento hotel en pesos por habitación':\n\n[mem-54d9e60f3af6] origen=memoria | tema=alojamiento | buscado hace 0.0 días (2026-11-25) | url=https://www.kayak.com.sv/Hoteles-en-Puerto-Madryn.5374.hotel.ksp\nLa habitación más barata en un alojamiento tipo hotel en Puerto Madryn para el próximo fin de semana encontrada en KAYAK en los últimos 3 días costaba $49 por noche. Para las mismas fechas, se encontraron habitaciones de 3 estrellas en un alojamiento tipo hotel desde $49 por noche y habitaciones de 4 estrellas en alojamientos tipo hotel desde...",
+            "timestamp": "2026-11-25T18:55:04.179+00:00"
+          }
+        ],
+        "cobertura": [
+          {
+            "tema": "comida",
+            "fuentes": 3,
+            "memoria": 3,
+            "web": 0,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "pasajes",
+            "fuentes": 3,
+            "memoria": 3,
+            "web": 0,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "alojamiento",
+            "fuentes": 3,
+            "memoria": 3,
+            "web": 0,
+            "guia": 0,
+            "con_precios": true
+          }
+        ],
+        "observaciones": []
+      }
+    },
+    {
+      "n": 9,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:55:07.251+00:00",
+      "detalle": {
+        "paso": 4,
+        "turno": 2,
+        "siguiente": "FINALIZAR",
+        "instruccion": "",
+        "temas": [],
+        "evaluacion": "R1 Cobertura: faltan pasajes, alojamiento y comida con precios utilizables en ARS; hay cambio (oficial, tarjeta, MEP) pero no se pudo convertir nada. R2 Fuentes: todos los aportes tienen fuentes (guía, memoria). R3 Precios: no hay montos de pasajes ni alojamiento confiables en ARS para 4 personas; los existentes están sin moneda o son UAH/COP, aunque la rúbrica admite precios de referencia, la moneda sigue sin resolverse. R4 Cálculo: el analista validó el viaje (VÁLIDO) pero no ejecutó calcular_presupuesto con precios utilizables; dijo que no se puede calcular. R5 Observaciones: el aporte #2 tiene la observación \"no se calculó el presupuesto con éxito\" sin resolver; el investigador ya rehizo la búsqueda en ronda 3 sin lograr ARS, por lo que no quedan correcciones útiles con el mismo especialista (ya se usó la corrección). R6 Coherencia: el investigador usa 4 personas y 4 noches/días según pedido, sin contradicciones graves en fechas. R7 Economía: el pedido sí tiene presupuesto, así que no aplica el atajo de temas estables. Además, la búsqueda web ya fue la alternativa de corrección y se reintentar agotaría el límite de decisiones sin asegurar datos en ARS. Conviene finalizar: la síntesis debe informar al usuario que no se pudo confirmar si entra en $1.200.000 para 4 personas y qué precios faltan.\"",
+        "forzada": false
+      }
+    },
+    {
+      "n": 10,
+      "nodo": "sintesis",
+      "timestamp": "2026-11-25T18:55:12.337+00:00",
+      "detalle": {
+        "respuesta": "## Respuesta\n\nNo podemos confirmar si con 4 personas el viaje entra en $1.200.000. Con los datos que tenemos, cualquier cifra sería una suposición.\n\n**Qué cambia con 4 personas:** el pedido ahora es para 4 viajeros, a diferencia de los 2 del turno anterior. Los pasajes, el alojamiento y la comida se duplican, así que el costo total se acerca al doble, pero no podemos calcularlo porque ningún precio confirmado está en pesos argentinos.\n\n## Presupuesto\n\n**No calculado.** Faltan precios confiables para los tres rubros principales:\n\n- **Pasajes:** Expedia muestra \"$237\" y \"$291\" sin moneda ni aclaración de si son por persona [mem-ba08bd28cd71]. Skyscanner dice \"desde $113\", probablemente en USD, sin confirmarlo [mem-0fe4922e8859]. Google Flights está en UAH y no sirve [mem-a77910cb693b].\n- **Alojamiento:** KAYAK da \"$45\" de promedio en septiembre y \"desde $49\" por noche, sin moneda ni aclarar si es por habitación o por persona [mem-2227095dbfb3] [mem-54d9e60f3af6]. El precio de Colombia (\"$132.564\") no sirve [mem-93e5c25f555d].\n- **Comida:** no hay un costo diario por persona confiable en ARS. Las cifras de Facebook son de otro contexto o de un particular [mem-4ce25e8f1ba9] [mem-ad0d068f9d8f].\n\n**Tipo de cambio (referencia):** oficial entre $1.579 y $1.615; tarjeta entre $2.052 y $2.099; MEP entre $1.572 y $1.693 por USD [mem-71caa0983bd4] [mem-118a59bdea75] [mem-d041e707b47c]. Conviene confirmar la moneda de los precios antes de elegir cuál usar.\n\n## Itinerario\n\nNo armamos itinerario día por día. Sin presupuesto confirmado no sabemos qué combinación de actividades y alojamiento es viable.\n\nLo que sí sabemos sobre las actividades: en septiembre se puede hacer avistaje de ballenas (ballena franca austral) desde Puerto Pirámides, en la Península Valdés [guia:puerto-madryn#000] [guia:puerto-madryn#007]. También hay snorkel con lobos marinos, buceo en el Golfo Nuevo y Punta Loma, a 17 km [guia:puerto-madryn#007]. Punta Tombo no aplica en septiembre porque se visita de octubre a marzo [guia:puerto-madryn#006]. Para el clima, la guía indica temperaturas bajas (promedio de 12 °C) y vientos muy intensos en esa época [guia:puerto-madryn#002].\n\n## Lo que no pudimos averiguar\n\n- Precio de pasajes ida y vuelta en ARS, por persona.\n- Precio por noche en ARS, con unidad clara (habitación o persona).\n- Costo diario de comida por persona en ARS.\n- Precio actual del avistaje de ballenas. El único dato citado es de 2019.\n\nPara completar el cálculo hace falta una búsqueda web específica por cada rubro, pidiendo precios en pesos argentinos. Requiere autorización del supervisor.\n\n## Fuentes\n- [guía] Wikivoyage, «Puerto Madryn» § Hacer — https://es.wikivoyage.org/wiki/Puerto_Madryn (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Puerto Madryn» § Comprender — https://es.wikivoyage.org/wiki/Puerto_Madryn (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Puerto Madryn» § Ver — https://es.wikivoyage.org/wiki/Puerto_Madryn (CC BY-SA 4.0)\n- [memoria] mem-ba08bd28cd71 → https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn — pasajes, buscado el 2026-11-25\n- [memoria] mem-0fe4922e8859 → https://www.skyscanner.com/us/es-mx/usd/rutas/buea/pmy/buenos-aires-a-puerto-madryn.html — pasajes, buscado el 2026-11-25\n- [memoria] mem-a77910cb693b → https://www.google.com/travel/flights?tfs=CBwQARoeag0IAxIJL20vMDFseTVtcg0IAxIJL20vMDRicGZ6Gh5qDQgDEgkvbS8wNGJwZnpyDQgDEgkvbS8wMWx5NW1AAUgBcAGCAQsI____________AZgBAQ&tfu=KgIIAw&hl=es — pasajes, buscado el 2026-11-25\n- [memoria] mem-2227095dbfb3 → https://www.es.kayak.com/Hoteles-en-Puerto-Madryn.5374.hotel.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-54d9e60f3af6 → https://www.kayak.com.sv/Hoteles-en-Puerto-Madryn.5374.hotel.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-93e5c25f555d → https://www.kayak.com.co/Hoteles-en-Puerto-Madryn.5374.hotel.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-4ce25e8f1ba9 → https://www.facebook.com/groups/724633018682127/posts/737466967398732 — comida, buscado el 2026-11-25\n- [memoria] mem-ad0d068f9d8f → https://www.facebook.com/masenmadryn/posts/-organiz%C3%A1-tus-comidas-y-ahorr%C3%A1-todos-los-d%C3%ADas-vas-a-comer-rico-y-variado-y-como-/1561478349343106 — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [memoria] mem-118a59bdea75 → https://www.lanacion.com.ar/dolar-hoy — cambio, buscado el 2026-11-25\n- [memoria] mem-d041e707b47c → https://www.dolarito.ar — cambio, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._"
+      }
+    }
+  ],
+  "respuesta_final": "## Respuesta\n\nNo podemos confirmar si con 4 personas el viaje entra en $1.200.000. Con los datos que tenemos, cualquier cifra sería una suposición.\n\n**Qué cambia con 4 personas:** el pedido ahora es para 4 viajeros, a diferencia de los 2 del turno anterior. Los pasajes, el alojamiento y la comida se duplican, así que el costo total se acerca al doble, pero no podemos calcularlo porque ningún precio confirmado está en pesos argentinos.\n\n## Presupuesto\n\n**No calculado.** Faltan precios confiables para los tres rubros principales:\n\n- **Pasajes:** Expedia muestra \"$237\" y \"$291\" sin moneda ni aclaración de si son por persona [mem-ba08bd28cd71]. Skyscanner dice \"desde $113\", probablemente en USD, sin confirmarlo [mem-0fe4922e8859]. Google Flights está en UAH y no sirve [mem-a77910cb693b].\n- **Alojamiento:** KAYAK da \"$45\" de promedio en septiembre y \"desde $49\" por noche, sin moneda ni aclarar si es por habitación o por persona [mem-2227095dbfb3] [mem-54d9e60f3af6]. El precio de Colombia (\"$132.564\") no sirve [mem-93e5c25f555d].\n- **Comida:** no hay un costo diario por persona confiable en ARS. Las cifras de Facebook son de otro contexto o de un particular [mem-4ce25e8f1ba9] [mem-ad0d068f9d8f].\n\n**Tipo de cambio (referencia):** oficial entre $1.579 y $1.615; tarjeta entre $2.052 y $2.099; MEP entre $1.572 y $1.693 por USD [mem-71caa0983bd4] [mem-118a59bdea75] [mem-d041e707b47c]. Conviene confirmar la moneda de los precios antes de elegir cuál usar.\n\n## Itinerario\n\nNo armamos itinerario día por día. Sin presupuesto confirmado no sabemos qué combinación de actividades y alojamiento es viable.\n\nLo que sí sabemos sobre las actividades: en septiembre se puede hacer avistaje de ballenas (ballena franca austral) desde Puerto Pirámides, en la Península Valdés [guia:puerto-madryn#000] [guia:puerto-madryn#007]. También hay snorkel con lobos marinos, buceo en el Golfo Nuevo y Punta Loma, a 17 km [guia:puerto-madryn#007]. Punta Tombo no aplica en septiembre porque se visita de octubre a marzo [guia:puerto-madryn#006]. Para el clima, la guía indica temperaturas bajas (promedio de 12 °C) y vientos muy intensos en esa época [guia:puerto-madryn#002].\n\n## Lo que no pudimos averiguar\n\n- Precio de pasajes ida y vuelta en ARS, por persona.\n- Precio por noche en ARS, con unidad clara (habitación o persona).\n- Costo diario de comida por persona en ARS.\n- Precio actual del avistaje de ballenas. El único dato citado es de 2019.\n\nPara completar el cálculo hace falta una búsqueda web específica por cada rubro, pidiendo precios en pesos argentinos. Requiere autorización del supervisor.\n\n## Fuentes\n- [guía] Wikivoyage, «Puerto Madryn» § Hacer — https://es.wikivoyage.org/wiki/Puerto_Madryn (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Puerto Madryn» § Comprender — https://es.wikivoyage.org/wiki/Puerto_Madryn (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Puerto Madryn» § Ver — https://es.wikivoyage.org/wiki/Puerto_Madryn (CC BY-SA 4.0)\n- [memoria] mem-ba08bd28cd71 → https://www.expedia.com/es/lp/vuelos/aep/pmy/buenos-aires-a-puerto-madryn — pasajes, buscado el 2026-11-25\n- [memoria] mem-0fe4922e8859 → https://www.skyscanner.com/us/es-mx/usd/rutas/buea/pmy/buenos-aires-a-puerto-madryn.html — pasajes, buscado el 2026-11-25\n- [memoria] mem-a77910cb693b → https://www.google.com/travel/flights?tfs=CBwQARoeag0IAxIJL20vMDFseTVtcg0IAxIJL20vMDRicGZ6Gh5qDQgDEgkvbS8wNGJwZnpyDQgDEgkvbS8wMWx5NW1AAUgBcAGCAQsI____________AZgBAQ&tfu=KgIIAw&hl=es — pasajes, buscado el 2026-11-25\n- [memoria] mem-2227095dbfb3 → https://www.es.kayak.com/Hoteles-en-Puerto-Madryn.5374.hotel.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-54d9e60f3af6 → https://www.kayak.com.sv/Hoteles-en-Puerto-Madryn.5374.hotel.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-93e5c25f555d → https://www.kayak.com.co/Hoteles-en-Puerto-Madryn.5374.hotel.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-4ce25e8f1ba9 → https://www.facebook.com/groups/724633018682127/posts/737466967398732 — comida, buscado el 2026-11-25\n- [memoria] mem-ad0d068f9d8f → https://www.facebook.com/masenmadryn/posts/-organiz%C3%A1-tus-comidas-y-ahorr%C3%A1-todos-los-d%C3%ADas-vas-a-comer-rico-y-variado-y-como-/1561478349343106 — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [memoria] mem-118a59bdea75 → https://www.lanacion.com.ar/dolar-hoy — cambio, buscado el 2026-11-25\n- [memoria] mem-d041e707b47c → https://www.dolarito.ar — cambio, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+  "metricas": {
+    "turno": 2,
+    "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → aprobacion_web → investigador → supervisor → sintesis",
+    "pasos_supervisor": 4,
+    "decision_forzada_por_freno": false,
+    "delegaciones": {
+      "investigador": 2,
+      "analista": 1
+    },
+    "refinamientos": 1,
+    "llamadas_por_herramienta": {
+      "consultar_guias": 1,
+      "buscar_en_memoria": 7,
+      "buscar_en_web": 3,
+      "validar_viaje": 1
+    },
+    "busquedas_web": 0,
+    "consultas_guias": 1,
+    "fuentes_guia": 4,
+    "fuentes_memoria": 12,
+    "fuentes_web": 0,
+    "observaciones": [
+      "El viaje es válido y hay presupuesto, pero no se calculó el presupuesto con éxito."
+    ],
+    "validacion": "aprobada",
+    "presupuesto_entra": null,
+    "alternativa_calculada": false
+  },
+  "tokens": {
+    "claude-haiku-5-5": {
+      "output_tokens": 13195,
+      "total_tokens": 102742,
+      "input_token_details": {
+        "ephemeral_1h_input_tokens": 0,
+        "cache_creation": 0,
+        "cache_read": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "output_token_details": {
+        "reasoning": 2155
+      },
+      "input_tokens": 89547
+    }
+  },
+  "archivo": "traces/api/api_e0b9fc89_t2_real_20261125-185410.json"
+}

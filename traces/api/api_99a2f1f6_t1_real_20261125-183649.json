@@ -1,0 +1,856 @@
+{
+  "pregunta": "Quiero ir 5 días a Ushuaia en marzo, somos 2, salimos de Buenos Aires y tenemos 2.000.000 de pesos. ¿Me armás el viaje y me decís si nos alcanza?",
+  "escenario": "api_99a2f1f6_t1",
+  "modo": "real",
+  "modelo": "claude-haiku-5-5",
+  "max_pasos": 6,
+  "recursion_limit": 20,
+  "inicio": "2026-11-25T18:36:49.204+00:00",
+  "fin": "2026-11-25T18:38:03.556+00:00",
+  "duracion_s": 74.35,
+  "estado": "completo",
+  "ruta": [
+    "supervisor",
+    "aprobacion_web",
+    "investigador",
+    "supervisor",
+    "analista",
+    "supervisor",
+    "sintesis"
+  ],
+  "pedido": {
+    "origen": "Buenos Aires",
+    "destino": "Ushuaia",
+    "fecha_ida": "2027-03-10",
+    "fecha_vuelta": "2027-03-14",
+    "dias": 5,
+    "personas": 2,
+    "presupuesto": 2000000.0,
+    "moneda": "ARS",
+    "supuestos": [
+      "marzo sin día exacto: ida el 10/03/2027 (marzo de 2026 ya pasó)",
+      "vuelta calculada como ida + 4 días (5 días de viaje): 14/03/2027"
+    ]
+  },
+  "eventos": [
+    {
+      "n": 1,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:36:53.471+00:00",
+      "detalle": {
+        "pedido_extraido": {
+          "origen": "Buenos Aires",
+          "destino": "Ushuaia",
+          "fecha_ida": "2027-03-10",
+          "fecha_vuelta": "2027-03-14",
+          "dias": 5,
+          "personas": 2,
+          "presupuesto": 2000000.0,
+          "moneda": "ARS",
+          "supuestos": [
+            "marzo sin día exacto: ida el 10/03/2027 (marzo de 2026 ya pasó)",
+            "vuelta calculada como ida + 4 días (5 días de viaje): 14/03/2027"
+          ]
+        },
+        "paso": 1,
+        "turno": 1,
+        "siguiente": "investigador",
+        "instruccion": "Buscá datos para un viaje de Buenos Aires a Ushuaia, 2 personas, del 10/03/2027 al 14/03/2027 (5 días, 4 noches). Necesitamos: pasajes aéreos Buenos Aires-Ushuaia ida y vuelta para 2 personas con precios de referencia (rangos, valores \"desde\" o promedios de fechas cercanas, no hace falta precio exacto para esas fechas); alojamiento en Ushuaia para 4 noches para 2 personas con precio de referencia por noche; comida con precio de referencia; cotización del dólar oficial, tarjeta y MEP (no el blue). Además, datos estables de guías: actividades, cómo llegar, barrios, clima típico de marzo y consejos. Indicá la fuente de cada dato (mem-... o URL para precios; guia:... para lo estable).",
+        "temas": [
+          "pasajes",
+          "alojamiento",
+          "comida",
+          "cambio",
+          "actividades",
+          "como_llegar",
+          "barrios",
+          "clima",
+          "consejos"
+        ],
+        "evaluacion": "No hay aportes todavía. R1 (cobertura) no se cumple: la pregunta pide armar el viaje y saber si alcanza el presupuesto, así que hacen falta pasajes, alojamiento, comida/actividades y cotización del dólar. R2, R3 y R4 están pendientes: no hay fuentes, precios ni cálculo. El presupuesto existe, por lo que el analista tiene que validar y calcular después de que el investigador traiga precios. Corresponde pedir primero al investigador los temas con precios y los estables.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 2,
+      "nodo": "aprobacion_web",
+      "timestamp": "2026-11-25T18:36:53.827+00:00",
+      "detalle": {
+        "ronda": 1,
+        "turno": 1,
+        "temas_sin_memoria": [
+          "pasajes",
+          "alojamiento",
+          "comida",
+          "cambio"
+        ],
+        "temas_en_memoria": [],
+        "temas_en_guias": [
+          "actividades",
+          "como_llegar",
+          "barrios",
+          "clima",
+          "consejos"
+        ],
+        "pausa": true,
+        "resultado": "aprobada",
+        "origen": "persona",
+        "comentario": "aprobado en la prueba final"
+      }
+    },
+    {
+      "n": 3,
+      "nodo": "investigador",
+      "timestamp": "2026-11-25T18:37:29.373+00:00",
+      "detalle": {
+        "ronda": 1,
+        "turno": 1,
+        "instruccion": "Buscá datos para un viaje de Buenos Aires a Ushuaia, 2 personas, del 10/03/2027 al 14/03/2027 (5 días, 4 noches). Necesitamos: pasajes aéreos Buenos Aires-Ushuaia ida y vuelta para 2 personas con precios de referencia (rangos, valores \"desde\" o promedios de fechas cercanas, no hace falta precio exacto para esas fechas); alojamiento en Ushuaia para 4 noches para 2 personas con precio de referencia por noche; comida con precio de referencia; cotización del dólar oficial, tarjeta y MEP (no el blue). Además, datos estables de guías: actividades, cómo llegar, barrios, clima típico de marzo y consejos. Indicá la fuente de cada dato (mem-... o URL para precios; guia:... para lo estable).",
+        "contenido": "## Hallazgos\n\n### Pasajes aéreos Buenos Aires–Ushuaia (2 personas, ida 10/03/2027, vuelta 14/03/2027)\n- Despegar: desde $257.564 por persona, con ida EZE–USH el 16/03/2027 y vuelta USH–EZE el 22/03/2027 (JetSMART figura en la misma oferta). Unidad: por persona; no dice si es ida y vuelta o por tramo, aunque la página muestra ambos tramos. — [https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires] (web)\n- JetSMART: solo ida desde ARS 81.102 (fecha referencia 02/03/2027; unidad no especificada, probablemente por persona). — [https://jetsmart.com/ofertas/es-ar/vuelos-a-ushuaia] (web)\n- Trip.com: vuelos desde 38 € en marzo (Flybondi, vuelo del 22/03), con ejemplos de tramos de 107 € a 110 € en moneda EUR, no ARS. Son referencias de otras fechas de marzo. — [https://es.trip.com/flights/buenos-aires-to-ushuaia/airfares-bue-ush] (web)\n- Aerolíneas Argentinas aparece como opción directa desde AEP (no tiene precio en la fuente). — [https://es.trip.com/flights/buenos-aires-to-ushuaia/airfares-bue-ush] (web)\n\n### Alojamiento en Ushuaia (4 noches, 2 personas)\n- Hotel Ushuaia (Kayak): desde $72 (tachado $145); habitación doble con 1 cama doble $84; habitación estándar $119. Moneda y unidad no especificadas (probablemente por noche por habitación; no queda claro si es ARS o USD). — [https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp] (web)\n- Momondo: habitaciones desde $72 a $119 en el mismo hotel; unidad no especificada. — [https://www.es.momondo.com/hoteles/ushuaia/Hotel-Ushuaia.mhd2200178.ksp] (web)\n- Guía (precios viejos, no actuales): B&B Familia Piatti double $450; Tango B&B double $500; La Casa en Ushuaia desde US$50 a US$70; Hostería Posada del Fin del Mundo US$600 a US$660 por habitación sencilla o doble. — [guia:ushuaia#026], [guia:ushuaia#027] (guía)\n- Resultado de Booking.com de la búsqueda: corresponde a Ibiza, no a Ushuaia, así que se descarta.\n\n### Comida\n- Menú del día (incluye bebida) en la zona cara de Ushuaia: ARS 23.087 (mayo 2026; unidad: menú del día por persona, según la comparación). — [https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas] (web)\n- Le Martial (cena): ARS 4.500–5.000 por persona. Reseña de enero de 2024, por lo que puede estar desactualizada. — [https://carta.menu/restaurants/ushuaia/restaurant-le-martial] (web)\n- Wanderlog lista comida rápida, pizzas, hamburguesas y cafeterías, sin precios. — [https://wanderlog.com/es/list/geoCategory/39876/los-mejores-restaurantes-de-comida-r%C3%A1pida-en-ushuaia] (web)\n\n### Cotización del dólar (valores de referencia, fechas de publicación distintas)\n- Infobae: oficial $1.615; tarjeta $2.099,50; MEP $1.693,68 (blue $1.700 solo informativo). — [https://www.infobae.com/economia/divisas/dolar-hoy] (web)\n- Dolarito: oficial ~$1.590 (venta); tarjeta $2.067; MEP $1.646,44. Fecha del portal: 20 de noviembre. — [https://www.dolarito.ar] (web)\n- La Nación: oficial venta $1.579; tarjeta venta $2.052,70; MEP venta $1.572,90. Fecha del portal: 15 de noviembre. — [https://www.lanacion.com.ar/dolar-hoy] (web)\n\n### Actividades (guía)\n- Canal Beagle: paseos en catamarán o barco (Motonave Barracuda Sail) con vistas de cormoranes, pingüinos, orcas, focas y leones marinos; kayak con guía desde el promontorio junto a Ushuaia. — [guia:ushuaia#016] (guía)\n- Senderismo: Glaciar Martial (1300 m, sendero empinado y a menudo resbaladizo) y Laguna Esmeralda (caminata corta, embarrada); mapa de senderismo ~AR$230 (dato de guía, puede estar desactualizado). — [guia:ushuaia#015] (guía)\n- Parque Nacional Tierra del Fuego a 12 km al oeste de la ciudad. — [guia:ushuaia#015] (guía)\n- Museos: Museo del Fin del Mundo (Av. Maipú 173; horario de abril a octubre, sin datos para marzo); Museo Marítimo y del Presidio (ex cárcel); Museo Acatushun en Estancia Harberton, a 85 km. — [guia:ushuaia#013] (guía)\n- Otros: Mástil del General Belgrano (Isla Redonda, ~AR$100), Plaza Islas Malvinas, y el tren \"El tren donde termina el mundo\". — [guia:ushuaia#012], [guia:ushuaia#014] (guía)\n\n### Cómo llegar y moverse\n- Aeropuerto Internacional Malvinas Argentinas (USH), a 5 km de la ciudad, con vuelos diarios desde Buenos Aires. — [guia:ushuaia#005] (guía)\n- Taxi aeropuerto–centro: unos AR$150 (dato de guía, puede estar desactualizado). Taxi al Glaciar Martial: ~AR$130. Usan taxímetro. — [guia:ushuaia#011] (guía)\n- Bus urbano: pago con tarjeta SUBE; sirve para Playa Larga y el eje este-oeste. Minivans al Parque Nacional, Glaciar Martial y Laguna Esmeralda salen de Maipú y Fadul. — [guia:ushuaia#009] (guía)\n- Por auto: Ruta Nacional 3 desde Buenos Aires, pero requiere cruzar a Chile y tomar ferry en el estrecho de Magallanes. — [guia:ushuaia#006] (guía)\n\n### Barrios y zonas\n- Centro y costanera: la zona comercial principal está en la avenida San Martín. — [guia:ushuaia#018] (guía)\n- Barrio Andino, cerca de la laguna del Diablo y a 5 minutos del aeropuerto y del centro (Cabañas Las Águilas). — [guia:ushuaia#026] (guía)\n- Zona residencial a pocos minutos del centro (Hostería Posada del Fin del Mundo, Rivadavia 603). — [guia:ushuaia#027] (guía)\n- Cerca del puerto (Hotel Albatros). — [guia:ushuaia#027] (guía)\n\n### Clima típico de marzo (guía, promedios mensuales)\n- Marzo: máxima 12 °C, mínima 4 °C, lluvia 48 mm. — [guia:ushuaia#003] (guía)\n- Ciudad con 146 días de precipitación y 206 días nublados al año; humedad media del 80%. — [guia:ushuaia#003] (guía)\n\n### Consejos (guía)\n- Clima: en verano casi no hay días despejados, y la mayoría tiene sol, nubes y lluvias breves. — [guia:ushuaia#003] (guía)\n- Salud: no hay riesgo de enfermedades graves; el mayor riesgo es un resfriado por el clima. Protegerse del sol, sobre todo en caminatas por montaña. — [guia:ushuaia#030] (guía)\n- Calzado: para el Glaciar Martial, zapatos resistentes e impermeables. — [guia:ushuaia#015] (guía)\n- Compras: los precios en Ushuaia son más altos que en el interior del país. — [guia:ushuaia#018] (guía)\n- Vida nocturna: limitada, la mayoría de bares cierran temprano. — [guia:ushuaia#023] (guía)\n\n## Datos que faltan\n- Precios de pasajes: no hay precio confirmado en ARS para ida y vuelta por persona; la oferta de Despegar tiene fechas de 16/03 y 22/03 (no 10/03 y 14/03), y el precio de JetSMART es solo ida y de otra fecha. Trip.com da precios en EUR.\n- Alojamiento: no hay moneda ni unidad confirmadas en los precios de Kayak y Momondo, y no hay precios para marzo de 2027.\n- Comida: no hay precios actuales de restaurantes de gama media o de cenas completas con fecha reciente. El precio de Expatistan es de mayo de 2026.\n- Cambio: las tres cotizaciones son de fechas distintas (Infobae sin fecha visible; Dolarito 20/11; La Nación 15/11) y no coinciden, así que conviene confirmar la cotización del día.\n- Museo del Fin del Mundo: el horario de marzo no figura en la guía (solo de abril a octubre).\n- Precios de la guía (taxis, mapa de senderismo, hostales) pueden estar desactualizados.",
+        "fuentes": [
+          {
+            "ref": "guia:ushuaia#008",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Llegar > En barco",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#013",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Ver > Museos",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#012",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Ver",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#014",
+            "origen": "guia",
+            "tema": "actividades",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Hacer",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#005",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Llegar > En avión",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#011",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Desplazarse > En taxi",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#009",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Desplazarse > En bus",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#006",
+            "origen": "guia",
+            "tema": "como_llegar",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Llegar > En automóvil",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#026",
+            "origen": "guia",
+            "tema": "barrios",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Dormir > Moderado",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#027",
+            "origen": "guia",
+            "tema": "barrios",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Dormir > Caro",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#023",
+            "origen": "guia",
+            "tema": "barrios",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Beber y salir",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#021",
+            "origen": "guia",
+            "tema": "barrios",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Comer > De gama media",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#003",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Comprender > Clima",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#014",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Hacer",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#018",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Comprar",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#023",
+            "origen": "guia",
+            "tema": "clima",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Beber y salir",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#018",
+            "origen": "guia",
+            "tema": "consejos",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Comprar",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#016",
+            "origen": "guia",
+            "tema": "consejos",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Hacer > Agua",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#030",
+            "origen": "guia",
+            "tema": "consejos",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Salud",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "guia:ushuaia#015",
+            "origen": "guia",
+            "tema": "consejos",
+            "url": "https://es.wikivoyage.org/wiki/Ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": "Ushuaia",
+            "seccion": "Hacer > Verano",
+            "licencia": "CC BY-SA 4.0"
+          },
+          {
+            "ref": "https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires",
+            "origen": "web",
+            "tema": "pasajes",
+            "url": "https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://jetsmart.com/ofertas/es-ar/vuelos-a-ushuaia",
+            "origen": "web",
+            "tema": "pasajes",
+            "url": "https://jetsmart.com/ofertas/es-ar/vuelos-a-ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://es.trip.com/flights/buenos-aires-to-ushuaia/airfares-bue-ush",
+            "origen": "web",
+            "tema": "pasajes",
+            "url": "https://es.trip.com/flights/buenos-aires-to-ushuaia/airfares-bue-ush",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp",
+            "origen": "web",
+            "tema": "alojamiento",
+            "url": "https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.es.momondo.com/hoteles/ushuaia/Hotel-Ushuaia.mhd2200178.ksp",
+            "origen": "web",
+            "tema": "alojamiento",
+            "url": "https://www.es.momondo.com/hoteles/ushuaia/Hotel-Ushuaia.mhd2200178.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.booking.com/hotel/es/ushuaia-illes-balears1.es.html",
+            "origen": "web",
+            "tema": "alojamiento",
+            "url": "https://www.booking.com/hotel/es/ushuaia-illes-balears1.es.html",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas",
+            "origen": "web",
+            "tema": "comida",
+            "url": "https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://carta.menu/restaurants/ushuaia/restaurant-le-martial",
+            "origen": "web",
+            "tema": "comida",
+            "url": "https://carta.menu/restaurants/ushuaia/restaurant-le-martial",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://wanderlog.com/es/list/geoCategory/39876/los-mejores-restaurantes-de-comida-r%C3%A1pida-en-ushuaia",
+            "origen": "web",
+            "tema": "comida",
+            "url": "https://wanderlog.com/es/list/geoCategory/39876/los-mejores-restaurantes-de-comida-r%C3%A1pida-en-ushuaia",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.infobae.com/economia/divisas/dolar-hoy",
+            "origen": "web",
+            "tema": "cambio",
+            "url": "https://www.infobae.com/economia/divisas/dolar-hoy",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.lanacion.com.ar/dolar-hoy",
+            "origen": "web",
+            "tema": "cambio",
+            "url": "https://www.lanacion.com.ar/dolar-hoy",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.dolarito.ar",
+            "origen": "web",
+            "tema": "cambio",
+            "url": "https://www.dolarito.ar",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          }
+        ],
+        "herramientas": [
+          "consultar_guias",
+          "buscar_en_memoria",
+          "buscar_en_web"
+        ],
+        "llamadas": [
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "destino": "Ushuaia",
+              "consulta": "qué ver y qué hacer, excursiones y actividades",
+              "tema": "actividades"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'qué ver y qué hacer, excursiones y actividades' [destino=Ushuaia, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:ushuaia#008] origen=guia | Ushuaia § Llegar > En barco | url=https://es.wikivoyage.org/wiki/Ushuaia\nVarios cruceros llegan a la ciudad como destino o por atracción.\n- **Cruceros Australis**: Es un crucero de cuatro noches desde Punta Arenas. Se puede realizar excursiones en la bahía de Ainsworth e islotes Tuckers para ver lobos marinos, pingüinos y...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "destino": "Ushuaia",
+              "consulta": "cómo llegar desde Buenos Aires, avión y aeropuerto, cómo moverse",
+              "tema": "como_llegar"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'cómo llegar desde Buenos Aires, avión y aeropuerto, cómo moverse' [destino=Ushuaia, tema=como_llegar]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:ushuaia#005] origen=guia | Ushuaia § Llegar > En avión | url=https://es.wikivoyage.org/wiki/Ushuaia\nHay un aeropuerto importante que da servicio a la ciudad:\n- **Aeropuerto Internacional Malvinas Argentinas** ((IATA: USH)): Ubicado en una pequeña península entre las bahías de Ushuaia (en el este) y Golondrina (en el oeste) a 5 km ...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "destino": "Ushuaia",
+              "consulta": "barrios y zonas para alojarse",
+              "tema": "barrios"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'barrios y zonas para alojarse' [destino=Ushuaia, tema=barrios]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:ushuaia#026] origen=guia | Ushuaia § Dormir > Moderado | url=https://es.wikivoyage.org/wiki/Ushuaia\n- **B&B Familia Piatti** Dirección: Bahía Paraiso 812. Precio: Single $350, double $450, triple $550.\n- **Tango B&B**: Tiene una excelente ubicación a siete cuadras de la calle principal, ofrece servicio a la habitación, internet gratuito, televisión por cable opcional, ...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "destino": "Ushuaia",
+              "consulta": "clima típico en marzo, temperaturas y lluvias",
+              "tema": "clima"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'clima típico en marzo, temperaturas y lluvias' [destino=Ushuaia, tema=clima]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:ushuaia#003] origen=guia | Ushuaia § Comprender > Clima | url=https://es.wikivoyage.org/wiki/Ushuaia\nClima típico (promedios mensuales):\n| Mes | Máxima (°C) | Mínima (°C) | Lluvia (mm) |\n|---|---|---|---|\n| Enero | 15 | 6 | 31 |\n| Febrero | 14 | 5 | 33 |\n| Marzo | 12 | 4 | 48 |\n| Abril | 10 | 2 | 50 |\n| Mayo | 6 | 0 | 55 |\n| Junio | 5 | -1 | 55 |\n| Julio ...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "consultar_guias",
+            "argumentos": {
+              "destino": "Ushuaia",
+              "consulta": "consejos de viaje, seguridad, abrigo, precauciones",
+              "tema": "consejos"
+            },
+            "resultado": "GUÍAS (Wikivoyage, 4 fragmentos) para 'consejos de viaje, seguridad, abrigo, precauciones' [destino=Ushuaia, tema=consejos]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.\n\n[guia:ushuaia#018] origen=guia | Ushuaia § Comprar | url=https://es.wikivoyage.org/wiki/Ushuaia\nCerca de la costanera y principalmente en la **avenida San Martín** se encuentra la principal zona comercial y al oeste de la ciudad y al norte del aeropuerto se encuentra una pequeña zona comercial. Los precios en **Ushuaia** son más altos que en el interior...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Buenos Aires",
+              "consulta": "pasajes aéreos Buenos Aires a Ushuaia ida y vuelta precio",
+              "tema": "pasajes"
+            },
+            "resultado": "SIN RESULTADOS EN MEMORIA para 'pasajes aéreos Buenos Aires a Ushuaia ida y vuelta precio' [destino=Buenos Aires, tema=pasajes]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Ushuaia",
+              "consulta": "precio alojamiento hotel por noche para 2 personas",
+              "tema": "alojamiento"
+            },
+            "resultado": "SIN RESULTADOS EN MEMORIA para 'precio alojamiento hotel por noche para 2 personas' [destino=Ushuaia, tema=alojamiento]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Ushuaia",
+              "consulta": "precio comida restaurante almuerzo cena",
+              "tema": "comida"
+            },
+            "resultado": "SIN RESULTADOS EN MEMORIA para 'precio comida restaurante almuerzo cena' [destino=Ushuaia, tema=comida]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_memoria",
+            "argumentos": {
+              "destino": "Argentina",
+              "consulta": "cotización dólar oficial tarjeta MEP",
+              "tema": "cambio"
+            },
+            "resultado": "SIN RESULTADOS EN MEMORIA para 'cotización dólar oficial tarjeta MEP' [destino=Argentina, tema=cambio]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_web",
+            "argumentos": {
+              "consulta": "precio pasaje avión Buenos Aires Ushuaia ida y vuelta marzo 2027",
+              "destino": "Buenos Aires",
+              "tema": "pasajes"
+            },
+            "resultado": "WEB (Tavily) — 3 resultados para 'precio pasaje avión Buenos Aires Ushuaia ida y vuelta marzo 2027' (guardados en memoria):\n\n[https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires] origen=web | tema=pasajes | guardado como mem-3d7e64ccdd8e\nVuelos desde Buenos Aires a Ushuaia\nIDA. EZE - USH. Mar. 16 mar. 2027. VUELTA. USH - EZE. Lun. 22 mar. 2027. Precio por persona desde. $257.564. Siguiente. JetSMART. Directo. IDA. EZE - USH. Sáb.\n\n[https://jetsmart.com/ofertas/es-ar/vuelos-a-ushuaia] origen=web | tema=pasajes | guardado como mem-1d1b29637eb8\nVuelos Baratos a Ushuaia ...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_web",
+            "argumentos": {
+              "consulta": "precio hotel Ushuaia por noche habitación doble",
+              "destino": "Ushuaia",
+              "tema": "alojamiento"
+            },
+            "resultado": "WEB (Tavily) — 3 resultados para 'precio hotel Ushuaia por noche habitación doble' (guardados en memoria):\n\n[https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp] origen=web | tema=alojamiento | guardado como mem-72caa2ad57bc\nHotel Ushuaia desde $72 ($̶1̶4̶5̶). Ushuaia Hoteles - KAYAK\nOfertas más recientes para Hotel Ushuaia ; Habitación doble, 1 cama doble. $84 ; Habitación estándar, tipo de cama desconocido. $119.\n\n[https://www.es.momondo.com/hoteles/ushuaia/Hotel-Ushuaia.mhd2200178.ksp] origen=web | tema=alojamiento | guardado como mem-46e71160999e\nOfertas, opiniones e imágene...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_web",
+            "argumentos": {
+              "consulta": "precio restaurante comida promedio Ushuaia menú",
+              "destino": "Ushuaia",
+              "tema": "comida"
+            },
+            "resultado": "WEB (Tavily) — 3 resultados para 'precio restaurante comida promedio Ushuaia menú' (guardados en memoria):\n\n[https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas] origen=web | tema=comida | guardado como mem-6d6e461aaecb\nEl costo de vida en Punta Arenas es un 8% más caro que en Ushuaia. Mayo 2026.\n| Comida | | | | - 15% |\n ---  --- \n| El coste de \"Comida\" en Punta Arenas (Chile) es un 15% más barato que en Ushuaia (Argentina) | | | | |\n|  | | Actualizar precios Actualizar precios | |\n|  | | Punta Arenas | Ushuaia | Diff |\n|  | Menú del día (incluyendo bebida) en la zona...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          },
+          {
+            "herramienta": "buscar_en_web",
+            "argumentos": {
+              "consulta": "cotización dólar oficial tarjeta MEP hoy Argentina",
+              "destino": "Argentina",
+              "tema": "cambio"
+            },
+            "resultado": "WEB (Tavily) — 3 resultados para 'cotización dólar oficial tarjeta MEP hoy Argentina' (guardados en memoria):\n\n[https://www.infobae.com/economia/divisas/dolar-hoy] origen=web | tema=cambio | guardado como mem-71caa0983bd4\nDólar hoy: cotización, tipos de cambio y evolución - Infobae\nFuente: Reuters - Real Time\n\nDólar oficial\n\n$1.615\n\nDólar tarjeta\n\n$2.099,50\n\nDólar blue\n\n$1.700\n\nDólar MEP\n\n$1.693,68\n\nCONTADO CON LIQUI\n\n$1.797,51\n\nRiesgo País \n\n1.094\n\nFuente: Reuters - Real Time\n\n# Cotización del dólar hoy en Argentina [...] Conocé las diferentes cotizaciones disponibles en el mercado: oficial, ...",
+            "timestamp": "2026-11-25T18:37:29.368+00:00"
+          }
+        ],
+        "cobertura": [
+          {
+            "tema": "actividades",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "como_llegar",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "barrios",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "clima",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "consejos",
+            "fuentes": 1,
+            "memoria": 0,
+            "web": 0,
+            "guia": 1,
+            "con_precios": false
+          },
+          {
+            "tema": "pasajes",
+            "fuentes": 3,
+            "memoria": 0,
+            "web": 3,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "alojamiento",
+            "fuentes": 3,
+            "memoria": 0,
+            "web": 3,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "comida",
+            "fuentes": 3,
+            "memoria": 0,
+            "web": 3,
+            "guia": 0,
+            "con_precios": true
+          },
+          {
+            "tema": "cambio",
+            "fuentes": 3,
+            "memoria": 0,
+            "web": 3,
+            "guia": 0,
+            "con_precios": true
+          }
+        ],
+        "observaciones": []
+      }
+    },
+    {
+      "n": 4,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:37:33.177+00:00",
+      "detalle": {
+        "paso": 2,
+        "turno": 1,
+        "siguiente": "analista",
+        "instruccion": "Validá el viaje con validar_viaje (Buenos Aires a Ushuaia, 2 personas, ida 10/03/2027, vuelta 14/03/2027, 4 noches, presupuesto 2.000.000 ARS) y después ejecutá calcular_presupuesto usando los precios del investigador: pasajes Despegar desde $257.564 por persona (ida y vuelta, aclarar la unidad; alternativa JetSMART solo ida desde ARS 81.102), alojamiento Kayak desde $72 por noche (aclarar si es ARS o USD y si es por habitación o por persona; si es USD, convertir con la cotización del dólar tarjeta/oficial/MEP que trajo el investigador), comida: menú del día aprox. ARS 23.087 por persona por día y cena de referencia ARS 4.500–5.000 por persona. Indicá si el total entra en 2.000.000 ARS, con el desglose y los supuestos usados.",
+        "temas": [],
+        "evaluacion": "R1 Cobertura: pasajes, alojamiento, comida, cambio, y temas estables (actividades, cómo llegar, barrios, clima, consejos) tienen datos. Falta confirmar la unidad de precios, pero hay referencias. R2 Fuentes: todos los aportes tienen fuentes (guía o URL). Los precios vienen de la web (válido). R3 Precios: pasajes (Despegar desde $257.564 por persona; JetSMART desde ARS 81.102) y alojamiento (Kayak desde $72, unidad dudosa) traen montos de referencia; alcanza para estimar. R4 Cálculo: falta que el analista ejecute validar_viaje y calcular_presupuesto y diga si entra en los 2.000.000 ARS. R5 Observaciones: ninguna pendiente. R6 Coherencia: 4 noches y 2 personas consistentes; la moneda del alojamiento es dudosa, que el analista la aclare al calcular. R7 Economía: se pidió presupuesto, así que los temas estables ya están cubiertos sin nuevas búsquedas.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 5,
+      "nodo": "analista",
+      "timestamp": "2026-11-25T18:37:48.036+00:00",
+      "detalle": {
+        "ronda": 2,
+        "turno": 1,
+        "instruccion": "Validá el viaje con validar_viaje (Buenos Aires a Ushuaia, 2 personas, ida 10/03/2027, vuelta 14/03/2027, 4 noches, presupuesto 2.000.000 ARS) y después ejecutá calcular_presupuesto usando los precios del investigador: pasajes Despegar desde $257.564 por persona (ida y vuelta, aclarar la unidad; alternativa JetSMART solo ida desde ARS 81.102), alojamiento Kayak desde $72 por noche (aclarar si es ARS o USD y si es por habitación o por persona; si es USD, convertir con la cotización del dólar tarjeta/oficial/MEP que trajo el investigador), comida: menú del día aprox. ARS 23.087 por persona por día y cena de referencia ARS 4.500–5.000 por persona. Indicá si el total entra en 2.000.000 ARS, con el desglose y los supuestos usados.",
+        "contenido": "## Validación\n**VÁLIDO:** Buenos Aires → Ushuaia, del 2027-03-10 al 2027-03-14 (5 días, 4 noches), 2 personas, presupuesto $2.000.000.\n\n## Presupuesto\n**Opción \"económica\"** (5 días, 4 noches, 2 personas)\n\n- Pasajes avión (Despegar): $515.128 [$257.564 por persona, ida y vuelta, × 2 personas]\n- Alojamiento hotel Ushuaia habitación doble (Kayak, desde): $604.656 [US$72 por noche por habitación × 4 noches × 1 habitación de 2 personas = $151.164 por noche]\n- Comida: $278.370 [$27.837 por persona por día × 5 días × 2 personas]\n- **Total: $1.398.154** | Presupuesto: $2.000.000\n- **Resultado: ENTRA.** Sobran $601.846.\n- Costo por día: $279.631 (por persona por día: $139.815)\n\n**Conversión de moneda:** el alojamiento se tomó en USD y se convirtió con el dólar tarjeta de $2.100 (fuente: Infobae, https://www.infobae.com/economia/divisas/dolar-hoy). Los tipos oficial ($1.615) y MEP ($1.693,68) de la misma fuente se cargaron como referencia.\n\n**Supuestos usados:**\n- **Pasaje:** el precio de Despegar se tomó como ida y vuelta, siguiendo la instrucción del supervisor. El investigador no pudo confirmarlo: la oferta muestra fechas de 16/03 (ida) y 22/03 (vuelta), no 10/03 y 14/03. JetSMART (solo ida, ARS 81.102) no se usó en el cálculo: sumado a una vuelta costaría más que el ida y vuelta de Despegar.\n- **Alojamiento:** Kayak no indica moneda ni unidad. Se asumió USD por noche por habitación doble (2 personas), porque en ARS $72 por noche no es un precio de hotel real. Es un precio \"desde\", así que es optimista. Si fuera por persona, el costo de alojamiento se duplicaría (aprox. $1,2 M), y el total seguiría dentro de los $2.000.000 solo si el resto no cambia demasiado; conviene confirmarlo.\n- **Comida:** menú del día ARS 23.087 por persona por día (dato de mayo de 2026, zona cara) más una cena de referencia de ARS 4.750 (punto medio de 4.500–5.000, reseña de 2024). Se sumaron ambos por día, para 5 días. No incluye desayuno ni otras comidas.\n- **Actividades y traslados:** no se incluyeron. El investigador no tiene precios confiables para marzo (los de la guía son viejos), así que el margen debería cubrirlos.\n\n## Conclusión\nEl viaje entra en los $2.000.000 con holgura (sobran $601.846), aun con la comida completa de los 5 días. Antes de reservar conviene confirmar el precio real del pasaje para 10/03 y 14/03, la moneda y la unidad del alojamiento, y cotizar traslados y actividades.\n\n## Datos que faltan\n- Precio del pasaje para las fechas exactas 10/03 y 14/03/2027 (la oferta de Despegar es para 16/03 y 22/03). Tampoco está confirmado si el precio es ida y vuelta o por tramo.\n- Moneda y unidad del alojamiento de Kayak (se asumió USD por noche por habitación). No hay precios para marzo de 2027.\n- Precios actuales de comida (el menú es de mayo de 2026 y la cena de una reseña de 2024).\n- Cotización del día: las tres fuentes tienen fechas distintas. Se usó la de Infobae, sin fecha visible.\n- Costo de actividades y traslados (taxi, excursiones): no hay precios vigentes.",
+        "fuentes": [
+          {
+            "ref": "https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires",
+            "origen": "web",
+            "tema": "pasajes",
+            "url": "https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp",
+            "origen": "web",
+            "tema": "alojamiento",
+            "url": "https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas",
+            "origen": "web",
+            "tema": "comida",
+            "url": "https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          },
+          {
+            "ref": "https://www.infobae.com/economia/divisas/dolar-hoy",
+            "origen": "web",
+            "tema": "cambio",
+            "url": "https://www.infobae.com/economia/divisas/dolar-hoy",
+            "fecha_busqueda": "2026-11-25",
+            "titulo": null,
+            "seccion": null,
+            "licencia": null
+          }
+        ],
+        "herramientas": [
+          "validar_viaje",
+          "calcular_presupuesto"
+        ],
+        "llamadas": [
+          {
+            "herramienta": "validar_viaje",
+            "argumentos": {
+              "origen": "Buenos Aires",
+              "destino": "Ushuaia",
+              "fecha_ida": "2027-03-10",
+              "fecha_vuelta": "2027-03-14",
+              "personas": 2,
+              "presupuesto": 2000000,
+              "moneda": "ARS",
+              "dias_pedidos": 5
+            },
+            "resultado": "VÁLIDO: Buenos Aires → Ushuaia, del 2027-03-10 al 2027-03-14 (5 días, 4 noches), 2 personas, presupuesto $ 2.000.000.",
+            "timestamp": "2026-11-25T18:37:48.033+00:00"
+          },
+          {
+            "herramienta": "calcular_presupuesto",
+            "argumentos": {
+              "personas": 2,
+              "noches": 4,
+              "presupuesto": 2000000,
+              "moneda_presupuesto": "ARS",
+              "opcion": "económica",
+              "pasaje": {
+                "monto": 257564,
+                "moneda": "ARS",
+                "tramo": "ida_y_vuelta",
+                "medio": "avión (Despegar)",
+                "medio_pago": "tarjeta",
+                "fuente": "https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires"
+              },
+              "alojamiento": {
+                "monto": 72,
+                "moneda": "USD",
+                "unidad": "por_noche_por_habitacion",
+                "personas_por_habitacion": 2,
+                "tipo": "hotel Ushuaia habitación doble (Kayak, desde)",
+                "medio_pago": "tarjeta",
+                "fuente": "https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp"
+              },
+              "comida_por_persona_por_dia": {
+                "monto": 27837,
+                "moneda": "ARS",
+                "medio_pago": "tarjeta",
+                "fuente": "https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas + https://carta.menu/restaurants/ushuaia/restaurant-le-martial (menú del día 23.087 + cena punto medio 4.750)"
+              },
+              "tipos_de_cambio": [
+                {
+                  "tipo": "tarjeta",
+                  "valor_ars": 2099.5,
+                  "fuente": "https://www.infobae.com/economia/divisas/dolar-hoy"
+                },
+                {
+                  "tipo": "oficial",
+                  "valor_ars": 1615,
+                  "fuente": "https://www.infobae.com/economia/divisas/dolar-hoy"
+                },
+                {
+                  "tipo": "MEP",
+                  "valor_ars": 1693.68,
+                  "fuente": "https://www.infobae.com/economia/divisas/dolar-hoy"
+                }
+              ]
+            },
+            "resultado": "PRESUPUESTO — opción 'económica' (5 días, 4 noches, 2 personas):\n- Pasajes avión (Despegar): $ 515.128  [$ 257.564 por persona (ida y vuelta) × 2 personas]\n- Alojamiento hotel Ushuaia habitación doble (Kayak, desde): $ 604.656  [$ 151.164 por noche por habitación × 4 noches × 1 habitación (de 2 personas)]\n- Comida: $ 278.370  [$ 27.837 por persona por día × 5 días × 2 personas]\nTOTAL: $ 1.398.154 | PRESUPUESTO: $ 2.000.000\nRESULTADO: ENTRA en el presupuesto. Sobran $ 601.846.\nCosto por día: $ 279.631 | por persona por día: $ 139.815\nConversiones de moneda:\n- alojamiento: US$ 72,00 → $ 151.164 ...",
+            "timestamp": "2026-11-25T18:37:48.033+00:00"
+          }
+        ],
+        "cobertura": [],
+        "observaciones": []
+      }
+    },
+    {
+      "n": 6,
+      "nodo": "supervisor",
+      "timestamp": "2026-11-25T18:37:50.707+00:00",
+      "detalle": {
+        "paso": 3,
+        "turno": 1,
+        "siguiente": "FINALIZAR",
+        "instruccion": "",
+        "temas": [],
+        "evaluacion": "R1 Cobertura: pasajes, alojamiento, comida, cambio y temas estables (actividades, cómo llegar, barrios, clima, consejos) tienen datos. R2 Fuentes: todos los aportes tienen fuentes (guía, URL). Los precios vienen de la web, aceptable como referencia. R3 Precios: pasajes (Despegar desde $257.564 por persona) y alojamiento (Kayak desde $72) traen montos; son de referencia, alcanzan para estimar. R4 Cálculo: el analista ejecutó validar_viaje (VÁLIDO) y calcular_presupuesto; dice que entra (total $1.398.154 de $2.000.000). Las dudas de unidad (alojamiento en USD por habitación, pasaje ida y vuelta) están aclaradas como supuestos y no son contradicciones internas. R5 Observaciones: ninguna pendiente. R6 Coherencia: noches (4), personas (2) y fechas son consistentes entre aportes. R7 Economía: la pregunta pide armar el viaje, así que el alcance es correcto; no hay pedidos extra. Se puede finalizar; la síntesis debe advertir que las unidades del alojamiento y del pasaje no están confirmadas y que las fechas exactas son supuestos.",
+        "forzada": false
+      }
+    },
+    {
+      "n": 7,
+      "nodo": "sintesis",
+      "timestamp": "2026-11-25T18:38:03.545+00:00",
+      "detalle": {
+        "respuesta": "## Itinerario (10 al 14 de marzo de 2027)\n\nClima típico de marzo: máxima 12 °C, mínima 4 °C, unos 48 mm de lluvia y cielo nublado con frecuencia. Conviene llevar ropa impermeable en capas [guia:ushuaia#003].\n\n- **Día 1 (10/03), llegada:** llegada al aeropuerto (USH), a 5 km del centro. Traslado en taxi de unos AR$150 (dato de guía, puede estar desactualizado) [guia:ushuaia#011]. Por la tarde, paseo por la Plaza Islas Malvinas y el Mástil del General Belgrano en Isla Redonda [guia:ushuaia#012].\n- **Día 2 (11/03), mar:** Canal Beagle en catamarán o barco, con chances de ver cormoranes, pingüinos, orcas, focas y leones marinos [guia:ushuaia#016].\n- **Día 3 (12/03), naturaleza:** Parque Nacional Tierra del Fuego, a 12 km al oeste de la ciudad. Se puede combinar con el tren \"El tren donde termina el mundo\" [guia:ushuaia#015], [guia:ushuaia#014].\n- **Día 4 (13/03), montaña:** Glaciar Martial (1300 m, sendero empinado y a menudo resbaladizo). Llevar zapatos resistentes e impermeables [guia:ushuaia#015]. Se llega en minivan desde Maipú o Fadul [guia:ushuaia#009].\n- **Día 5 (14/03), cierre y regreso:** Museo Marítimo y del Presidio, en la ex cárcel [guia:ushuaia#013]. Luego, traslado al aeropuerto. El horario del Museo del Fin del Mundo para marzo no figura en la guía, así que conviene confirmarlo.\n\nQuedaron fuera Laguna Esmeralda y el Museo Acatushun (85 km), por falta de tiempo o por distancia.\n\n## Presupuesto\n\nOpción económica, 5 días, 4 noches, 2 personas:\n\n| Concepto | Cálculo | Monto |\n|---|---|---|\n| Pasajes (Despegar) | $257.564 por persona × 2 | $515.128 |\n| Alojamiento (Kayak, desde) | US$72 por noche × 4 noches, a $2.100 | $604.656 |\n| Comida | ($23.087 menú + $4.750 cena) por persona por día × 5 días × 2 | $278.370 |\n| **Total** | | **$1.398.154** |\n\n- **Resultado:** entra en los $2.000.000 y sobran **$601.846**.\n- **Costo por día:** $279.631 (unos $139.815 por persona por día).\n- **Dólar usado:** tarjeta de $2.100, de Infobae [https://www.infobae.com/economia/divisas/dolar-hoy]. Las otras fuentes dan valores distintos y con fechas de noviembre, así que conviene confirmar la cotización del día.\n\n**Supuestos a verificar:**\n- **Pasaje:** se tomó el precio de Despegar como ida y vuelta, pero la oferta tiene fechas del 16/03 y 22/03, no del 10/03 y 14/03 [https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires].\n- **Alojamiento:** Kayak no indica moneda ni unidad. Se asumió USD por noche por habitación doble, y es un precio \"desde\", así que es optimista [https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp].\n- **Si el alojamiento fuera por persona:** sería unos $1,2 M y el total llegaría a unos $2.002.810. Eso supera el presupuesto por unos $2.810. El análisis anterior decía que seguiría dentro, pero con estos números no entra.\n- **Actividades y traslados:** no están incluidos. Los precios de la guía son viejos, así que conviene dejar margen para ellos.\n\n## Lo que no pudimos averiguar\n\n- Precio exacto del pasaje para el 10/03 y el 14/03, y si la oferta es ida y vuelta.\n- Moneda y unidad del alojamiento en Kayak. No hay precios confirmados para marzo de 2027.\n- Precios actuales de restaurantes: el menú es de mayo de 2026 y la cena, de una reseña de 2024.\n- Costo real de excursiones, tren y taxis.\n\n## Fuentes\n- [guía] Wikivoyage, «Ushuaia» § Ver > Museos — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Ver — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En taxi — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En bus — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Comprender > Clima — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Agua — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Verano — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [web] https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires — pasajes, buscado el 2026-11-25\n- [web] https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp — alojamiento, buscado el 2026-11-25\n- [web] https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [web] https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas — comida, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._"
+      }
+    }
+  ],
+  "respuesta_final": "## Itinerario (10 al 14 de marzo de 2027)\n\nClima típico de marzo: máxima 12 °C, mínima 4 °C, unos 48 mm de lluvia y cielo nublado con frecuencia. Conviene llevar ropa impermeable en capas [guia:ushuaia#003].\n\n- **Día 1 (10/03), llegada:** llegada al aeropuerto (USH), a 5 km del centro. Traslado en taxi de unos AR$150 (dato de guía, puede estar desactualizado) [guia:ushuaia#011]. Por la tarde, paseo por la Plaza Islas Malvinas y el Mástil del General Belgrano en Isla Redonda [guia:ushuaia#012].\n- **Día 2 (11/03), mar:** Canal Beagle en catamarán o barco, con chances de ver cormoranes, pingüinos, orcas, focas y leones marinos [guia:ushuaia#016].\n- **Día 3 (12/03), naturaleza:** Parque Nacional Tierra del Fuego, a 12 km al oeste de la ciudad. Se puede combinar con el tren \"El tren donde termina el mundo\" [guia:ushuaia#015], [guia:ushuaia#014].\n- **Día 4 (13/03), montaña:** Glaciar Martial (1300 m, sendero empinado y a menudo resbaladizo). Llevar zapatos resistentes e impermeables [guia:ushuaia#015]. Se llega en minivan desde Maipú o Fadul [guia:ushuaia#009].\n- **Día 5 (14/03), cierre y regreso:** Museo Marítimo y del Presidio, en la ex cárcel [guia:ushuaia#013]. Luego, traslado al aeropuerto. El horario del Museo del Fin del Mundo para marzo no figura en la guía, así que conviene confirmarlo.\n\nQuedaron fuera Laguna Esmeralda y el Museo Acatushun (85 km), por falta de tiempo o por distancia.\n\n## Presupuesto\n\nOpción económica, 5 días, 4 noches, 2 personas:\n\n| Concepto | Cálculo | Monto |\n|---|---|---|\n| Pasajes (Despegar) | $257.564 por persona × 2 | $515.128 |\n| Alojamiento (Kayak, desde) | US$72 por noche × 4 noches, a $2.100 | $604.656 |\n| Comida | ($23.087 menú + $4.750 cena) por persona por día × 5 días × 2 | $278.370 |\n| **Total** | | **$1.398.154** |\n\n- **Resultado:** entra en los $2.000.000 y sobran **$601.846**.\n- **Costo por día:** $279.631 (unos $139.815 por persona por día).\n- **Dólar usado:** tarjeta de $2.100, de Infobae [https://www.infobae.com/economia/divisas/dolar-hoy]. Las otras fuentes dan valores distintos y con fechas de noviembre, así que conviene confirmar la cotización del día.\n\n**Supuestos a verificar:**\n- **Pasaje:** se tomó el precio de Despegar como ida y vuelta, pero la oferta tiene fechas del 16/03 y 22/03, no del 10/03 y 14/03 [https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires].\n- **Alojamiento:** Kayak no indica moneda ni unidad. Se asumió USD por noche por habitación doble, y es un precio \"desde\", así que es optimista [https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp].\n- **Si el alojamiento fuera por persona:** sería unos $1,2 M y el total llegaría a unos $2.002.810. Eso supera el presupuesto por unos $2.810. El análisis anterior decía que seguiría dentro, pero con estos números no entra.\n- **Actividades y traslados:** no están incluidos. Los precios de la guía son viejos, así que conviene dejar margen para ellos.\n\n## Lo que no pudimos averiguar\n\n- Precio exacto del pasaje para el 10/03 y el 14/03, y si la oferta es ida y vuelta.\n- Moneda y unidad del alojamiento en Kayak. No hay precios confirmados para marzo de 2027.\n- Precios actuales de restaurantes: el menú es de mayo de 2026 y la cena, de una reseña de 2024.\n- Costo real de excursiones, tren y taxis.\n\n## Fuentes\n- [guía] Wikivoyage, «Ushuaia» § Ver > Museos — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Ver — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En taxi — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En bus — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Comprender > Clima — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Agua — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Verano — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [web] https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires — pasajes, buscado el 2026-11-25\n- [web] https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp — alojamiento, buscado el 2026-11-25\n- [web] https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [web] https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas — comida, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+  "metricas": {
+    "turno": 1,
+    "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+    "pasos_supervisor": 3,
+    "decision_forzada_por_freno": false,
+    "delegaciones": {
+      "investigador": 1,
+      "analista": 1
+    },
+    "refinamientos": 0,
+    "llamadas_por_herramienta": {
+      "consultar_guias": 5,
+      "buscar_en_memoria": 4,
+      "buscar_en_web": 4,
+      "validar_viaje": 1,
+      "calcular_presupuesto": 1
+    },
+    "busquedas_web": 4,
+    "consultas_guias": 5,
+    "fuentes_guia": 17,
+    "fuentes_memoria": 0,
+    "fuentes_web": 12,
+    "observaciones": [],
+    "validacion": "aprobada",
+    "presupuesto_entra": true,
+    "alternativa_calculada": false
+  },
+  "tokens": {
+    "claude-haiku-5-5": {
+      "input_tokens": 90259,
+      "total_tokens": 104767,
+      "input_token_details": {
+        "cache_read": 0,
+        "cache_creation": 0,
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "output_tokens": 14508,
+      "output_token_details": {
+        "reasoning": 3181
+      }
+    }
+  },
+  "archivo": "traces/api/api_99a2f1f6_t1_real_20261125-183649.json"
+}

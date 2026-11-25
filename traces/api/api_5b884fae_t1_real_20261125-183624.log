@@ -1,0 +1,74 @@
+==========================================================================================
+TRAZA MULTI-AGENTE | escenario: api_5b884fae_t1 | modo: real | modelo: claude-haiku-5-5
+MAX_PASOS_SUPERVISOR: 6 | RECURSION_LIMIT: 20 | inicio: 2026-11-25T18:36:24.505+00:00
+==========================================================================================
+PREGUNTA: ¿Qué se puede hacer en Salta en julio y qué clima hace? Pensamos ir 4 días.
+RUTA: supervisor → aprobacion_web → investigador → supervisor → sintesis
+
+[18:36:27.879] SUPERVISOR · pedido extraído: {"destino": "Salta", "fecha_ida": "2027-07-10", "fecha_vuelta": "2027-07-13", "dias": 4, "supuestos": ["Julio sin día exacto: ida el 10/07/2027 (julio de 2026 ya pasó)", "Duración de 4 días: vuelta calculada como ida + 3 días"]}
+[18:36:27.879] SUPERVISOR · decisión 1 → investigador
+           evaluación: Ningún aporte todavía. La pregunta pide actividades y clima en Salta, sin presupuesto ni cuentas, así que no hace falta el analista. Son temas estables que responden las guías (R7): solo hay que pedir actividades y clima, sin precios ni búsqueda web. Falta cobertura de ambos temas (R1, R2).
+           instrucción: Buscá en la base de guías (Wikivoyage) información sobre Salta (Argentina) para un viaje de 4 días en julio: (1) actividades y qué se puede hacer en la ciudad y alrededores en esa época; (2) clima típico de julio en Salta. No busques precios ni uses la web: estos temas son estables y alcanzan con fuentes de guía. Indicá la fuente de cada dato.
+           temas pedidos: actividades, clima
+[18:36:27.887] APROBACIÓN WEB · sin_pedir (memoria) · sin memoria: ninguno
+[18:36:40.261] INVESTIGADOR · ronda 1 · herramientas: consultar_guias
+           ACCIÓN: consultar_guias({"consulta": "qué ver y qué hacer en la ciudad y alrededores, actividades en julio", "destino": "Salta", "tema": "actividades"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'qué ver y qué hacer en la ciudad y alrededores, actividades en julio' [destino=Salta, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:salta#011] origen=guia | Salta...
+           ACCIÓN: consultar_guias({"consulta": "clima típico en julio, temperaturas máximas y mínimas y lluvias", "destino": "Salta", "tema": "clima"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'clima típico en julio, temperaturas máximas y mínimas y lluvias' [destino=Salta, tema=clima]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:salta#001] origen=guia | Salta § Comprend...
+           fuentes: guia:salta#011 (guia, actividades), guia:salta#023 (guia, actividades), guia:salta#000 (guia, actividades), guia:salta#005 (guia, actividades), guia:salta#001 (guia, clima), guia:salta#005 (guia, clima), guia:salta#011 (guia, clima), guia:salta#013 (guia, clima)
+           cobertura: actividades 1 (0 mem / 0 web, sin precios); clima 1 (0 mem / 0 web, sin precios)
+           chequeo por código: sin observaciones
+[18:36:41.934] SUPERVISOR · decisión 2 → FINALIZAR
+           evaluación: R1: La pregunta pide actividades y clima en julio; ambos temas tienen datos (actividades y clima de guía). No pide presupuesto ni cuentas, así que no hace falta analista. R2: Todos los aportes tienen fuentes de guía (guia:salta#001, #011, #013, #023, #000). R3: No aplica, no hay precios solicitados. R4: No aplica, no hay presupuesto. R5: Las observaciones del chequeo por código son "ninguna". R6: No hay contradicciones visibles; los datos de clima y actividades son coherentes. R7: La pregunta solo pide cosas estables, así que no se piden precios ni búsquedas web. La rúbrica se cumple, por lo que corresponde finalizar.
+[18:36:47.769] SÍNTESIS · respuesta final (3223 caracteres)
+
+RESPUESTA FINAL:
+## Qué hacer en Salta en julio
+
+Tomamos como fechas de referencia el 10 al 13 de julio de 2027, porque no indicaste un día exacto.
+
+**En la ciudad:**
+- **Cabildo Histórico y Museo Histórico del Norte**, en la Plaza 9 de Julio. El edificio es de 1783 y el museo recorre la historia regional desde la prehistoria hasta mediados del siglo XX. Los textos están solo en español [guia:salta#011].
+- **Cerro San Bernardo**, con vistas de la ciudad y los alrededores. Se puede subir en teleférico desde el Parque San Martín, en taxi, o caminando por 1070 escalones desde la estatua de Güemes [guia:salta#011].
+- **La Balcarce**, la calle de bares, restaurantes, peñas y boliches. Los fines de semana hay ferias artesanales [guia:salta#023].
+- **Teatros Provincial y Del Huerto**, con obras de teatro, ballet y la sinfónica provincial. También el Estadio Padre Ernesto Martearena, si te interesa el fútbol regional [guia:salta#023].
+- **Shopping de la ciudad**, con cine y juegos infantiles, para un plan de lluvia o de descanso [guia:salta#023].
+
+**Excursiones desde Salta:**
+- Salta es punto de partida para **Cafayate, Cachi y Purmamarca**, y para la **Quebrada de Humahuaca**, Patrimonio de la Humanidad [guia:salta#000].
+- Podés contratar excursiones o ir en vehículo propio. Si vas por cuenta propia, la guía recomienda consultar a Defensa Civil de Salta (0387-521-5601 y 0387-421-3031) sobre el estado de las rutas, porque pueden producirse derrumbes en cualquier época del año [guia:salta#013].
+
+## Clima en julio
+
+Julio es un mes de invierno seco:
+- **Máxima promedio:** 20,2 °C.
+- **Mínima promedio:** 2,9 °C.
+- **Lluvia:** unos 3 mm en el mes.
+
+Los días suelen ser agradables, pero las noches son frías y las heladas son comunes. La nieve es rara [guia:salta#001].
+
+Para comparar, junio tiene máximas de 19,1 °C y mínimas de 3,8 °C, y agosto, de 22,3 °C y 4,5 °C, con algo más de lluvia (5 mm) [guia:salta#001]. Julio es, entonces, uno de los meses más fríos de la temporada, pero sigue siendo seco y con buenos días para salir.
+
+## Lo que no pudimos averiguar
+
+- Horarios y disponibilidad actuales del teleférico, los museos y las excursiones para julio de 2027.
+- Estado de las rutas a Cafayate, Cachi, Purmamarca y la Quebrada de Humahuaca en esas fechas. Conviene confirmarlo con Defensa Civil antes de salir.
+- Eventos específicos de julio. La guía no los detalla.
+
+Si me decís cuántas personas viajan y tu presupuesto aproximado, puedo armar un itinerario día por día con costos estimados.
+
+## Fuentes
+- [guía] Wikivoyage, «Salta» § Ver — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Salta» § Beber y salir — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Salta» § Comprender — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Salta» § Comprender > Clima — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Salta» § Hacer > Circuitos Turísticos Tradicionales — https://es.wikivoyage.org/wiki/Salta (CC BY-SA 4.0)
+
+_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._
+
+------------------------------------------------------------------------------------------
+ESTADO: completo | DURACIÓN: 23.28 s | DECISIONES DEL SUPERVISOR: 2
+REFINAMIENTOS: 0 | BÚSQUEDAS WEB REALES (TAVILY): 0 | DATOS: 6 de guías · 0 de memoria · 0 de la web
+VALIDACIÓN: no se validó | PRESUPUESTO ENTRA: None | HERRAMIENTAS: {"consultar_guias": 2}
+TOKENS: {"claude-haiku-5-5": {"input_tokens": 22150, "total_tokens": 25846, "input_token_details": {"cache_read": 0, "cache_creation": 0, "ephemeral_1h_input_tokens": 0, "ephemeral_5m_input_tokens": 0}, "output_tokens": 3696, "output_token_details": {"reasoning": 237}}}

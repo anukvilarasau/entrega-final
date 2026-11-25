@@ -1,0 +1,186 @@
+{
+  "n": 2,
+  "nombre": "flujo_completo",
+  "pregunta": "Quiero ir 5 días a Ushuaia en marzo, somos 2, salimos de Buenos Aires y tenemos 2.000.000 de pesos. ¿Me armás el viaje y me decís si nos alcanza?",
+  "aprobar": true,
+  "demuestra": "Flujo completo: guías + pausa HITL + web + analista + síntesis",
+  "pausa": {
+    "tipo": "aprobacion_busqueda_web",
+    "ronda": 1,
+    "destino": "Ushuaia",
+    "temas_sin_memoria": [
+      "pasajes",
+      "alojamiento",
+      "comida",
+      "cambio"
+    ],
+    "temas_en_memoria": [],
+    "temas_en_guias": [
+      "actividades",
+      "como_llegar",
+      "barrios",
+      "clima",
+      "consejos"
+    ],
+    "consultas_previstas": [
+      "precio de pasajes Buenos Aires → Ushuaia",
+      "precio de alojamiento por noche en Ushuaia",
+      "cuánto cuesta comer en Ushuaia",
+      "cotización del dólar oficial, tarjeta y MEP"
+    ],
+    "instruccion_del_supervisor": "Buscá datos para un viaje de Buenos Aires a Ushuaia, 2 personas, del 10/03/2027 al 14/03/2027 (5 días, 4 noches). Necesitamos: pasajes aéreos Buenos Aires-Ushuaia ida y vuelta para 2 personas con precios de referencia (rangos, valores \"desde\" o promedios de fechas cercanas, no hace falta precio exacto para esas fechas); alojamiento en Ushuaia para 4 noches para 2 personas con precio de referencia por noche; comida con precio de referencia; cotización del dólar oficial, tarjeta y MEP (no el blue). Además, datos estables de guías: actividades, cómo llegar, barrios, clima típico de marzo y consejos. Indicá la fuente de cada dato (mem-... o URL para precios; guia:... para lo estable).",
+    "como_responder": "POST /tasks/{job_id}/approve con {\"aprobado\": true} o {\"aprobado\": false}"
+  },
+  "conversacion": null,
+  "job": {
+    "job_id": "99a2f1f6cdfc4f51b627ab694b0d6a89",
+    "estado": "DONE",
+    "pregunta": "Quiero ir 5 días a Ushuaia en marzo, somos 2, salimos de Buenos Aires y tenemos 2.000.000 de pesos. ¿Me armás el viaje y me decís si nos alcanza?",
+    "auto_aprobar": false,
+    "modo": "real",
+    "thread_id": "99a2f1f6cdfc4f51b627ab694b0d6a89",
+    "turno": 1,
+    "creado": "2026-11-25T18:36:49.204+00:00",
+    "iniciado": "2026-11-25T18:36:49.208+00:00",
+    "actualizado": "2026-11-25T18:38:03.567+00:00",
+    "terminado": "2026-11-25T18:38:03.567+00:00",
+    "nodo_actual": null,
+    "ruta": [
+      "supervisor",
+      "aprobacion_web",
+      "investigador",
+      "supervisor",
+      "analista",
+      "supervisor",
+      "sintesis"
+    ],
+    "aprobacion_pendiente": null,
+    "aprobaciones": [
+      {
+        "ronda": 1,
+        "aprobado": true,
+        "comentario": "aprobado en la prueba final",
+        "temas": [
+          "pasajes",
+          "alojamiento",
+          "comida",
+          "cambio"
+        ],
+        "timestamp": "2026-11-25T18:36:53.806+00:00"
+      }
+    ],
+    "resultado": {
+      "respuesta_final": "## Itinerario (10 al 14 de marzo de 2027)\n\nClima típico de marzo: máxima 12 °C, mínima 4 °C, unos 48 mm de lluvia y cielo nublado con frecuencia. Conviene llevar ropa impermeable en capas [guia:ushuaia#003].\n\n- **Día 1 (10/03), llegada:** llegada al aeropuerto (USH), a 5 km del centro. Traslado en taxi de unos AR$150 (dato de guía, puede estar desactualizado) [guia:ushuaia#011]. Por la tarde, paseo por la Plaza Islas Malvinas y el Mástil del General Belgrano en Isla Redonda [guia:ushuaia#012].\n- **Día 2 (11/03), mar:** Canal Beagle en catamarán o barco, con chances de ver cormoranes, pingüinos, orcas, focas y leones marinos [guia:ushuaia#016].\n- **Día 3 (12/03), naturaleza:** Parque Nacional Tierra del Fuego, a 12 km al oeste de la ciudad. Se puede combinar con el tren \"El tren donde termina el mundo\" [guia:ushuaia#015], [guia:ushuaia#014].\n- **Día 4 (13/03), montaña:** Glaciar Martial (1300 m, sendero empinado y a menudo resbaladizo). Llevar zapatos resistentes e impermeables [guia:ushuaia#015]. Se llega en minivan desde Maipú o Fadul [guia:ushuaia#009].\n- **Día 5 (14/03), cierre y regreso:** Museo Marítimo y del Presidio, en la ex cárcel [guia:ushuaia#013]. Luego, traslado al aeropuerto. El horario del Museo del Fin del Mundo para marzo no figura en la guía, así que conviene confirmarlo.\n\nQuedaron fuera Laguna Esmeralda y el Museo Acatushun (85 km), por falta de tiempo o por distancia.\n\n## Presupuesto\n\nOpción económica, 5 días, 4 noches, 2 personas:\n\n| Concepto | Cálculo | Monto |\n|---|---|---|\n| Pasajes (Despegar) | $257.564 por persona × 2 | $515.128 |\n| Alojamiento (Kayak, desde) | US$72 por noche × 4 noches, a $2.100 | $604.656 |\n| Comida | ($23.087 menú + $4.750 cena) por persona por día × 5 días × 2 | $278.370 |\n| **Total** | | **$1.398.154** |\n\n- **Resultado:** entra en los $2.000.000 y sobran **$601.846**.\n- **Costo por día:** $279.631 (unos $139.815 por persona por día).\n- **Dólar usado:** tarjeta de $2.100, de Infobae [https://www.infobae.com/economia/divisas/dolar-hoy]. Las otras fuentes dan valores distintos y con fechas de noviembre, así que conviene confirmar la cotización del día.\n\n**Supuestos a verificar:**\n- **Pasaje:** se tomó el precio de Despegar como ida y vuelta, pero la oferta tiene fechas del 16/03 y 22/03, no del 10/03 y 14/03 [https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires].\n- **Alojamiento:** Kayak no indica moneda ni unidad. Se asumió USD por noche por habitación doble, y es un precio \"desde\", así que es optimista [https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp].\n- **Si el alojamiento fuera por persona:** sería unos $1,2 M y el total llegaría a unos $2.002.810. Eso supera el presupuesto por unos $2.810. El análisis anterior decía que seguiría dentro, pero con estos números no entra.\n- **Actividades y traslados:** no están incluidos. Los precios de la guía son viejos, así que conviene dejar margen para ellos.\n\n## Lo que no pudimos averiguar\n\n- Precio exacto del pasaje para el 10/03 y el 14/03, y si la oferta es ida y vuelta.\n- Moneda y unidad del alojamiento en Kayak. No hay precios confirmados para marzo de 2027.\n- Precios actuales de restaurantes: el menú es de mayo de 2026 y la cena, de una reseña de 2024.\n- Costo real de excursiones, tren y taxis.\n\n## Fuentes\n- [guía] Wikivoyage, «Ushuaia» § Ver > Museos — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Ver — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En taxi — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En bus — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Comprender > Clima — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Agua — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Verano — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [web] https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires — pasajes, buscado el 2026-11-25\n- [web] https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp — alojamiento, buscado el 2026-11-25\n- [web] https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [web] https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas — comida, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+      "estado_grafo": "completo",
+      "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+      "turno": 1,
+      "thread_id": "99a2f1f6cdfc4f51b627ab694b0d6a89",
+      "permiso_web": "aprobada",
+      "aprobaciones_hitl": [
+        {
+          "ronda": 1,
+          "turno": 1,
+          "temas_sin_memoria": [
+            "pasajes",
+            "alojamiento",
+            "comida",
+            "cambio"
+          ],
+          "temas_en_memoria": [],
+          "temas_en_guias": [
+            "actividades",
+            "como_llegar",
+            "barrios",
+            "clima",
+            "consejos"
+          ],
+          "pausa": true,
+          "resultado": "aprobada",
+          "origen": "persona",
+          "comentario": "aprobado en la prueba final",
+          "timestamp": "2026-11-25T18:36:53.823+00:00"
+        }
+      ],
+      "metricas": {
+        "turno": 1,
+        "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+        "pasos_supervisor": 3,
+        "decision_forzada_por_freno": false,
+        "delegaciones": {
+          "investigador": 1,
+          "analista": 1
+        },
+        "refinamientos": 0,
+        "llamadas_por_herramienta": {
+          "consultar_guias": 5,
+          "buscar_en_memoria": 4,
+          "buscar_en_web": 4,
+          "validar_viaje": 1,
+          "calcular_presupuesto": 1
+        },
+        "busquedas_web": 4,
+        "consultas_guias": 5,
+        "fuentes_guia": 17,
+        "fuentes_memoria": 0,
+        "fuentes_web": 12,
+        "observaciones": [],
+        "validacion": "aprobada",
+        "presupuesto_entra": true,
+        "alternativa_calculada": false
+      },
+      "pedido": {
+        "origen": "Buenos Aires",
+        "destino": "Ushuaia",
+        "fecha_ida": "2027-03-10",
+        "fecha_vuelta": "2027-03-14",
+        "dias": 5,
+        "personas": 2,
+        "presupuesto": 2000000.0,
+        "moneda": "ARS",
+        "supuestos": [
+          "marzo sin día exacto: ida el 10/03/2027 (marzo de 2026 ya pasó)",
+          "vuelta calculada como ida + 4 días (5 días de viaje): 14/03/2027"
+        ]
+      },
+      "traza": "traces/api/api_99a2f1f6_t1_real_20261125-183649.json"
+    },
+    "error": null,
+    "tramos": 2,
+    "duracion_s": 74.36,
+    "tiempo_ejecucion_s": 74.02,
+    "total_tokens": 104767,
+    "costo_usd": 0.01628,
+    "tokens": {
+      "claude-haiku-5-5": {
+        "input_tokens": 90259,
+        "total_tokens": 104767,
+        "input_token_details": {
+          "cache_read": 0,
+          "cache_creation": 0,
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "output_tokens": 14508,
+        "output_token_details": {
+          "reasoning": 3181
+        }
+      }
+    }
+  },
+  "archivo": "2_flujo_completo.json",
+  "langsmith": {
+    "run_ids": [
+      "01a213ff-02b9-7551-ad3f-3dd5faf9bb34",
+      "01a213ff-14b1-73fe-8d1d-52d5c4a4c7ac"
+    ],
+    "run_id": "01a213ff-02b9-7551-ad3f-3dd5faf9bb34",
+    "tramos": 2,
+    "latencia_s": 74.02,
+    "costo_usd": 0.01628,
+    "tokens": 104767,
+    "estados": [
+      "success",
+      "success"
+    ]
+  }
+}

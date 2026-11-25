@@ -152,7 +152,7 @@ def tabla(salidas: list[dict[str, Any]]) -> str:
     for s in salidas:
         f = fila(s)
         entra = {True: "sí", False: "**no**", None: "—"}[f["presupuesto_entra"]]
-        filas.append(f"| {f['n']} | [{f['escenario']}](traces/pruebas_finales/{s['archivo']}) | {f['estado']} | "
+        filas.append(f"| {f['n']} | [{f['escenario']}]({s['archivo']}) | {f['estado']} | "
                      f"{f['turno']} | {f['pausa_hitl']} | {f['permiso_web']} | {f['fuentes']} | {f['busquedas_web']} | "
                      f"{entra} | {f['validacion']} | {f['tiempo_ejecucion_s']} | {f['tokens']} | {f['costo_usd']} |")
     return "\n".join(filas)
@@ -172,7 +172,7 @@ async def langsmith_de(job_id: str) -> dict[str, Any]:
     cliente = Client()
     proyecto = await asyncio.to_thread(cliente.read_project, project_name=config.AJUSTES.langsmith_project)
     runs = [r async for r in cliente.runs.query_v2(
-        project_ids=[str(proyecto.id)], is_root=True, page_size=10,
+        project_ids=[str(proyecto.id)], is_root=True, page_size=10, include_subtree_usage=True,
         filter=f'and(eq(metadata_key, "job_id"), eq(metadata_value, "{job_id}"))',
         selects=["ID", "TRACE_ID", "START_TIME", "LATENCY_SECONDS", "TOTAL_TOKENS", "TOTAL_COST", "STATUS", "TAGS"])]
     if not runs:

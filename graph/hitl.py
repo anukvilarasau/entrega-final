@@ -146,6 +146,8 @@ def crear_nodo_aprobacion(memoria: MemoriaBusquedas, base: BaseConocimiento | No
         ronda = max(1, state.get("pasos_supervisor", 1))
         pedido = state.get("pedido")
         destino = pedido.destino if pedido is not None else None
+        if not destino and base is not None:  # pedido sin destino: el que se mencione en la pregunta (con guía)
+            destino = base.destino_mencionado(state.get("pregunta"))
         temas: list[Tema] = list(state.get("temas_pedidos") or [])
         sin_memoria, en_memoria, en_guias = await temas_por_origen(memoria, destino, temas, base)
         previo: PermisoWeb = state.get("permiso_web", "libre")

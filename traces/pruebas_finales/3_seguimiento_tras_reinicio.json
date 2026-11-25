@@ -1,0 +1,230 @@
+{
+  "n": 3,
+  "nombre": "seguimiento_tras_reinicio",
+  "pregunta": "¿Y si vamos en julio, en temporada de esquí?",
+  "aprobar": true,
+  "seguimiento_de": 2,
+  "reiniciar": true,
+  "demuestra": "Follow-up después de `docker compose restart app`: recuerda el pedido (checkpoint en Redis)",
+  "reinicio_s": 16.0,
+  "pausa": {
+    "tipo": "aprobacion_busqueda_web",
+    "ronda": 1,
+    "destino": "Ushuaia",
+    "temas_sin_memoria": [
+      "pasajes"
+    ],
+    "temas_en_memoria": [
+      "alojamiento",
+      "comida",
+      "cambio"
+    ],
+    "temas_en_guias": [
+      "clima",
+      "actividades"
+    ],
+    "consultas_previstas": [
+      "precio de pasajes Buenos Aires → Ushuaia"
+    ],
+    "instruccion_del_supervisor": "Para Ushuaia en julio de 2027 (ida 10/07/2027, vuelta 14/07/2027), 2 personas, salida desde Buenos Aires. Buscá: clima típico de julio y actividades de temporada de esquí/nieve (cerro Castor, Glaciar Martial, etc.) desde guías (guia:...). Precios de REFERENCIA (rangos o valores 'desde', no hace falta exacto para esas fechas) de: pasajes ida y vuelta BUE-USH para 2 personas, alojamiento 4 noches para 2 personas, y comida diaria aproximada. Cotización del dólar oficial, tarjeta y MEP (no el blue). Indicá la fuente de cada dato (guía o mem-...) y aclará unidades (por persona o total, por noche o total).",
+    "como_responder": "POST /tasks/{job_id}/approve con {\"aprobado\": true} o {\"aprobado\": false}"
+  },
+  "conversacion": {
+    "thread_id": "99a2f1f6cdfc4f51b627ab694b0d6a89",
+    "turnos_completos": 2,
+    "turnos": [
+      {
+        "turno": 1,
+        "pregunta": "Quiero ir 5 días a Ushuaia en marzo, somos 2, salimos de Buenos Aires y tenemos 2.000.000 de pesos. ¿Me armás el viaje y me decís si nos alcanza?",
+        "respuesta": "## Itinerario (10 al 14 de marzo de 2027)\n\nClima típico de marzo: máxima 12 °C, mínima 4 °C, unos 48 mm de lluvia y cielo nublado con frecuencia. Conviene llevar ropa impermeable en capas [guia:ushuaia#003].\n\n- **Día 1 (10/03), llegada:** llegada al aeropuerto (USH), a 5 km del centro. Traslado en taxi de unos AR$150 (dato de guía, puede estar desactualizado) [guia:ushuaia#011]. Por la tarde, paseo por la Plaza Islas Malvinas y el Mástil del General Belgrano en Isla Redonda [guia:ushuaia#012].\n- **Día 2 (11/03), mar:** Canal Beagle en catamarán o barco, con chances de ver cormoranes, pingüinos, orcas, focas y leones marinos [guia:ushuaia#016].\n- **Día 3 (12/03), naturaleza:** Parque Nacional Tierra del Fuego, a 12 km al oeste de la ciudad. Se puede combinar con el tren \"El tren donde termina el mundo\" [guia:ushuaia#015], [guia:ushuaia#014].\n- **Día 4 (13/03), montaña:** Glaciar Martial (1300 m, sendero empinado y a menudo resbaladizo). Llevar zapatos resistentes e impermeables [guia:ushuaia#015]. Se llega en minivan desde Maipú o Fadul [guia:ushuaia#009].\n- **Día 5 (14/03), cierre y regreso:** Museo Marítimo y del Presidio, en la ex cárcel [guia:ushuaia#013]. Luego, traslado al aeropuerto. El horario del Museo del Fin del Mundo para marzo no figura en la guía, así que conviene confirmarlo.\n\nQuedaron fuera Laguna Esmeralda y el Museo Acatushun (85 km), por falta de tiempo o por distancia.\n\n## Presupuesto\n\nOpción económica, 5 días, 4 noches, 2 personas:\n\n| Concepto | Cálculo | Monto |\n|---|---|---|\n| Pasajes (Despegar) | $257.564 por persona × 2 | $515.128 |\n| Alojamiento (Kayak, desde) | US$72 por noche × 4 noches, a $2.100 | $604.656 |\n| Comida | ($23.087 menú + $4.750 cena) por persona por día × 5 días × 2 | $278.370 |\n| **Total** | | **$1.398.154** |\n\n- **Resultado:** entra en los $2.000.000 y sobran **$601.846**.\n- **Costo por día:** $279.631 (unos $139.815 por persona por día).\n- **Dólar usado:** tarjeta de $2.100, de Infobae [https://www.infobae.com/economia/divisas/dolar-hoy]. Las otras fuentes dan valores distintos y con fechas de noviembre, así que conviene confirmar la cotización del día.\n\n**Supuestos a verificar:**\n- **Pasaje:** se tomó el precio de Despegar como ida y vuelta, pero la oferta tiene fechas del 16/03 y 22/03, no del 10/03 y 14/03 [https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires].\n- **Alojamiento:** Kayak no indica moneda ni unidad. Se asumió USD por noche por habitación doble, y es un precio \"desde\", así que es optimista [https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp].\n- **Si el alojamiento fuera por persona:** sería unos $1,2 M y el total llegaría a unos $2.002.810. Eso supera el presupuesto por unos $2.810. El análisis anterior decía que seguiría dentro, pero con estos números no entra.\n- **Actividades y traslados:** no están incluidos. Los precios de la guía son viejos, así que conviene dejar margen para ellos.\n\n## Lo que no pudimos averiguar\n\n- Precio exacto del pasaje para el 10/03 y el 14/03, y si la oferta es ida y vuelta.\n- Moneda y unidad del alojamiento en Kayak. No hay precios confirmados para marzo de 2027.\n- Precios actuales de restaurantes: el menú es de mayo de 2026 y la cena, de una reseña de 2024.\n- Costo real de excursiones, tren y taxis.\n\n## Fuentes\n- [guía] Wikivoyage, «Ushuaia» § Ver > Museos — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Ver — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En taxi — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Desplazarse > En bus — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Comprender > Clima — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Agua — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Verano — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [web] https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires — pasajes, buscado el 2026-11-25\n- [web] https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp — alojamiento, buscado el 2026-11-25\n- [web] https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [web] https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas — comida, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+        "pedido": {
+          "origen": "Buenos Aires",
+          "destino": "Ushuaia",
+          "fecha_ida": "2027-03-10",
+          "fecha_vuelta": "2027-03-14",
+          "dias": 5,
+          "personas": 2,
+          "presupuesto": 2000000.0,
+          "moneda": "ARS",
+          "supuestos": [
+            "marzo sin día exacto: ida el 10/03/2027 (marzo de 2026 ya pasó)",
+            "vuelta calculada como ida + 4 días (5 días de viaje): 14/03/2027"
+          ]
+        },
+        "timestamp": "2026-11-25T18:38:03.539+00:00"
+      },
+      {
+        "turno": 2,
+        "pregunta": "¿Y si vamos en julio, en temporada de esquí?",
+        "respuesta": "## Itinerario (julio 2027, 10 al 14/07)\n\nJulio es el pico del invierno fueguino: máxima de 5 °C, mínima de -1 °C, unos 46 mm de lluvia y humedad promedio del 80%. Hay poca luz (unas 7 horas diarias de mayo a agosto), así que conviene planear las actividades de montaña para las horas de sol [guia:ushuaia#003].\n\n- **Día 1 (10/07), llegada:** traslado al centro y primer contacto con la ciudad, con la Plaza Islas Malvinas si el clima lo permite [guia:ushuaia#012].\n- **Día 2 (11/07), esquí:** Glaciar Martial, que tiene dos pistas con vista al mar [guia:ushuaia#017].\n- **Día 3 (12/07), nieve y trineo:** Las Cotorras, con motonieves y trineos tirados por huskies [guia:ushuaia#017].\n- **Día 4 (13/07), esquí alpino o de fondo:** Cerro Castor, a 20 km al noroeste de la ciudad [guia:ushuaia#017].\n- **Día 5 (14/07), regreso:** Museo Marítimo y del Presidio, antes del traslado al aeropuerto [guia:ushuaia#013].\n\nEn julio no conviene incluir la laguna Esmeralda, porque la nieve dificulta el acceso [guia:ushuaia#014]. Tampoco hay actividades de mar (como el Canal Beagle) que sean tan atractivas como en verano, así que el foco es la nieve.\n\n## Presupuesto\n\nComparado con marzo, el presupuesto se mantiene igual en la estructura: pasajes, alojamiento y comida. Los precios son de referencia actual (noviembre de 2026) y no de julio de 2027.\n\n**Opción económica:** total **$1.338.364**. **Entra**, y sobran **$661.636** (33 % del presupuesto).\n- Pasajes (Despegar, supuesto ida y vuelta por persona): $502.838 [$251.419 × 2] [https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires]\n- Alojamiento (Hotel Ushuaia, US$72 por noche por habitación, 4 noches): $604.656 [mem-46e71160999e]\n- Comida (menú del día, 1 por persona por día): $230.870 [mem-6d6e461aaecb]\n- Costo por día: $267.673 (por persona: $133.836)\n\n**Opción conservadora (precios altos):** total **$1.866.592**. **Entra** con margen estrecho, sobran **$133.408** (7 %).\n- Pasajes (Google Travel, $318.180 × 2): $636.360 [https://www.google.com/travel/flights/flights-from-buenos-aires-to-ushuaia.html?gl=AR&hl=es-419]\n- Alojamiento (Kayak estándar, US$119 × 4 noches): $999.362 [mem-72caa2ad57bc]\n- Comida: $230.870\n\n**Dólar usado:** tarjeta de Infobae, $2.099,50 [mem-71caa0983bd4]. Es el valor más alto de la memoria, tomado como conservador. Las cotizaciones son de noviembre de 2026.\n\n**Advertencia de supuestos:** si la comida son dos comidas diarias por persona, la opción conservadora queda en $2.097.462 y deja de entrar. Con la económica sigue entrando ($1.569.234).\n\n## Alternativas\n\nSi el alojamiento se cotiza por persona y no por habitación, el viaje no entra incluso en la opción económica con holgura suficiente. Para bajar costos, conviene:\n- Reducir a 4 días, eliminando un día de traslado o de museo.\n- Buscar alojamiento compartido o apartamentos con cocina para cocinar parte de las comidas.\n- Priorizar actividades gratuitas o de bajo costo en la ciudad.\n\n## Lo que no pudimos averiguar\n\n- **Pasajes:** no se sabe si el precio es ida y vuelta o por tramo, ni si es por persona o total, ni la fecha de referencia. Tampoco hay precio confiable para julio de 2027.\n- **Alojamiento:** no hay moneda ni unidad confirmada (por noche o por persona), ni precio para 4 noches y 2 personas.\n- **Comida:** no hay costo diario confiable; algunos precios son de 2024.\n- **Actividades de nieve:** no hay precios de pases de esquí, trineos ni motonieves en las fuentes, así que no entran en el presupuesto.\n- **Clima exacto:** solo hay promedios mensuales, no el pronóstico para las fechas.\n\n## Fuentes\n- [guía] Wikivoyage, «Ushuaia» § Comprender > Clima — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Invierno — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [memoria] mem-46e71160999e → https://www.es.momondo.com/hoteles/ushuaia/Hotel-Ushuaia.mhd2200178.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-72caa2ad57bc → https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-6d6e461aaecb → https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [web] https://www.google.com/travel/flights/flights-from-buenos-aires-to-ushuaia.html?gl=AR&hl=es-419 — pasajes, buscado el 2026-11-25\n- [web] https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires — pasajes, buscado el 2026-11-25\n- [memoria] mem-46e71160999e — alojamiento, buscado el 2026-11-25\n- [memoria] mem-6d6e461aaecb — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 — cambio, buscado el 2026-11-25\n- [memoria] mem-72caa2ad57bc — alojamiento, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+        "pedido": {
+          "origen": "Buenos Aires",
+          "destino": "Ushuaia",
+          "fecha_ida": "2027-07-10",
+          "fecha_vuelta": "2027-07-14",
+          "dias": 5,
+          "personas": 2,
+          "presupuesto": 2000000.0,
+          "moneda": "ARS",
+          "supuestos": [
+            "julio sin día exacto: ida el 10/07/2027 (julio de 2026 ya pasó)",
+            "vuelta calculada como ida + 4 días (5 días de viaje): 14/07/2027"
+          ]
+        },
+        "timestamp": "2026-11-25T18:39:24.641+00:00"
+      }
+    ],
+    "jobs": [
+      "99a2f1f6cdfc4f51b627ab694b0d6a89",
+      "c9dc418b6c05436e8692c0385f086029"
+    ],
+    "job_activo": null,
+    "checkpointer": "AsyncRedisSaver"
+  },
+  "job": {
+    "job_id": "c9dc418b6c05436e8692c0385f086029",
+    "estado": "DONE",
+    "pregunta": "¿Y si vamos en julio, en temporada de esquí?",
+    "auto_aprobar": false,
+    "modo": "real",
+    "thread_id": "99a2f1f6cdfc4f51b627ab694b0d6a89",
+    "turno": 2,
+    "creado": "2026-11-25T18:38:21.174+00:00",
+    "iniciado": "2026-11-25T18:38:21.177+00:00",
+    "actualizado": "2026-11-25T18:39:24.673+00:00",
+    "terminado": "2026-11-25T18:39:24.673+00:00",
+    "nodo_actual": null,
+    "ruta": [
+      "supervisor",
+      "aprobacion_web",
+      "investigador",
+      "supervisor",
+      "analista",
+      "supervisor",
+      "sintesis"
+    ],
+    "aprobacion_pendiente": null,
+    "aprobaciones": [
+      {
+        "ronda": 1,
+        "aprobado": true,
+        "comentario": "aprobado en la prueba final",
+        "temas": [
+          "pasajes"
+        ],
+        "timestamp": "2026-11-25T18:38:27.274+00:00"
+      }
+    ],
+    "resultado": {
+      "respuesta_final": "## Itinerario (julio 2027, 10 al 14/07)\n\nJulio es el pico del invierno fueguino: máxima de 5 °C, mínima de -1 °C, unos 46 mm de lluvia y humedad promedio del 80%. Hay poca luz (unas 7 horas diarias de mayo a agosto), así que conviene planear las actividades de montaña para las horas de sol [guia:ushuaia#003].\n\n- **Día 1 (10/07), llegada:** traslado al centro y primer contacto con la ciudad, con la Plaza Islas Malvinas si el clima lo permite [guia:ushuaia#012].\n- **Día 2 (11/07), esquí:** Glaciar Martial, que tiene dos pistas con vista al mar [guia:ushuaia#017].\n- **Día 3 (12/07), nieve y trineo:** Las Cotorras, con motonieves y trineos tirados por huskies [guia:ushuaia#017].\n- **Día 4 (13/07), esquí alpino o de fondo:** Cerro Castor, a 20 km al noroeste de la ciudad [guia:ushuaia#017].\n- **Día 5 (14/07), regreso:** Museo Marítimo y del Presidio, antes del traslado al aeropuerto [guia:ushuaia#013].\n\nEn julio no conviene incluir la laguna Esmeralda, porque la nieve dificulta el acceso [guia:ushuaia#014]. Tampoco hay actividades de mar (como el Canal Beagle) que sean tan atractivas como en verano, así que el foco es la nieve.\n\n## Presupuesto\n\nComparado con marzo, el presupuesto se mantiene igual en la estructura: pasajes, alojamiento y comida. Los precios son de referencia actual (noviembre de 2026) y no de julio de 2027.\n\n**Opción económica:** total **$1.338.364**. **Entra**, y sobran **$661.636** (33 % del presupuesto).\n- Pasajes (Despegar, supuesto ida y vuelta por persona): $502.838 [$251.419 × 2] [https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires]\n- Alojamiento (Hotel Ushuaia, US$72 por noche por habitación, 4 noches): $604.656 [mem-46e71160999e]\n- Comida (menú del día, 1 por persona por día): $230.870 [mem-6d6e461aaecb]\n- Costo por día: $267.673 (por persona: $133.836)\n\n**Opción conservadora (precios altos):** total **$1.866.592**. **Entra** con margen estrecho, sobran **$133.408** (7 %).\n- Pasajes (Google Travel, $318.180 × 2): $636.360 [https://www.google.com/travel/flights/flights-from-buenos-aires-to-ushuaia.html?gl=AR&hl=es-419]\n- Alojamiento (Kayak estándar, US$119 × 4 noches): $999.362 [mem-72caa2ad57bc]\n- Comida: $230.870\n\n**Dólar usado:** tarjeta de Infobae, $2.099,50 [mem-71caa0983bd4]. Es el valor más alto de la memoria, tomado como conservador. Las cotizaciones son de noviembre de 2026.\n\n**Advertencia de supuestos:** si la comida son dos comidas diarias por persona, la opción conservadora queda en $2.097.462 y deja de entrar. Con la económica sigue entrando ($1.569.234).\n\n## Alternativas\n\nSi el alojamiento se cotiza por persona y no por habitación, el viaje no entra incluso en la opción económica con holgura suficiente. Para bajar costos, conviene:\n- Reducir a 4 días, eliminando un día de traslado o de museo.\n- Buscar alojamiento compartido o apartamentos con cocina para cocinar parte de las comidas.\n- Priorizar actividades gratuitas o de bajo costo en la ciudad.\n\n## Lo que no pudimos averiguar\n\n- **Pasajes:** no se sabe si el precio es ida y vuelta o por tramo, ni si es por persona o total, ni la fecha de referencia. Tampoco hay precio confiable para julio de 2027.\n- **Alojamiento:** no hay moneda ni unidad confirmada (por noche o por persona), ni precio para 4 noches y 2 personas.\n- **Comida:** no hay costo diario confiable; algunos precios son de 2024.\n- **Actividades de nieve:** no hay precios de pases de esquí, trineos ni motonieves en las fuentes, así que no entran en el presupuesto.\n- **Clima exacto:** solo hay promedios mensuales, no el pronóstico para las fechas.\n\n## Fuentes\n- [guía] Wikivoyage, «Ushuaia» § Comprender > Clima — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [guía] Wikivoyage, «Ushuaia» § Hacer > Invierno — https://es.wikivoyage.org/wiki/Ushuaia (CC BY-SA 4.0)\n- [memoria] mem-46e71160999e → https://www.es.momondo.com/hoteles/ushuaia/Hotel-Ushuaia.mhd2200178.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-72caa2ad57bc → https://www.es.kayak.com/Ushuaia-Hoteles-Hotel-Ushuaia.2200178.ksp — alojamiento, buscado el 2026-11-25\n- [memoria] mem-6d6e461aaecb → https://www.expatistan.com/es/costo-de-vida/comparacion/ushuaia/punta-arenas — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25\n- [web] https://www.google.com/travel/flights/flights-from-buenos-aires-to-ushuaia.html?gl=AR&hl=es-419 — pasajes, buscado el 2026-11-25\n- [web] https://www.despegar.com.ar/vuelos/bue/ush/vuelos-a-ushuaia-desde-buenos+aires — pasajes, buscado el 2026-11-25\n- [memoria] mem-46e71160999e — alojamiento, buscado el 2026-11-25\n- [memoria] mem-6d6e461aaecb — comida, buscado el 2026-11-25\n- [memoria] mem-71caa0983bd4 — cambio, buscado el 2026-11-25\n- [memoria] mem-72caa2ad57bc — alojamiento, buscado el 2026-11-25\n\n_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._\n\n_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._",
+      "estado_grafo": "completo",
+      "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+      "turno": 2,
+      "thread_id": "99a2f1f6cdfc4f51b627ab694b0d6a89",
+      "permiso_web": "aprobada",
+      "aprobaciones_hitl": [
+        {
+          "ronda": 1,
+          "turno": 2,
+          "temas_sin_memoria": [
+            "pasajes"
+          ],
+          "temas_en_memoria": [
+            "alojamiento",
+            "comida",
+            "cambio"
+          ],
+          "temas_en_guias": [
+            "clima",
+            "actividades"
+          ],
+          "pausa": true,
+          "resultado": "aprobada",
+          "origen": "persona",
+          "comentario": "aprobado en la prueba final",
+          "timestamp": "2026-11-25T18:38:27.292+00:00"
+        }
+      ],
+      "metricas": {
+        "turno": 2,
+        "ruta": "supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis",
+        "pasos_supervisor": 3,
+        "decision_forzada_por_freno": false,
+        "delegaciones": {
+          "investigador": 1,
+          "analista": 1
+        },
+        "refinamientos": 0,
+        "llamadas_por_herramienta": {
+          "consultar_guias": 2,
+          "buscar_en_memoria": 4,
+          "buscar_en_web": 2,
+          "validar_viaje": 1,
+          "calcular_presupuesto": 2
+        },
+        "busquedas_web": 1,
+        "consultas_guias": 2,
+        "fuentes_guia": 7,
+        "fuentes_memoria": 9,
+        "fuentes_web": 3,
+        "observaciones": [],
+        "validacion": "aprobada",
+        "presupuesto_entra": true,
+        "alternativa_calculada": true
+      },
+      "pedido": {
+        "origen": "Buenos Aires",
+        "destino": "Ushuaia",
+        "fecha_ida": "2027-07-10",
+        "fecha_vuelta": "2027-07-14",
+        "dias": 5,
+        "personas": 2,
+        "presupuesto": 2000000.0,
+        "moneda": "ARS",
+        "supuestos": [
+          "julio sin día exacto: ida el 10/07/2027 (julio de 2026 ya pasó)",
+          "vuelta calculada como ida + 4 días (5 días de viaje): 14/07/2027"
+        ]
+      },
+      "traza": "traces/api/api_c9dc418b_t2_real_20261125-183821.json"
+    },
+    "error": null,
+    "tramos": 2,
+    "duracion_s": 63.5,
+    "tiempo_ejecucion_s": 62.48,
+    "total_tokens": 102004,
+    "costo_usd": 0.015207,
+    "tokens": {
+      "claude-haiku-5-5": {
+        "input_token_details": {
+          "cache_read": 0,
+          "ephemeral_1h_input_tokens": 0,
+          "cache_creation": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "output_token_details": {
+          "reasoning": 2545
+        },
+        "input_tokens": 89487,
+        "output_tokens": 12517,
+        "total_tokens": 102004
+      }
+    }
+  },
+  "archivo": "3_seguimiento_tras_reinicio.json",
+  "langsmith": {
+    "run_ids": [
+      "01a21400-69fc-77b2-a10d-b424d9424679",
+      "01a21400-81cd-70ad-864a-fcfdc2b1259b"
+    ],
+    "run_id": "01a21400-69fc-77b2-a10d-b424d9424679",
+    "tramos": 2,
+    "latencia_s": 62.46,
+    "costo_usd": 0.015207,
+    "tokens": 102004,
+    "estados": [
+      "success",
+      "success"
+    ]
+  }
+}

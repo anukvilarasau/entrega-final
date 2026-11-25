@@ -63,6 +63,22 @@ async def correr_react(agente: CompiledStateGraph, entrada_texto: str) -> tuple[
         return mensajes, True
 
 
+def resumir_resultado(texto: str, largo: int = LARGO_RESULTADO_TRAZA) -> str:
+    """Los primeros `largo` caracteres del resultado de una herramienta, para la traza.
+
+    Si el corte deja afuera la línea del veredicto ("RESULTADO: ENTRA / NO ENTRA ..." de calcular_presupuesto),
+    se agrega igual al final: las métricas (presupuesto_entra) se calculan con este texto. En la prueba final 4
+    el presupuesto tenía 6 renglones y el veredicto quedó después del corte: la métrica decía "entra" y no.
+    """
+    if len(texto) <= largo:
+        return texto
+    corto = texto[:largo] + "..."
+    veredicto = next((ln.strip() for ln in texto.splitlines() if ln.strip().startswith("RESULTADO:")), None)
+    if veredicto and veredicto not in corto:
+        corto += f" / {veredicto}"
+    return corto
+
+
 def extraer_llamadas(mensajes: list[BaseMessage]) -> tuple[list[LlamadaHerramienta], list[Fuente], dict[str, dict[str, Any]]]:
     """Recorre los mensajes del ciclo ReAct.
 
@@ -87,7 +103,7 @@ def extraer_llamadas(mensajes: list[BaseMessage]) -> tuple[list[LlamadaHerramien
         llamadas.append(LlamadaHerramienta(
             herramienta=m.name or str(pedido.get("name", "?")),
             argumentos=argumentos,
-            resultado=texto[:LARGO_RESULTADO_TRAZA] + ("..." if len(texto) > LARGO_RESULTADO_TRAZA else ""),
+            resultado=resumir_resultado(texto),
         ))
         if isinstance(m.artifact, list):
             fuentes.extend(f for f in m.artifact if isinstance(f, Fuente))

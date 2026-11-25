@@ -1,0 +1,126 @@
+==========================================================================================
+TRAZA MULTI-AGENTE | escenario: api_26e00e1e_t1 | modo: real | modelo: claude-haiku-5-5
+MAX_PASOS_SUPERVISOR: 6 | RECURSION_LIMIT: 20 | inicio: 2026-11-25T18:41:06.537+00:00
+==========================================================================================
+PREGUNTA: Quiero ir a Mendoza del 20 al 12 de marzo, somos 3, salimos de Rosario y tenemos 900.000 pesos. ¿Nos alcanza?
+RUTA: supervisor → aprobacion_web → investigador → supervisor → aprobacion_web → investigador → supervisor → analista → supervisor → sintesis
+
+[18:41:11.107] SUPERVISOR · pedido extraído: {"origen": "Rosario", "destino": "Mendoza", "fecha_ida": "2027-03-20", "fecha_vuelta": "2027-03-12", "personas": 3, "presupuesto": 900000.0, "moneda": "ARS", "supuestos": ["Ida 20/03/2027 y vuelta 12/03/2027 según lo dicho; el año se asume 2027 por ser el próximo marzo; la vuelta es anterior a la ida tal como la escribió el usuario."]}
+[18:41:11.107] SUPERVISOR · decisión 1 → investigador
+           evaluación: Todavía no hay aportes. La pregunta pide si alcanza el presupuesto para un viaje, por lo que hacen falta pasajes, alojamiento, comida/actividades y cotización del dólar (R1, R3, R4). Ninguno de los puntos está cubierto aún. Las fechas son inconsistentes (vuelta anterior a la ida); el analista debe validar, pero no conviene finalizar sin datos. Primero se piden los precios al investigador.
+           instrucción: Buscá datos para un viaje de Rosario a Mendoza para 3 personas, ida 2027-03-20 y vuelta 2027-03-12 (la vuelta figura anterior a la ida; reportá esa fecha tal como está). Necesitamos precios de referencia (rangos, valores 'desde' o promedios), no precios exactos: pasajes Rosario-Mendoza para 3 personas, alojamiento en Mendoza para 3 personas, comida por día, y la cotización del dólar oficial, tarjeta y MEP (no el blue). Incluí también actividades, cómo llegar, clima y barrios de Mendoza en marzo desde las guías. Indicá fuente de cada dato (mem-..., URL o guia:...).
+           temas pedidos: pasajes, alojamiento, comida, cambio, actividades, como_llegar, clima, barrios
+[18:41:12.656] APROBACIÓN WEB · rechazada (persona, con pausa) · sin memoria: pasajes, alojamiento, comida
+[18:41:43.027] INVESTIGADOR · ronda 1 · herramientas: consultar_guias, buscar_en_memoria, buscar_en_web
+           ACCIÓN: consultar_guias({"destino": "Mendoza", "consulta": "qué ver y qué hacer en Mendoza", "tema": "actividades"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'qué ver y qué hacer en Mendoza' [destino=Mendoza, tema=actividades]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:mendoza#008] origen=guia | Mendoza § Ver > Museos | url=https://es...
+           ACCIÓN: consultar_guias({"destino": "Mendoza", "consulta": "cómo llegar a Mendoza desde Rosario o desde otras ciudades, avión y micro", "tema": "como_llegar"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'cómo llegar a Mendoza desde Rosario o desde otras ciudades, avión y micro' [destino=Mendoza, tema=como_llegar]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:mendoza#002] origen=gui...
+           ACCIÓN: consultar_guias({"destino": "Mendoza", "consulta": "clima en marzo, temperaturas máximas y mínimas y lluvias", "tema": "clima"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'clima en marzo, temperaturas máximas y mínimas y lluvias' [destino=Mendoza, tema=clima]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:mendoza#001] origen=guia | Mendoza § Entender ...
+           ACCIÓN: consultar_guias({"destino": "Mendoza", "consulta": "barrios y zonas de Mendoza dónde alojarse", "tema": "barrios"})
+           OBSERVACIÓN: GUÍAS (Wikivoyage, 4 fragmentos) para 'barrios y zonas de Mendoza dónde alojarse' [destino=Mendoza, tema=barrios]. Información estable; los precios que mencionen las guías pueden estar desactualizados: NO los uses como precio actual.  [guia:mendoza#014] origen=guia | Mendoza § Dormir | url=https://e...
+           ACCIÓN: buscar_en_memoria({"destino": "Rosario a Mendoza", "consulta": "precio pasajes avión o micro Rosario Mendoza para 3 personas", "tema": "pasajes"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio pasajes avión o micro Rosario Mendoza para 3 personas' [destino=Rosario a Mendoza, tema=pasajes]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"destino": "Mendoza", "consulta": "precio alojamiento hotel por noche para 3 personas marzo", "tema": "alojamiento"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio alojamiento hotel por noche para 3 personas marzo' [destino=Mendoza, tema=alojamiento]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"destino": "Mendoza", "consulta": "precio comida restaurantes por persona por día", "tema": "comida"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio comida restaurantes por persona por día' [destino=Mendoza, tema=comida]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"destino": "Argentina", "consulta": "cotización dólar oficial tarjeta MEP", "tema": "cambio"})
+           OBSERVACIÓN: MEMORIA — 3 datos vigentes para 'cotización dólar oficial tarjeta MEP':  [mem-71caa0983bd4] origen=memoria | tema=cambio | buscado hace 0.0 días (2026-11-25) | url=https://www.infobae.com/economia/divisas/dolar-hoy Fuente: Reuters - Real Time  Dólar oficial  $1.615  Dólar tarjeta  $2.099,50  Dólar b...
+           ACCIÓN: buscar_en_web({"consulta": "precio pasajes micro Rosario a Mendoza por persona ida", "destino": "Rosario a Mendoza", "tema": "pasajes"})
+           OBSERVACIÓN: WEB NO AUTORIZADA: la persona que revisa el pedido RECHAZÓ la búsqueda web, y la memoria no tiene datos de Rosario a Mendoza / pasajes. No inventes datos: informalo en 'Datos que faltan'.
+           ACCIÓN: buscar_en_web({"consulta": "precio hotel por noche Mendoza centro habitación marzo", "destino": "Mendoza", "tema": "alojamiento"})
+           OBSERVACIÓN: WEB NO AUTORIZADA: la persona que revisa el pedido RECHAZÓ la búsqueda web, y la memoria no tiene datos de Mendoza / alojamiento. No inventes datos: informalo en 'Datos que faltan'.
+           ACCIÓN: buscar_en_web({"consulta": "precio promedio comida restaurante Mendoza por persona", "destino": "Mendoza", "tema": "comida"})
+           OBSERVACIÓN: WEB NO AUTORIZADA: la persona que revisa el pedido RECHAZÓ la búsqueda web, y la memoria no tiene datos de Mendoza / comida. No inventes datos: informalo en 'Datos que faltan'.
+           fuentes: guia:mendoza#008 (guia, actividades), guia:mendoza#007 (guia, actividades), guia:mendoza#009 (guia, actividades), guia:mendoza#011 (guia, actividades), guia:mendoza#002 (guia, como_llegar), guia:mendoza#020 (guia, como_llegar), guia:mendoza#003 (guia, como_llegar), guia:mendoza#006 (guia, como_llegar), guia:mendoza#001 (guia, clima), guia:mendoza#020 (guia, clima), guia:mendoza#011 (guia, clima), guia:mendoza#008 (guia, clima), guia:mendoza#014 (guia, barrios), guia:mendoza#017 (guia, barrios), guia:mendoza#009 (guia, barrios), guia:mendoza#015 (guia, barrios), mem-71caa0983bd4 (memoria, cambio), mem-118a59bdea75 (memoria, cambio), mem-d041e707b47c (memoria, cambio)
+           cobertura: actividades 1 (0 mem / 0 web, sin precios); como_llegar 1 (0 mem / 0 web, sin precios); clima 1 (0 mem / 0 web, sin precios); barrios 1 (0 mem / 0 web, sin precios); pasajes 0 (0 mem / 0 web, sin precios); alojamiento 0 (0 mem / 0 web, sin precios); comida 0 (0 mem / 0 web, sin precios); cambio 3 (3 mem / 0 web, con precios)
+           chequeo por código: Se pidieron precios de pasajes pero los resultados encontrados no traen ningún precio. | Se pidieron precios de alojamiento pero los resultados encontrados no traen ningún precio.
+[18:41:46.791] SUPERVISOR · decisión 2 → investigador
+           evaluación: R1 Cobertura: falta pasajes, alojamiento y comida con precios; la cotización sí está. Las guías cubren actividades, cómo llegar, clima y barrios. R2 Fuentes: hay fuentes para todo lo aportado (guía y memoria), pero los precios de pasajes, alojamiento y comida no tienen fuente de memoria ni web. R3 Precios: FALLA; pasajes y alojamiento no traen ningún monto. La búsqueda web fue rechazada por la persona que revisa, así que la memoria no tiene datos. R4 Cálculo: no se ejecutó validar_viaje ni calcular_presupuesto, porque no hay precios. R5 Observaciones: hay dos observaciones sin resolver (pasajes y alojamiento sin precios). R6 Coherencia: la vuelta figura antes que la ida; el supuesto ya está registrado y el analista debe reportarlo. R7 Economía: el pedido sí pide cuentas, así que hacen falta precios de pasajes, alojamiento y comida, además de la cotización.
+           instrucción: Rehacer la búsqueda de precios para Rosario a Mendoza, 3 personas, ida 2027-03-20 y vuelta 2027-03-12 (la vuelta figura antes que la ida; reportala tal como está). Las observaciones del chequeo son que pasajes y alojamiento no trajeron ningún precio. Buscá en memoria con forzar=true y, si hace falta, pedí permiso para la web (la búsqueda web fue rechazada antes; pedila de nuevo solo una vez). Necesitamos precios de referencia (rangos, 'desde' o promedios), no exactos: pasajes Rosario-Mendoza para 3 personas, alojamiento en Mendoza para 3 personas y comida por día en Mendoza. No repitas la cotización del dólar ni las guías ya obtenidas. Indicá la fuente de cada precio (mem-..., URL).
+           temas pedidos: pasajes, alojamiento, comida
+[18:41:46.800] APROBACIÓN WEB · rechazada (decision_previa) · sin memoria: pasajes, alojamiento, comida
+[18:41:58.273] INVESTIGADOR · ronda 2 · herramientas: buscar_en_memoria, buscar_en_web
+           ACCIÓN: buscar_en_memoria({"consulta": "precio pasaje Rosario a Mendoza ida y vuelta, 3 personas, marzo 2027", "destino": "Mendoza", "tema": "pasajes"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio pasaje Rosario a Mendoza ida y vuelta, 3 personas, marzo 2027' [destino=Mendoza, tema=pasajes]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"consulta": "precio alojamiento hotel o departamento por noche en Mendoza, 3 personas, marzo", "destino": "Mendoza", "tema": "alojamiento"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio alojamiento hotel o departamento por noche en Mendoza, 3 personas, marzo' [destino=Mendoza, tema=alojamiento]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_memoria({"consulta": "precio comida por día, restaurantes y menú en Mendoza", "destino": "Mendoza", "tema": "comida"})
+           OBSERVACIÓN: SIN RESULTADOS EN MEMORIA para 'precio comida por día, restaurantes y menú en Mendoza' [destino=Mendoza, tema=comida]: no hay nada guardado sobre este destino y tema. Buscá en la web con buscar_en_web.
+           ACCIÓN: buscar_en_web({"consulta": "precio pasaje micro o avión Rosario a Mendoza ida y vuelta, por persona, marzo 2027", "destino": "Mendoza", "tema": "pasajes"})
+           OBSERVACIÓN: WEB NO AUTORIZADA: la persona que revisa el pedido RECHAZÓ la búsqueda web, y la memoria no tiene datos de Mendoza / pasajes. No inventes datos: informalo en 'Datos que faltan'.
+           ACCIÓN: buscar_en_web({"consulta": "precio alojamiento por noche en Mendoza, hotel o departamento para 3 personas, marzo", "destino": "Mendoza", "tema": "alojamiento"})
+           OBSERVACIÓN: WEB NO AUTORIZADA: la persona que revisa el pedido RECHAZÓ la búsqueda web, y la memoria no tiene datos de Mendoza / alojamiento. No inventes datos: informalo en 'Datos que faltan'.
+           ACCIÓN: buscar_en_web({"consulta": "precio comida por día en Mendoza, restaurantes, menú y almuerzo por persona", "destino": "Mendoza", "tema": "comida"})
+           OBSERVACIÓN: WEB NO AUTORIZADA: la persona que revisa el pedido RECHAZÓ la búsqueda web, y la memoria no tiene datos de Mendoza / comida. No inventes datos: informalo en 'Datos que faltan'.
+           ACCIÓN: buscar_en_web({"consulta": "precio pasaje micro Rosario a Mendoza por persona, alojamiento por noche Mendoza y comida por día Mendoza, marzo 2027", "destino": "Mendoza", "tema": "pasajes", "forzar": true})
+           OBSERVACIÓN: WEB NO AUTORIZADA: la persona que revisa el pedido RECHAZÓ la búsqueda web, y la memoria no tiene datos de Mendoza / pasajes. No inventes datos: informalo en 'Datos que faltan'.
+           cobertura: pasajes 0 (0 mem / 0 web, sin precios); alojamiento 0 (0 mem / 0 web, sin precios); comida 0 (0 mem / 0 web, sin precios)
+           chequeo por código: Las búsquedas no devolvieron ninguna fuente utilizable. | Se pidieron precios de pasajes pero los resultados encontrados no traen ningún precio. | Se pidieron precios de alojamiento pero los resultados encontrados no traen ningún precio.
+[18:42:02.644] SUPERVISOR · decisión 3 → analista
+           evaluación: R1 Cobertura: faltan pasajes, alojamiento y comida (sin datos); hay actividades, clima, cómo llegar, barrios y cambio. Incumplida. R2 Fuentes: guías y memoria tienen fuentes; los precios de pasajes, alojamiento y comida no existen. R3 Precios: pasajes y alojamiento sin ningún monto de referencia en memoria ni web; incumplida. R4 Cálculo: no corresponde calcular todavía porque no hay precios; el analista no puede trabajar sin precios. R5 Observaciones: quedan sin resolver las de pasajes, alojamiento y (en el aporte 2) la falta de fuentes utilizables; el reintento ya se hizo. R6 Coherencia: las fechas del pedido son incoherentes (vuelta 12/03 anterior a la ida 20/03); validar_viaje debería marcarlo como inválido, pero el analista aún no lo validó. R7 Economía: no hay más búsquedas útiles sin permiso web, y el investigador ya reintentó una vez. La web fue rechazada dos veces y la memoria no tiene datos de pasajes, alojamiento ni comida. Como las fechas son imposibles, no se debe pedir suponer otras fechas: la síntesis debe avisar al usuario que corrija el orden de fechas y que faltaron precios por no estar disponibles.
+           instrucción: Validá el viaje con validar_viaje usando los datos del pedido: ida 2027-03-20, vuelta 2027-03-12, 3 personas, presupuesto total 900.000 ARS, origen Rosario, destino Mendoza. Como la vuelta es anterior a la ida, reportá el resultado tal como lo devuelva validar_viaje. Si validar_viaje da INVÁLIDO, no calcules el presupuesto y dejalo indicado. Si no da INVÁLIDO, informá que no hay precios de pasajes, alojamiento ni comida disponibles (la búsqueda web fue rechazada), así que no se puede calcular un presupuesto confiable; usá solo el tipo de cambio disponible (oficial $1.615 según mem-71caa0983bd4, con la aclaración de que hay otras fuentes guardadas con valores algo distintos) y indicá qué falta.
+[18:42:06.117] ANALISTA · ronda 3 · herramientas: validar_viaje
+           ACCIÓN: validar_viaje({"origen": "Rosario", "destino": "Mendoza", "fecha_ida": "2027-03-20", "fecha_vuelta": "2027-03-12", "personas": 3, "presupuesto": 900000, "moneda": "ARS"})
+           OBSERVACIÓN: INVÁLIDO: el viaje no cumple las reglas. - viaje: la vuelta (2027-03-12) tiene que ser DESPUÉS de la ida (2027-03-20) No calcules el presupuesto hasta que se corrijan estos datos.
+           chequeo por código: sin observaciones
+[18:42:09.156] SUPERVISOR · decisión 4 → FINALIZAR
+           evaluación: R1 Cobertura: falta pasajes, alojamiento y comida (sin datos); hay cambio y guías (actividades, clima, barrios, cómo llegar). R2 Fuentes: guías y memoria citadas; OK. R3 Precios: pasajes, alojamiento y comida sin ningún monto; falla. R4 Cálculo: validar_viaje dio INVÁLIDO (vuelta anterior a la ida), así que no hace falta calcular. R5 Observaciones: quedan sin resolver las de pasajes y alojamiento, pero la web fue rechazada dos veces y la memoria no tiene datos; no es resoluble. R6 Coherencia: la fecha de vuelta anterior a la ida es un problema de pedido, no de aportes; no se debe suponer otras fechas. R7: el pedido incluye presupuesto, así que se necesitan precios, pero no hay forma de obtenerlos ahora. Conclusión: FINALIZAR; la síntesis debe avisar que las fechas son inválidas, que faltan precios de pasajes, alojamiento y comida por rechazo de la búsqueda web, y que el tipo de cambio disponible es referencia (oficial $1.615, tarjeta $2.099,50, MEP $1.693,68, del 25/11/2026).
+[18:42:15.189] SÍNTESIS · respuesta final (4591 caracteres)
+
+RESPUESTA FINAL:
+> ⚠️ La búsqueda web no fue autorizada: esta respuesta usa solo los datos que ya estaban en la memoria local de búsquedas, así que puede estar incompleta.
+
+El viaje, tal como lo escribiste, no se puede presupuestar todavía: la fecha de vuelta (12 de marzo de 2027) es anterior a la de ida (20 de marzo de 2027). Para armar el itinerario y el presupuesto necesitamos que confirmes las fechas. Puede ser que la vuelta sea el 12 de marzo y la ida antes (por ejemplo, el 10 o el 11), o que la ida sea el 20 y la vuelta algún día posterior. Con eso también definimos cuántos días dura el viaje.
+
+## Lo que no pudimos averiguar
+
+Esta consulta se respondió solo con datos de la memoria local. La búsqueda en la web no fue autorizada por el revisor, así que no tenemos precios actuales de:
+
+- **Pasajes Rosario–Mendoza** para 3 personas, en avión o micro.
+- **Alojamiento** en Mendoza para 3 personas (precio por noche).
+- **Comida** por día en Mendoza.
+
+Tampoco tenemos la cantidad de días del viaje.
+
+## Lo que sí sabemos
+
+**Clima en marzo** (típico, según la guía) [guia:mendoza#001]: máxima promedio de 27,3 °C, mínima de 14,4 °C y unos 27 mm de lluvia en el mes. Los veranos son secos, así que el calor se modera por la baja humedad, y las montañas cercanas son frescas incluso en esa época.
+
+**Cómo llegar** [guia:mendoza#002] [guia:mendoza#003]: hay vuelos a El Plumerillo (MDZ), pero la guía los describe como más caros que el micro. La terminal de micros está a unos 2 km al este del centro, con conexiones diarias. La guía recomienda comprar con anticipación en temporada alta, de diciembre a marzo. Desde el aeropuerto podés tomar un remis a precio fijo o el colectivo, que sale cada 40 minutos. No tenemos confirmado si hay vuelos directos desde Rosario.
+
+**Qué hacer** [guia:mendoza#007] [guia:mendoza#008] [guia:mendoza#009]: el Parque San Martín para caminar o andar en bici, con una buena vista al atardecer desde el Cerro de la Gloria. Las bodegas ofrecen visitas y catas; marzo y abril son buenos meses por la cosecha, aunque muchas requieren reserva y cierran los fines de semana. Hay museos como el Museo Provincial de Bellas Artes, el MMAMM y el Museo del Área Fundacional. Para aventura, Potrerillos tiene trekking, rafting y parapente. Las Termas de Cacheuta quedan a una hora de la ciudad.
+
+**Dónde alojarse** [guia:mendoza#014] [guia:mendoza#017]: la zona entre Plaza Independencia y el Parque San Martín es la más agradable, con bares y restaurantes cerca en Aristides Villanueva. Al este del centro está la opción más barata, aunque con más ruido. Si buscan algo fuera de la ciudad, Chacras de Coria y Luján de Cuyo tienen hoteles de vino. Cuidado con pagar depósitos por adelantado en alquileres temporarios.
+
+## Cambio de moneda
+
+Para tener una referencia, la memoria guarda un dólar oficial de $1.615 [mem-71caa0983bd4] y otro de $1.579 [mem-118a59bdea75]. Son cotizaciones de noviembre de 2026 y no alcanzan para calcular el presupuesto.
+
+## Próximo paso
+
+Confirmanos las fechas correctas y cuántos días quieren quedarse. Con eso podemos armar el itinerario y el presupuesto, siempre que se autorice la búsqueda web para tener precios actuales de pasajes y alojamiento.
+
+## Fuentes
+- [guía] Wikivoyage, «Mendoza» § Ver > Museos — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Ver — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Hacer — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Llegar > Por avión — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Llegar > Por bus — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Entender > Clima — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Dormir — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [guía] Wikivoyage, «Mendoza» § Dormir > Derroche — https://es.wikivoyage.org/wiki/Mendoza (CC BY-SA 4.0)
+- [memoria] mem-71caa0983bd4 → https://www.infobae.com/economia/divisas/dolar-hoy — cambio, buscado el 2026-11-25
+- [memoria] mem-118a59bdea75 → https://www.lanacion.com.ar/dolar-hoy — cambio, buscado el 2026-11-25
+
+_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) y pueden cambiar. Confirmalos antes de reservar._
+
+_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._
+
+------------------------------------------------------------------------------------------
+ESTADO: completo | DURACIÓN: 68.66 s | DECISIONES DEL SUPERVISOR: 4
+REFINAMIENTOS: 1 | BÚSQUEDAS WEB REALES (TAVILY): 0 | DATOS: 12 de guías · 3 de memoria · 0 de la web
+VALIDACIÓN: rechazada | PRESUPUESTO ENTRA: None | HERRAMIENTAS: {"consultar_guias": 4, "buscar_en_memoria": 7, "buscar_en_web": 7, "validar_viaje": 1}
+TOKENS: {"claude-haiku-5-5": {"input_token_details": {"cache_read": 0, "ephemeral_1h_input_tokens": 0, "cache_creation": 0, "ephemeral_5m_input_tokens": 0}, "output_token_details": {"reasoning": 1075}, "input_tokens": 96849, "output_tokens": 11505, "total_tokens": 108354}}
