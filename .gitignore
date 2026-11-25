@@ -1,4 +1,4 @@
-# Entorno virtual (se recrea con: pip install -r requirements.txt)
+# Entorno virtual (se recrea con run.sh / run.ps1 o pip install -r requirements.txt)
 .venv/
 __pycache__/
 .pytest_cache/
@@ -6,11 +6,9 @@ __pycache__/
 # Secretos: las claves NUNCA se suben a GitHub
 .env
 .DS_Store
-# Cache de embeddings / memoria de búsquedas (se genera sola)
+# Índices y modelos (se generan solos: la ingesta y la descarga al arrancar)
+data/indice_chroma/
 data/memoria_chroma/
+data/modelos/
 # Notas de progreso personales (no se suben)
 PROGRESO.md
-
-# Índices y modelos (se generan solos: ingesta y descarga al arrancar)
-data/indice_chroma/
-data/modelos/

@@ -5,5 +5,9 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 data/memoria_chroma/
+data/indice_chroma/
+data/modelos/
 traces/
 screenshots/
+docs/
+*.ipynb

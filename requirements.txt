@@ -1,33 +1,49 @@
-# Python 3.12 · instalar con: python -m pip install -r requirements.txt
-# --- Grafo multi-agente (PE6) ---
+# Python 3.12 (declarado también en Dockerfile y run.sh) · instalar con: python -m pip install -r requirements.txt
+# Todas las versiones fijas: la instalación es reproducible.
+
+# --- Grafo multi-agente (M5-M6) ---
 langgraph==1.2.18
 langgraph-checkpoint==4.3.2
-# LLM: Claude vía LangChain
+# --- LLM: Claude vía LangChain (M1-M2) ---
 langchain-core==1.7.3
 langchain-anthropic==1.7.7
 anthropic==2.3.0
-# Búsqueda web (reemplaza a TavilySearchResults, deprecado)
+# --- Búsqueda web (su vía async usa aiohttp) ---
 langchain-tavily==0.2.18
-langchain==1.4.7          # dependencia de langchain-tavily (fijada para que la instalación sea reproducible)
-# Memoria local de búsquedas (embeddings ONNX por defecto, sin torch)
-chromadb==1.5.9
-# Validación y configuración
+langchain==1.4.7          # dependencia de langchain-tavily (fijada)
+
+# --- RAG (M3-M4): vector store, embeddings ONNX (sin torch), BM25 y re-ranking ---
+chromadb==1.5.9           # vector store local por defecto + memoria de búsquedas
+pinecone==10.3.0          # vector store alternativo (VECTOR_STORE=pinecone), cliente async nativo
+fastembed==0.9.1          # embeddings multilingües y cross-encoder de re-ranking en ONNX
+onnxruntime==1.32.0
+tokenizers==0.23.3        # tokenizer del modelo de embeddings: el chunking cuenta tokens con él
+huggingface_hub==1.33.0   # descarga de los modelos (una vez)
+numpy==2.5.5
+rank-bm25==0.2.2          # parte léxica de la búsqueda híbrida
+
+# --- Validación y configuración ---
 pydantic==2.14.2
+pydantic-settings==2.16.3 # variables de entorno validadas (config.py)
 python-dotenv==1.2.4
-# --- API de producción (PE7) ---
+
+# --- API de producción (M7) ---
 fastapi==0.164.0
 uvicorn==0.54.0
-httpx==0.28.1             # cliente async de la prueba de carga y de los tests
-# Estado de los jobs (redis.asyncio) + checkpoints de LangGraph en Redis (necesita Redis 8+ o Redis Stack)
+httpx==0.28.1             # cliente async de las pruebas y los tests
+# Estado de los jobs (redis.asyncio) + checkpoints de LangGraph en Redis (Redis 8+ o Redis Stack)
 redis==8.1.0
 langgraph-checkpoint-redis==0.6.0
 redisvl==0.32.1           # dependencia de langgraph-checkpoint-redis (fijada)
 fakeredis==2.40.0         # modo mock y tests: Redis en memoria, sin servidor
-# Observabilidad
-langsmith==0.15.0
+
+# --- Observabilidad ---
+langsmith==0.16.2         # actualizado: el SDK anterior usaba un endpoint que LangSmith da de baja el 31/01/2027
+
 # --- Tests (sin API key) ---
 pytest==9.2.0
 pytest-asyncio==1.4.1.post1
+
 # --- Notebook de demo (ejecutarlo y guardar sus salidas) ---
 ipykernel==7.4.0
 nbconvert==7.17.2

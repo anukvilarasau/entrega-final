@@ -1,4 +1,5 @@
-# API + Redis.  Levantar:  docker compose up --build
+# API + Redis con UNA instrucción:   docker compose up --build
+# (la primera vez construye la imagen con los modelos ONNX; la ingesta del RAG corre sola al arrancar)
 # Redis 8 trae RedisJSON y RediSearch de fábrica (los necesita langgraph-checkpoint-redis).
 services:
   redis:
@@ -7,7 +8,7 @@ services:
       - "6379:6379"
     volumes:
       - redis_datos:/data
-    command: ["redis-server", "--appendonly", "yes"]   # los jobs y checkpoints sobreviven a un reinicio
+    command: ["redis-server", "--appendonly", "yes"]   # jobs y checkpoints sobreviven a un reinicio
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -15,19 +16,32 @@ services:
       retries: 10
 
   app:
-    build: .
-    env_file: .env
+    build:
+      context: .
+      args:   # qué modelos se hornean en la imagen (los mismos del .env)
+        EMBEDDINGS_MODELO: ${EMBEDDINGS_MODELO:-}
+        RERANKER_MODELO: ${RERANKER_MODELO:-}
+        RERANKER: ${RERANKER:-}
+    env_file:
+      - path: .env
+        required: false          # sin .env arranca igual (con MODO_MOCK=1 abajo no hace falta ninguna clave)
     environment:
-      REDIS_URL: redis://redis:6379/0        # pisa el REDIS_URL del .env: adentro de compose se usa este Redis
+      REDIS_URL: redis://redis:6379/0           # pisa el REDIS_URL del .env: adentro de compose se usa este Redis
+      MODO_MOCK: ${MODO_MOCK:-0}
+      CHROMA_DIR: /app/data/indice_chroma
+      MEMORIA_DIR: /app/data/memoria_chroma
     ports:
       - "8000:8000"
     volumes:
-      - chroma_datos:/app/data/memoria_chroma   # la memoria de búsquedas (ChromaDB) persiste
-      - ./traces:/app/traces                    # las trazas de los jobs quedan en el repo local
+      - indice_rag:/app/data/indice_chroma      # índice de las guías (la ingesta es idempotente)
+      - memoria_busquedas:/app/data/memoria_chroma
+      - ./traces:/app/traces                    # las trazas de cada job quedan en el repo local
     depends_on:
       redis:
         condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   redis_datos:
-  chroma_datos:
+  indice_rag:
+  memoria_busquedas:
