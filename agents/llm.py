@@ -165,4 +165,8 @@ def explicar_error(e: Exception) -> str:
             return "No se pudo conectar con la API de Claude (sin internet o timeout)."
     except ImportError:
         pass
+    # langchain-anthropic envuelve el 400 de "sin saldo" en su propia excepción: se reconoce por el mensaje.
+    if "credit balance is too low" in str(e):
+        return (f"{type(e).__name__}: la cuenta de Anthropic no tiene saldo (credit balance is too low). Cargá "
+                "crédito en console.anthropic.com → Plans & Billing, o corré en modo mock (MODO_MOCK=1).")
     return f"{type(e).__name__}: {e}"

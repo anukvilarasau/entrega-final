@@ -1,7 +1,7 @@
 """
 rag/evaluate.py — Evaluación del retriever con un golden set: Recall@k, Precision@k y MRR.
 
-    python -m rag.evaluate                       # configuración del .env; guarda docs/evaluacion_rag.{md,json}
+    python -m rag.evaluate                       # configuración del .env; guarda docs/evaluacion/evaluacion_rag.{md,json}
     python -m rag.evaluate --mock                # embeddings offline (sirve para probar el script, no para medir)
     python -m rag.evaluate --reranker ninguno --salida sin_reranker
     python -m rag.evaluate --reranker-modelo BAAI/bge-reranker-v2-m3-int8 --salida bge
@@ -38,7 +38,7 @@ from rag.documentos import Fragmento, normalizar
 from rag.reranker import RerankerCrossEncoder, RerankerLLM, SinReranker
 
 GOLDEN_SET: Path = config.DATA_DIR / "golden_set.json"
-SALIDA_DIR: Path = config.BASE_DIR / "docs"
+SALIDA_DIR: Path = config.BASE_DIR / "docs" / "evaluacion"
 
 
 class PreguntaGolden(BaseModel):
@@ -178,7 +178,7 @@ async def _main() -> int:
         f"# Evaluación del RAG ({configuracion['fecha']})\n\n"
         + "\n".join(f"- **{c}**: `{v}`" for c, v in configuracion.items()) + "\n\n" + tabla_md(metricas, args.k) + "\n",
         encoding="utf-8")
-    print(f"\nGuardado en docs/{args.salida}.md y .json")
+    print(f"\nGuardado en docs/evaluacion/{args.salida}.md y .json")
     return 0
 
 

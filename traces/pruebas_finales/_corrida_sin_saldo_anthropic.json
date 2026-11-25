@@ -1,0 +1,42 @@
+{
+  "n": 1,
+  "nombre": "solo_guias",
+  "pregunta": "¿Qué se puede hacer en Salta en julio y qué clima hace? Pensamos ir 4 días.",
+  "aprobar": null,
+  "demuestra": "RAG sin pausa: lo estable sale de las guías (0 búsquedas web, sin analista)",
+  "conversacion": null,
+  "job": {
+    "job_id": "5eb7a1650e864f8eb43c0fcf34edc51a",
+    "estado": "FAILED",
+    "pregunta": "¿Qué se puede hacer en Salta en julio y qué clima hace? Pensamos ir 4 días.",
+    "auto_aprobar": false,
+    "modo": "real",
+    "thread_id": "5eb7a1650e864f8eb43c0fcf34edc51a",
+    "turno": 1,
+    "creado": "2026-11-25T18:18:25.479+00:00",
+    "iniciado": "2026-11-25T18:18:25.482+00:00",
+    "actualizado": "2026-11-25T18:18:25.928+00:00",
+    "terminado": "2026-11-25T18:18:25.928+00:00",
+    "nodo_actual": null,
+    "ruta": [],
+    "aprobacion_pendiente": null,
+    "aprobaciones": [],
+    "resultado": null,
+    "error": "AnthropicInvalidRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011ChQ78gKvMnvfjUh8hPwaN'}",
+    "tramos": 1,
+    "duracion_s": 0.45,
+    "tiempo_ejecucion_s": null,
+    "total_tokens": 0,
+    "costo_usd": null,
+    "tokens": {}
+  },
+  "archivo": "1_solo_guias.json",
+  "langsmith": {
+    "run_id": "01a213ee-2b4f-75d7-b712-721300a958d4",
+    "tramos": 1,
+    "latencia_s": 0.44,
+    "costo_usd": 0.0,
+    "tokens": 0,
+    "url": "https://smith.langchain.com/o/5b41f3a0-bdd1-442c-b00f-c637ed683e2a/projects/p/42732cce-dcd9-4d99-93d5-e9273491bde3/r/01a213ee-2b4f-75d7-b712-721300a958d4?trace_id=01a213ee-2b4f-75d7-b712-721300a958d4&start_time=2026-11-25T18:18:25.487711"
+  }
+}
