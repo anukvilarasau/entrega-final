@@ -55,7 +55,9 @@ async def test_escenario_1_flujo_completo(tmp_path: Path) -> None:
 async def test_escenario_2_solo_clima_no_pasa_por_el_analista(tmp_path: Path) -> None:
     t = await correr(mock(tmp_path), "¿Qué clima hace en Bariloche en enero?")
     assert t.texto_ruta() == "supervisor → investigador → supervisor → sintesis"
-    assert "analista" not in t.metricas["delegaciones"] and "22 °C" in t.respuesta_final
+    assert "analista" not in t.metricas["delegaciones"] and "| Enero |" in t.respuesta_final
+    # el clima típico sale de la guía (RAG), sin ir a la web ni a la memoria
+    assert t.metricas["fuentes_guia"] > 0 and t.metricas["busquedas_web"] == 0 and "[guía] Wikivoyage" in t.respuesta_final
 
 
 async def test_escenario_3_presupuesto_que_no_alcanza(tmp_path: Path) -> None:

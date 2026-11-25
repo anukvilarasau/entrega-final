@@ -8,11 +8,15 @@ recalculado) y alternativas si no alcanza.
 
 Hay partes que NO se dejan en manos del LLM, las agrega el código:
 - la lista de FUENTES, armada con las fuentes que devolvieron las
-  herramientas (con su origen: memoria o web, y la fecha de búsqueda), así
-  no se puede inventar una URL;
+  herramientas (guía, memoria o web), así no se puede inventar una URL. Las
+  de guía salen de los METADATOS del fragmento: artículo, sección, URL y
+  licencia (CC BY-SA 4.0, con la atribución a Wikivoyage);
 - el aviso de que los precios son aproximados y salen de la web;
 - un aviso si la respuesta se armó con información parcial porque actuó el
   freno de pasos.
+
+Al final del turno agrega un `TurnoConversacion` (pregunta, pedido, respuesta)
+a `turnos`: es lo que va a recordar el turno siguiente de la conversación.
 """
 
 import logging
@@ -23,13 +27,26 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from agents.common import NodoAsync
-from graph.state import Fuente, OrquestadorState, validar_actualizacion
+from graph.state import (
+    Fuente,
+    OrquestadorState,
+    TurnoConversacion,
+    aportes_del_turno,
+    decisiones_del_turno,
+    turno_actual,
+    validar_actualizacion,
+)
 
 log = logging.getLogger(__name__)
 
 AVISO_PRECIOS: str = (
     "_Los precios son aproximados: salen de búsquedas web (o de la memoria local de búsquedas de los últimos días) "
     "y pueden cambiar. Confirmalos antes de reservar._"
+)
+
+AVISO_GUIAS: str = (
+    "_La información de destinos (qué hacer, cómo llegar, clima típico) sale de las guías de Wikivoyage en español, "
+    "bajo licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.es)._"
 )
 
 AVISO_SIN_WEB: str = (
@@ -52,25 +69,38 @@ qué dólar se usó y de dónde salió)
 costos (menos días, micro en vez de avión, alojamiento compartido, cocinar, actividades gratuitas).
 - Si la pregunta no pide presupuesto (por ejemplo, solo el clima): respondé eso directamente, sin itinerario.
 - Si faltaron datos (búsqueda caída, sin precios), decilo con claridad en ## Lo que no pudimos averiguar.
-Citá las fuentes junto a cada dato con [URL] o [mem-...] tal como aparecen en los aportes.
+- Si es un SEGUIMIENTO (hay CONVERSACIÓN PREVIA), respondé al cambio que pide el usuario y compará brevemente con \
+lo anterior (por ejemplo: "en julio, a diferencia de enero, ..."). No repitas lo que no cambió.
+Lo estable (qué hacer, cómo llegar, clima típico) viene de las guías; los precios, de la memoria o la web.
+Citá las fuentes junto a cada dato con [guia:...], [URL] o [mem-...] tal como aparecen en los aportes.
 Sé breve: como máximo unas 600 palabras. No copies todos los hallazgos: elegí lo que sirve para decidir.
 No agregues una sección de fuentes al final ni avisos sobre precios: eso lo agrega el sistema."""
 
 
+LARGO_RESPUESTA_PREVIA: int = 1200
+
+
 def mensaje_para_sintesis(state: OrquestadorState) -> str:
     pedido = state.get("pedido")
-    bloques = [f"PREGUNTA DEL USUARIO:\n{state['pregunta']}"]
+    bloques = []
+    previos = [t for t in state.get("turnos", []) if t.turno < turno_actual(state)]
+    if previos:
+        t = previos[-1]
+        bloques.append(f"CONVERSACIÓN PREVIA (turno {t.turno}):\nEl usuario preguntó: {t.pregunta}\n"
+                       f"Le respondimos (resumen):\n{t.respuesta[:LARGO_RESPUESTA_PREVIA]}")
+    bloques.append(f"PREGUNTA DEL USUARIO{' (seguimiento)' if previos else ''}:\n{state['pregunta']}")
     if pedido is not None:
         bloques.append(pedido.como_texto())
-    for a in state.get("aportes", []):
+    aportes = aportes_del_turno(state)
+    for a in aportes:
         obs = " | ".join(a.observaciones) if a.observaciones else "ninguna"
         bloques.append(f"APORTE DEL {a.agente.upper()} (ronda {a.ronda}) — observaciones: {obs}\n{a.contenido}")
-    if not state.get("aportes"):
+    if not aportes:
         bloques.append("(No hay aportes de los especialistas.)")
     if state.get("permiso_web") == "rechazada":
         bloques.append("ATENCIÓN: la persona que revisó el pedido NO autorizó la búsqueda web. Los datos salen solo "
                        "de la memoria local: aclaralo y decí qué no se pudo averiguar por eso.")
-    if any(d.forzada for d in state.get("decisiones", [])):
+    if any(d.forzada for d in decisiones_del_turno(state)):
         bloques.append("ATENCIÓN: el trabajo se cortó por el límite de pasos; la información puede estar incompleta. "
                        "Decilo y respondé con lo que haya.")
     return "\n\n".join(bloques)
@@ -86,6 +116,7 @@ def fuentes_a_listar(fuentes: list[Fuente], cuerpo: str, usadas_por_analista: li
        + las que usó el analista para calcular.
     2. Si no hay ninguna citada, las primeras MAX_FUENTES_SIN_CITA.
     Sin repetir la misma página: si una URL aparece como 'web' y como 'memoria', queda una sola.
+    En las guías la clave es (artículo, sección): dos secciones de la misma guía son dos fuentes.
     """
     citadas = [f for f in fuentes if f.ref in cuerpo or (f.url and f.url in cuerpo)]
     elegidas = citadas + [f for f in usadas_por_analista if f not in citadas]
@@ -93,7 +124,8 @@ def fuentes_a_listar(fuentes: list[Fuente], cuerpo: str, usadas_por_analista: li
         elegidas = fuentes[:MAX_FUENTES_SIN_CITA]
     por_pagina: dict[str, Fuente] = {}
     for f in elegidas:
-        por_pagina.setdefault(f.url or f.ref, f)
+        clave = f"{f.url}#{f.seccion}" if f.origen == "guia" else (f.url or f.ref)
+        por_pagina.setdefault(clave, f)
     return list(por_pagina.values())
 
 
@@ -103,7 +135,9 @@ def seccion_fuentes(fuentes: list[Fuente]) -> str:
         return "## Fuentes\n- No se usaron fuentes externas."
     lineas = ["## Fuentes"]
     for f in fuentes:
-        if f.origen == "web":
+        if f.origen == "guia":
+            lineas.append(f"- [guía] Wikivoyage, «{f.titulo}» § {f.seccion} — {f.url} ({f.licencia})")
+        elif f.origen == "web":
             lineas.append(f"- [web] {f.ref} — {f.tema}, buscado el {f.fecha_busqueda.isoformat()}")
         else:
             url = f" → {f.url}" if f.url else ""
@@ -166,23 +200,29 @@ def crear_nodo_sintesis(llm: BaseChatModel) -> NodoAsync:
                            "reemplazá un día por un día libre._")
 
         partes: list[str] = []
-        if any(d.forzada for d in state.get("decisiones", [])):
+        if any(d.forzada for d in decisiones_del_turno(state)):
             partes.append("> ⚠️ Esta respuesta se armó con información parcial: el sistema llegó a su límite de "
                           "pasos antes de completar todas las verificaciones.")
         if state.get("permiso_web") == "rechazada":
             partes.append(AVISO_SIN_WEB)
         partes.append(cuerpo)
-        todas = [f for a in state.get("aportes", []) for f in a.fuentes]
-        del_analista = [f for a in state.get("aportes", []) if a.agente == "analista" for f in a.fuentes]
+        aportes = aportes_del_turno(state)
+        todas = [f for a in aportes for f in a.fuentes]
+        del_analista = [f for a in aportes if a.agente == "analista" for f in a.fuentes]
         fuentes = fuentes_a_listar(todas, cuerpo, del_analista)
         partes.append(seccion_fuentes(fuentes))
-        if fuentes:
+        if any(f.origen in ("web", "memoria") for f in fuentes):
             partes.append(AVISO_PRECIOS)
+        if any(f.origen == "guia" for f in fuentes):
+            partes.append(AVISO_GUIAS)
         final = "\n\n".join(partes)
 
         log.info("[sintesis] respuesta final: %d caracteres, fuentes: %d", len(final), len(fuentes))
+        turno = TurnoConversacion(turno=turno_actual(state), pregunta=state["pregunta"], pedido=state.get("pedido"),
+                                  respuesta=final)
         return validar_actualizacion("sintesis", {
             "respuesta_final": final,
+            "turnos": [turno],
             "messages": [AIMessage(content=final, name="sintesis")],
         })
 

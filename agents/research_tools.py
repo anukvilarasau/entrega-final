@@ -1,9 +1,14 @@
 """
-research_tools.py — Las 2 herramientas del agente investigador.
+research_tools.py — Las 3 herramientas del agente investigador, en el orden en que se usan.
 
-1. buscar_en_memoria → busca en ChromaDB lo que ya se trajo de la web antes.
-2. buscar_en_web     → busca en la web con Tavily y GUARDA lo encontrado en
-                       la memoria, para la próxima vez.
+1. consultar_guias   → RAG sobre la base de conocimiento propia (guías de
+                       Wikivoyage): lo ESTABLE (qué hacer, cómo llegar, barrios,
+                       clima típico, consejos). Gratis, local, con fuente exacta.
+2. buscar_en_memoria → busca en ChromaDB lo que ya se trajo de la web antes
+                       (precios y cotizaciones de los últimos días).
+3. buscar_en_web     → busca en la web con Tavily (solo lo que CAMBIA: precios,
+                       tipo de cambio) y GUARDA lo encontrado en la memoria. Si
+                       el tema es estable y hay guía del destino, no va a la web.
 
 Reglas de diseño (las mismas de la Pre-entrega 5):
 - Esquema de entrada Pydantic (args_schema): el LLM ve qué argumentos existen
@@ -11,11 +16,14 @@ Reglas de diseño (las mismas de la Pre-entrega 5):
 - Docstring muy descriptivo: es lo que el LLM lee para decidir CUÁNDO usarla.
 - Los errores vuelven como TEXTO al LLM (para que razone); nunca rompen el programa.
 
-Cada herramienta devuelve DOS cosas (response_format="content_and_artifact"):
+Cada herramienta devuelve DOS cosas (response_format="content_and_artifact"),
+validadas con el modelo Pydantic `SalidaHerramienta` antes de volver al agente:
 - content: texto legible para el LLM;
 - artifact: la lista de `Fuente` (Pydantic) de cada dato, con su origen
-  ("memoria" o "web"). El nodo investigador arma el Aporte con estos
+  ("guia", "memoria" o "web"). El nodo investigador arma el Aporte con estos
   artifacts, NO con lo que el LLM diga: así las fuentes no se pueden inventar.
+  En las guías, la fuente sale de los METADATOS del fragmento indexado
+  (URL del artículo, sección, licencia).
 
 El buscador web se "inyecta": en modo real es Tavily; en modo mock y en los
 tests es `BuscadorMock`, que lee resultados prefijados de un JSON.
@@ -40,10 +48,14 @@ from langchain_core.tools import BaseTool, StructuredTool, ToolException
 from pydantic import BaseModel, ConfigDict, Field
 
 import config
+from agents.common import SalidaHerramienta, salida  # noqa: F401 (SalidaHerramienta se re-exporta)
+from graph.state import PATRON_PRECIO, TEMAS_ESTABLES, Fuente, PermisoWeb, Tema, cantidad
+from rag.base import BaseConocimiento
 from rag.memoria import MemoriaBusquedas, ResultadoBusquedaMemoria, ResultadoWeb, id_memoria, normalizar
-from graph.state import PATRON_PRECIO, Fuente, PermisoWeb, Tema, cantidad
+from rag.retriever import ResultadoBusqueda
 
 log = logging.getLogger(__name__)
+
 
 # "libre" = comportamiento de la PE6 (sin control humano). Ver el docstring del módulo.
 PERMISO_WEB: contextvars.ContextVar[PermisoWeb] = contextvars.ContextVar("permiso_web", default="libre")
@@ -125,9 +137,19 @@ class BuscadorMock:
 # Esquemas de entrada (lo que ve el LLM)
 # ---------------------------------------------------------------------------
 _DESC_TEMA = (
-    "Tema de la búsqueda: 'pasajes' (vuelos o micros), 'alojamiento', 'clima', "
-    "'comida', 'actividades', 'cambio' (cotización del dólar) u 'otro'."
+    "Tema de la búsqueda: 'pasajes' (vuelos o micros), 'alojamiento', 'comida', 'cambio' (cotización del dólar), "
+    "'clima', 'actividades', 'como_llegar', 'barrios', 'consejos' u 'otro'."
 )
+LARGO_FRAGMENTO: int = 1100  # caracteres de cada fragmento de guía que ve el LLM
+
+
+class ConsultarGuiasInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    consulta: str = Field(min_length=3, max_length=300,
+                          description="Qué querés saber, en castellano: 'qué hacer en invierno', 'cómo llegar desde el aeropuerto'.")
+    destino: str = Field(min_length=2, max_length=80, description="Destino del viaje, por ejemplo 'Bariloche'.")
+    tema: Tema = Field(description=_DESC_TEMA)
 
 
 class BuscarEnMemoriaInput(BaseModel):
@@ -169,11 +191,49 @@ def _fuentes_de_memoria(r: ResultadoBusquedaMemoria) -> list[Fuente]:
     ]
 
 
+def formatear_guias(r: ResultadoBusqueda, tema: str) -> str:
+    lineas = [f"GUÍAS (Wikivoyage, {cantidad(len(r.fragmentos), 'fragmento')}) para '{r.consulta}' "
+              f"[destino={r.destino}, tema={tema}]. Información estable; los precios que mencionen las guías "
+              "pueden estar desactualizados: NO los uses como precio actual."]
+    for x in r.fragmentos:
+        f = x.fragmento
+        texto = f.texto.replace("\n\n", "\n")
+        extracto = texto[:LARGO_FRAGMENTO] + ("..." if len(texto) > LARGO_FRAGMENTO else "")
+        lineas.append(f"\n[{f.id}] origen=guia | {f.titulo} § {f.seccion} | url={f.url}\n{extracto}")
+    return "\n".join(lineas)
+
+
+def fuentes_de_guias(r: ResultadoBusqueda, tema: Tema) -> list[Fuente]:
+    """Las fuentes salen de los METADATOS de cada fragmento indexado (no del texto ni del LLM)."""
+    return [Fuente(ref=x.fragmento.id, origen="guia", tema=tema, url=x.fragmento.url, titulo=x.fragmento.titulo,
+                   seccion=x.fragmento.seccion, licencia=x.fragmento.licencia) for x in r.fragmentos]
+
+
 # ---------------------------------------------------------------------------
 # Fábrica de herramientas
 # ---------------------------------------------------------------------------
-def crear_herramientas_investigador(memoria: MemoriaBusquedas, buscador: BuscadorWeb) -> list[BaseTool]:
-    """Crea las 2 herramientas del investigador, conectadas a ESTA memoria y ESTE buscador."""
+def crear_herramientas_investigador(memoria: MemoriaBusquedas, buscador: BuscadorWeb,
+                                    base: BaseConocimiento | None = None) -> list[BaseTool]:
+    """Crea las herramientas del investigador, conectadas a ESTA base de guías, ESTA memoria y ESTE buscador.
+
+    Sin `base` (tests de la PE6) quedan solo las 2 herramientas de memoria y web.
+    """
+
+    async def consultar_guias(consulta: str, destino: str, tema: Tema) -> tuple[str, list[Fuente]]:
+        assert base is not None
+        try:
+            r = await base.consultar(consulta, destino)
+        except Exception as e:  # índice dañado, modelo que no carga...: se informa, no rompe el grafo
+            log.warning("consultar_guias falló: %s", e)
+            return salida(f"ERROR al consultar las guías: {type(e).__name__}: {e}. Probá con buscar_en_memoria.")
+        if r.destino_sin_guia:
+            return salida(f"SIN GUÍA para '{destino}': la base de conocimiento tiene guías de "
+                          f"{', '.join(base.destinos())}. Para este destino usá buscar_en_memoria y, si no hay "
+                          "nada, buscar_en_web.")
+        if not r.fragmentos:
+            return salida(f"SIN RESULTADOS EN LAS GUÍAS para '{consulta}' [destino={destino}]. Probá con otras "
+                          "palabras o usá buscar_en_memoria.")
+        return salida(formatear_guias(r, tema), fuentes_de_guias(r, tema))
 
     async def buscar_en_memoria(consulta: str, destino: str, tema: Tema) -> tuple[str, list[Fuente]]:
         try:
@@ -199,6 +259,11 @@ def crear_herramientas_investigador(memoria: MemoriaBusquedas, buscador: Buscado
 
     async def buscar_en_web(consulta: str, destino: str, tema: Tema, forzar: bool = False) -> tuple[str, list[Fuente]]:
         ahora = datetime.now().astimezone()
+        # Guarda (entrega final): lo estable lo responden las guías. Si hay guía del destino, no se gasta Tavily.
+        if base is not None and tema in TEMAS_ESTABLES and base.tiene_guia(destino):
+            log.info("buscar_en_web: evitada, el tema '%s' es estable y hay guía de %s", tema, destino)
+            return (f"NO SE BUSCÓ EN LA WEB: '{tema}' es un tema estable y la base de conocimiento tiene la guía de "
+                    f"{destino}. Usá consultar_guias (la web es solo para precios y tipo de cambio)."), []
         # Guarda: si la memoria ya tiene datos vigentes, no se gasta una búsqueda web.
         # forzar=true solo pasa si lo guardado NO trae precios: si los trae, se bloquea POR CÓDIGO
         # (en la corrida real del escenario 5 el LLM forzaba la web teniendo precios en memoria).
@@ -262,29 +327,57 @@ def crear_herramientas_investigador(memoria: MemoriaBusquedas, buscador: Buscado
         return (f"WEB NO AUTORIZADA: {motivo}, y la memoria no tiene datos de {destino} / {tema}. "
                 "No inventes datos: informalo en 'Datos que faltan'."), []
 
+    herramienta_guias = StructuredTool.from_function(
+        coroutine=_validada(consultar_guias),
+        name="consultar_guias",
+        args_schema=ConsultarGuiasInput,
+        response_format="content_and_artifact",
+        description=(
+            "Consulta la BASE DE CONOCIMIENTO de guías de viaje (Wikivoyage en español, búsqueda híbrida con "
+            "re-ranking) sobre lo ESTABLE de un destino: qué ver y qué hacer, cómo llegar y moverse, barrios y "
+            "zonas, clima típico por mes, dónde comer o dormir (tipos y zonas, no precios) y consejos de seguridad. "
+            "Usala PRIMERO para esos temas: es gratis e instantánea. Cada fragmento trae su ID (guia:...), la "
+            "sección y la URL del artículo: citalo. NO sirve para precios actuales ni tipo de cambio. Si responde "
+            "'SIN GUÍA', el destino no está en la base: usá buscar_en_memoria."
+        ),
+    )
     herramienta_memoria = StructuredTool.from_function(
-        coroutine=buscar_en_memoria,
+        coroutine=_validada(buscar_en_memoria),
         name="buscar_en_memoria",
         args_schema=BuscarEnMemoriaInput,
         response_format="content_and_artifact",
         description=(
-            "Busca en la MEMORIA LOCAL (ChromaDB) datos de viaje que ya se trajeron de la web antes. "
-            "Usala SIEMPRE PRIMERO, antes de buscar_en_web: es gratis e instantánea. "
+            "Busca en la MEMORIA LOCAL (ChromaDB) datos que ya se trajeron de la web antes (precios de pasajes, "
+            "alojamiento y comida, tipo de cambio). Usala SIEMPRE antes de buscar_en_web: es gratis e instantánea. "
             f"Solo devuelve datos del mismo destino y tema, guardados hace {config.MEMORIA_MAX_DIAS} días o menos "
             "y parecidos a tu consulta. Cada dato trae su ID (mem-...), la URL original y la fecha de búsqueda. "
             "Si responde 'SIN RESULTADOS EN MEMORIA', usá buscar_en_web."
         ),
     )
     herramienta_web = StructuredTool.from_function(
-        coroutine=buscar_en_web,
+        coroutine=_validada(buscar_en_web),
         name="buscar_en_web",
         args_schema=BuscarEnWebInput,
         response_format="content_and_artifact",
         description=(
-            "Busca en la WEB con Tavily información actual de viajes: precios de pasajes (avión o micro), "
-            "alojamiento, clima, actividades o cotización del dólar. Usala SOLO si buscar_en_memoria no trajo "
-            "nada útil. Todo lo que encuentra queda guardado en la memoria. Cada resultado trae su URL: "
-            "citala siempre. Si responde con 'ERROR', no inventes datos."
+            "Busca en la WEB con Tavily lo que CAMBIA: precios actuales de pasajes (avión o micro), alojamiento, "
+            "comida o excursiones, y la cotización del dólar. Usala SOLO si buscar_en_memoria no trajo nada útil "
+            "(y para temas estables solo si el destino no tiene guía). Todo lo que encuentra queda guardado en la "
+            "memoria. Cada resultado trae su URL: citala siempre. Si responde con 'ERROR', no inventes datos."
         ),
     )
-    return [herramienta_memoria, herramienta_web]
+    if base is None:
+        return [herramienta_memoria, herramienta_web]
+    return [herramienta_guias, herramienta_memoria, herramienta_web]
+
+
+def _validada(fn: Any) -> Any:
+    """Toda salida de herramienta pasa por SalidaHerramienta (Pydantic) antes de volver al agente."""
+    import functools
+
+    @functools.wraps(fn)
+    async def envoltura(*args: Any, **kwargs: Any) -> tuple[str, list[Fuente]]:
+        texto, fuentes = await fn(*args, **kwargs)
+        return salida(texto, fuentes)
+
+    return envoltura

@@ -35,6 +35,7 @@ from graph.state import (
     OrquestadorState,
     PedidoViaje,
     aportes_de,
+    turno_actual,
     contexto_especialista,
     validacion_del_pedido,
     validar_actualizacion,
@@ -140,6 +141,7 @@ def crear_nodo_analista(agente: CompiledStateGraph) -> NodoAsync:
         aporte = Aporte(
             agente="analista",
             ronda=ronda,
+            turno=turno_actual(state),
             instruccion=instruccion,
             contenido=contenido,
             fuentes=fuentes,

@@ -25,23 +25,35 @@ from agents.llm import Politica, PoliticaEstructurada, nueva_llamada
 if TYPE_CHECKING:
     from graph.state import DecisionSupervisor, PedidoViaje
 
-TEMAS: tuple[str, ...] = ("pasajes", "alojamiento", "clima", "actividades", "cambio")
+TEMAS: tuple[str, ...] = ("pasajes", "alojamiento", "comida", "clima", "actividades", "como_llegar", "barrios",
+                          "consejos", "cambio")
+# Lo estable va primero a las guías (consultar_guias); lo que tiene precio, a la memoria y la web.
+ESTABLES: frozenset[str] = frozenset({"clima", "actividades", "como_llegar", "barrios", "consejos"})
 
 # Palabras de la instrucción que indican cada tema.
 PALABRAS_TEMA: dict[str, tuple[str, ...]] = {
     "pasajes": ("pasaje", "vuelo", "micro", "transporte"),
     "alojamiento": ("alojamiento", "hotel", "hostel", "cabaña"),
+    "comida": ("comida", "comer", "restaurante"),
     "clima": ("clima", "temperatura", "tiempo"),
-    "actividades": ("actividad", "excursion", "excursión", "qué hacer", "que hacer", "comida"),
+    "actividades": ("actividad", "excursion", "excursión", "qué hacer", "que hacer", "qué ver", "que ver"),
+    "como_llegar": ("cómo llegar", "como llegar", "cómo llego", "como llego", "aeropuerto"),
+    "barrios": ("barrio", "zona"),
+    "consejos": ("consejo", "seguridad", "seguro"),
     "cambio": ("cambio", "dólar", "dolar", "cotización", "cotizacion"),
 }
 
-# Consulta por defecto de cada tema.
+# Consulta por defecto de cada tema. En los datos del mock, los precios de comida vienen en la misma
+# página web que las actividades (por eso "comida" usa esa consulta, pero va a la memoria/web).
 CONSULTA_POR_TEMA: dict[str, str] = {
     "pasajes": "precio pasajes vuelo y micro {origen} {destino} ida y vuelta",
     "alojamiento": "precio alojamiento hostel hotel habitacion doble por noche {destino}",
+    "comida": "que hacer actividades excursiones y comida en {destino}",
     "clima": "clima en {destino} en {mes}",
-    "actividades": "que hacer actividades excursiones y comida en {destino}",
+    "actividades": "qué ver y qué hacer en {destino}: actividades y excursiones",
+    "como_llegar": "cómo llegar a {destino} en avión o en micro",
+    "barrios": "barrios y zonas de {destino}",
+    "consejos": "consejos de seguridad en {destino}",
     "cambio": "cotizacion dolar oficial tarjeta MEP hoy",
 }
 
@@ -72,7 +84,7 @@ def consultas_pedidas(instruccion: str) -> dict[str, str]:
     """Qué temas pide la instrucción y con qué consulta buscar cada uno."""
     pedidos: list[str] = []
     if (m := re.search(r"TEMAS A BUSCAR:\s*(.+)", instruccion)):  # lista estructurada del supervisor
-        pedidos = [t.strip() for t in m.group(1).split(",") if t.strip() in (*TEMAS, "comida")]
+        pedidos = [t.strip() for t in m.group(1).split(",") if t.strip() in TEMAS]
         instruccion = instruccion.replace(m.group(0), "")
     explicitas = {
         t: c.strip()
@@ -84,8 +96,7 @@ def consultas_pedidas(instruccion: str) -> dict[str, str]:
     destino = _campo(instruccion, "destino", "Bariloche")
     origen = _campo(instruccion, "origen", "")
     mes = _campo(instruccion, "mes", "enero")
-    # En el mock la comida viene en la misma página que las actividades.
-    temas = list(dict.fromkeys("actividades" if t == "comida" else t for t in pedidos)) \
+    temas = list(dict.fromkeys(pedidos)) \
         or [t for t in TEMAS if any(p in texto for p in PALABRAS_TEMA[t])] or ["pasajes", "alojamiento"]
     return {
         t: re.sub(r"\s+", " ", CONSULTA_POR_TEMA[t].format(origen=origen, destino=destino, mes=mes)).strip()
@@ -93,7 +104,7 @@ def consultas_pedidas(instruccion: str) -> dict[str, str]:
     }
 
 
-def politica_investigador(mensajes: list[BaseMessage], _herramientas: list[str]) -> AIMessage:
+def politica_investigador(mensajes: list[BaseMessage], herramientas: list[str]) -> AIMessage:
     instruccion = _instruccion(mensajes)
     consultas = consultas_pedidas(instruccion)
     destino = _campo(instruccion, "destino", "Bariloche")
@@ -103,9 +114,23 @@ def politica_investigador(mensajes: list[BaseMessage], _herramientas: list[str])
     def llamadas_de(herramienta: str, tema: str) -> list[ToolMessage]:
         return [r for p, r in hechos if p.get("name") == herramienta and p.get("args", {}).get("tema") == tema]
 
-    # Paso 1: memoria primero (salvo que se pida forzar la web).
+    # Paso 0 (entrega final): lo estable, primero a las guías (si la herramienta está disponible).
+    con_guias = "consultar_guias" in herramientas
+    if con_guias:
+        a_guias = [t for t in consultas if t in ESTABLES and not llamadas_de("consultar_guias", t)]
+        if a_guias:
+            return AIMessage(
+                content=f"Primero consulto las guías para: {', '.join(a_guias)}.",
+                tool_calls=[nueva_llamada("consultar_guias", {"consulta": consultas[t], "destino": destino, "tema": t})
+                            for t in a_guias],
+            )
+
+    def resuelto_por_guias(tema: str) -> bool:
+        return con_guias and tema in ESTABLES and any(r.artifact for r in llamadas_de("consultar_guias", tema))
+
+    # Paso 1: memoria (salvo que se pida forzar la web), para lo que las guías no resolvieron.
     if not forzar:
-        pendientes = [t for t in consultas if not llamadas_de("buscar_en_memoria", t)]
+        pendientes = [t for t in consultas if not resuelto_por_guias(t) and not llamadas_de("buscar_en_memoria", t)]
         if pendientes:
             return AIMessage(
                 content=f"Primero reviso la memoria para: {', '.join(pendientes)}.",
@@ -116,7 +141,7 @@ def politica_investigador(mensajes: list[BaseMessage], _herramientas: list[str])
     # Paso 2: web para lo que la memoria no tenía (o todo, si se pidió forzar).
     a_la_web = [
         t for t in consultas
-        if not llamadas_de("buscar_en_web", t)
+        if not resuelto_por_guias(t) and not llamadas_de("buscar_en_web", t)
         and (forzar or any(str(r.content).startswith(("SIN RESULTADOS", "ERROR")) for r in llamadas_de("buscar_en_memoria", t)))
     ]
     if a_la_web:
@@ -149,7 +174,7 @@ def _redactar_hallazgos(consultas: dict[str, str], hechos: list[tuple[dict[str, 
                 if not ref or ref in vistas:
                     continue
                 vistas.add(ref)
-                origen = "memoria" if ref.startswith("mem-") else "web"
+                origen = "memoria" if ref.startswith("mem-") else ("guía" if ref.startswith("guia:") else "web")
                 if origen == "web" and "\n" in cuerpo:  # en la web, la 1.ª línea es el título de la página
                     titulo, _, cuerpo = cuerpo.partition("\n")
                     cuerpo = f"{titulo.strip()}: {cuerpo}"

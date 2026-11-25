@@ -1,7 +1,7 @@
 """
-state.py — El estado compartido del orquestador: la "ficha" que viaja por el grafo.
+graph/state.py — El estado compartido del orquestador: la "ficha" que viaja por el grafo.
 
-Tres ideas:
+Cuatro ideas:
 
 1. `OrquestadorState` HEREDA de `MessagesState` (de LangGraph), como pide la
    consigna. De ahí trae `messages` (el historial, con el reductor
@@ -16,6 +16,14 @@ Tres ideas:
    devuelve cada nodo antes de que entre al estado: si el investigador
    intentara tocar la decisión del supervisor, o firmar un aporte como
    "analista", falla con un error claro.
+
+4. Conversaciones (entrega final): un thread de LangGraph puede tener varios
+   TURNOS (pregunta → respuesta → "¿y si vamos en julio?"). Cada aporte,
+   decisión y aprobación lleva su `turno`; los nodos solo miran los del turno
+   actual (`aportes_de`, `decisiones_del_turno`) y el historial completo queda
+   en el checkpoint. Al terminar, la síntesis agrega un `TurnoConversacion` a
+   `turnos` (pregunta, pedido y respuesta): es lo que recuerda el turno
+   siguiente, aunque la API se haya reiniciado en el medio.
 """
 
 import operator
@@ -45,13 +53,20 @@ Destino = Literal["investigador", "analista", "FINALIZAR"]
 
 # Herramientas que puede usar cada especialista: "herramientas acotadas".
 HERRAMIENTAS_POR_AGENTE: dict[str, frozenset[str]] = {
-    "investigador": frozenset({"buscar_en_memoria", "buscar_en_web"}),
+    "investigador": frozenset({"consultar_guias", "buscar_en_memoria", "buscar_en_web"}),
     "analista": frozenset({"validar_viaje", "calcular_presupuesto"}),
 }
 
 # De dónde salió un dato y sobre qué tema es.
-Origen = Literal["memoria", "web"]
-Tema = Literal["pasajes", "alojamiento", "comida", "clima", "actividades", "cambio", "otro"]
+# "guia" (entrega final): un fragmento de la base de conocimiento (RAG sobre las guías de Wikivoyage).
+Origen = Literal["guia", "memoria", "web"]
+Tema = Literal["pasajes", "alojamiento", "comida", "clima", "actividades", "como_llegar", "barrios", "consejos",
+               "cambio", "otro"]
+
+# Lo ESTABLE (qué hacer, cómo llegar, barrios, clima típico, consejos) lo responden las guías (RAG);
+# lo que CAMBIA (precios, tipo de cambio) sale de la memoria de búsquedas o de la web (con permiso humano).
+TEMAS_ESTABLES: frozenset[str] = frozenset({"clima", "actividades", "como_llegar", "barrios", "consejos"})
+TEMAS_VOLATILES: frozenset[str] = frozenset({"pasajes", "alojamiento", "comida", "cambio"})
 
 # Permiso para usar la búsqueda web (Tavily) en una corrida (Pre-entrega 7, human-in-the-loop):
 # - "libre": no hay control humano (la consola y los tests de la PE6);
@@ -64,6 +79,8 @@ PATRON_PRECIO: re.Pattern[str] = re.compile(r"(\$|US\$|USD|U\$S|ARS)\s?\d", re.I
 
 # IDs de la memoria ChromaDB: "mem-" + 12 caracteres hexadecimales.
 PATRON_ID_MEMORIA: re.Pattern[str] = re.compile(r"^mem-[0-9a-f]{12}$")
+# IDs de los fragmentos de guía: "guia:<slug>#<nnn>" (los arma rag/chunking.py).
+PATRON_ID_GUIA: re.Pattern[str] = re.compile(r"^guia:[a-z0-9-]+#\d{3}$")
 _VALIDADOR_URL: TypeAdapter[AnyHttpUrl] = TypeAdapter(AnyHttpUrl)
 
 
@@ -81,21 +98,33 @@ def ahora() -> str:
 # Modelos Pydantic
 # ---------------------------------------------------------------------------
 class Fuente(BaseModel):
-    """De dónde salió un dato: una URL de la web o un registro de la memoria."""
+    """De dónde salió un dato: un fragmento de guía, una URL de la web o un registro de la memoria.
+
+    Las fuentes las arma SIEMPRE el código con lo que devolvieron las herramientas
+    (metadatos del índice, URLs de Tavily, IDs de la memoria), nunca el LLM.
+    """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    ref: str = Field(min_length=1, description="URL http(s) si origen='web'; ID 'mem-…' si origen='memoria'.")
+    ref: str = Field(min_length=1, description="'guia:<slug>#nnn' si origen='guia'; URL si 'web'; 'mem-…' si 'memoria'.")
     origen: Origen
     tema: Tema = "otro"
-    url: str | None = Field(default=None, description="URL original (en memoria: la de cuando se buscó).")
+    url: str | None = Field(default=None, description="URL original (guía: el artículo de Wikivoyage).")
     fecha_busqueda: date = Field(default_factory=date.today)
+    titulo: str | None = Field(default=None, description="(guía) Título del artículo.")
+    seccion: str | None = Field(default=None, description="(guía) Sección del fragmento: 'Hacer > Senderismo'.")
+    licencia: str | None = Field(default=None, description="(guía) Licencia del texto (CC BY-SA 4.0).")
 
     @model_validator(mode="after")
     def _ref_segun_origen(self) -> "Fuente":
         if self.origen == "memoria":
             if not PATRON_ID_MEMORIA.match(self.ref):
                 raise ValueError(f"ID de memoria inválido: {self.ref!r} (formato 'mem-' + 12 hex)")
+        elif self.origen == "guia":
+            if not PATRON_ID_GUIA.match(self.ref):
+                raise ValueError(f"ID de fragmento de guía inválido: {self.ref!r} (formato 'guia:<slug>#nnn')")
+            if not self.url:
+                raise ValueError("Una fuente de guía tiene que traer la URL del artículo (de los metadatos).")
         else:
             try:
                 _VALIDADOR_URL.validate_python(self.ref)
@@ -129,6 +158,7 @@ class CoberturaTema(BaseModel):
     fuentes: int = Field(ge=0, description="Fuentes distintas de este tema.")
     memoria: int = Field(ge=0, description="Cuántas salieron de la memoria.")
     web: int = Field(ge=0, description="Cuántas salieron de la web.")
+    guia: int = Field(default=0, ge=0, description="Cuántas salieron de las guías (RAG).")
     con_precios: bool = Field(description="Si algún resultado de este tema trae un monto ($, US$, ARS...).")
 
 
@@ -139,6 +169,7 @@ class Aporte(BaseModel):
 
     agente: Especialista
     ronda: int = Field(ge=1, description="Número de decisión del supervisor que pidió este trabajo.")
+    turno: int = Field(default=1, ge=1, description="Turno de la conversación (1 = la primera pregunta del thread).")
     instruccion: str = Field(min_length=1, description="Lo que le pidió el supervisor.")
     contenido: str = Field(min_length=1, description="El resultado del especialista.")
     fuentes: list[Fuente] = Field(default_factory=list, description="De dónde salió cada dato.")
@@ -200,8 +231,9 @@ class DecisionSupervisor(BaseModel):
     temas: list[Tema] = Field(
         default_factory=list,
         description=(
-            "SOLO si siguiente == 'investigador': los temas que tiene que buscar ('pasajes', 'alojamiento', "
-            "'comida', 'clima', 'actividades', 'cambio', 'otro'). Vacía en cualquier otro caso."
+            "SOLO si siguiente == 'investigador': los temas que tiene que buscar. Estables (los responden las "
+            "guías): 'clima', 'actividades', 'como_llegar', 'barrios', 'consejos'. Con precios (memoria o web): "
+            "'pasajes', 'alojamiento', 'comida', 'cambio'. U 'otro'. Vacía en cualquier otro caso."
         ),
     )
 
@@ -289,6 +321,7 @@ class DecisionRegistrada(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     paso: int = Field(ge=1)
+    turno: int = Field(default=1, ge=1)
     siguiente: Destino
     instruccion: str = ""
     temas: list[Tema] = Field(default_factory=list)
@@ -303,12 +336,26 @@ class RegistroAprobacion(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     ronda: int = Field(ge=1, description="Decisión del supervisor que mandó al investigador.")
+    turno: int = Field(default=1, ge=1)
     temas_sin_memoria: list[Tema] = Field(default_factory=list, description="Temas que irían a la web.")
     temas_en_memoria: list[Tema] = Field(default_factory=list, description="Temas que ya responde ChromaDB.")
+    temas_en_guias: list[Tema] = Field(default_factory=list, description="Temas estables que responden las guías.")
     pausa: bool = Field(description="True si el grafo se detuvo a esperar a una persona.")
     resultado: PermisoWeb
     origen: Literal["persona", "auto_aprobar", "memoria", "decision_previa"]
     comentario: str = ""
+    timestamp: str = Field(default_factory=ahora)
+
+
+class TurnoConversacion(BaseModel):
+    """Un turno terminado de la conversación: lo que recuerda el turno siguiente (vive en el checkpoint)."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    turno: int = Field(ge=1)
+    pregunta: str
+    pedido: PedidoViaje | None = None
+    respuesta: str = Field(description="La respuesta final que recibió el usuario.")
     timestamp: str = Field(default_factory=ahora)
 
 
@@ -333,6 +380,8 @@ class OrquestadorState(MessagesState):
     - permiso_web         → aprobacion_web (human-in-the-loop, solo en la API de la PE7).
     - aprobaciones        → aprobacion_web (historial de pausas y respuestas, se suma).
     - auto_aprobar        → se carga al inicio (prueba de carga: aprueba sin esperar a nadie).
+    - turno               → se carga al inicio de cada turno (1, 2, 3...: conversación de varios turnos).
+    - turnos              → síntesis, al terminar cada turno (historial de la conversación, se suma).
     """
 
     pregunta: str
@@ -347,6 +396,8 @@ class OrquestadorState(MessagesState):
     permiso_web: PermisoWeb
     aprobaciones: Annotated[list[RegistroAprobacion], operator.add]
     auto_aprobar: bool
+    turno: int
+    turnos: Annotated[list[TurnoConversacion], operator.add]
 
 
 # Qué campos puede escribir cada nodo. `messages` lo pueden usar todos para
@@ -357,7 +408,7 @@ CAMPOS_POR_NODO: dict[str, frozenset[str]] = {
     "aprobacion_web": frozenset({"messages", "permiso_web", "aprobaciones"}),
     "investigador": frozenset({"messages", "aportes"}),
     "analista": frozenset({"messages", "aportes"}),
-    "sintesis": frozenset({"messages", "respuesta_final"}),
+    "sintesis": frozenset({"messages", "respuesta_final", "turnos"}),
 }
 
 
@@ -393,6 +444,9 @@ def validar_actualizacion(nodo: Nodo, actualizacion: dict[str, Any]) -> dict[str
                 r if isinstance(r, RegistroAprobacion) else RegistroAprobacion.model_validate(r)
                 for r in resultado["aprobaciones"]
             ]
+        if "turnos" in resultado:
+            resultado["turnos"] = [t if isinstance(t, TurnoConversacion) else TurnoConversacion.model_validate(t)
+                                   for t in resultado["turnos"]]
         if "decisiones" in resultado:
             resultado["decisiones"] = [
                 d if isinstance(d, DecisionRegistrada) else DecisionRegistrada.model_validate(d)
@@ -403,32 +457,41 @@ def validar_actualizacion(nodo: Nodo, actualizacion: dict[str, Any]) -> dict[str
     return resultado
 
 
-def estado_inicial(pregunta: str, auto_aprobar: bool = False) -> dict[str, Any]:
-    """El estado con el que arranca cada corrida.
+def entrada_turno(pregunta: str, turno: int = 1, auto_aprobar: bool = False) -> dict[str, Any]:
+    """Lo que entra al grafo al empezar un turno.
 
-    `auto_aprobar` (PE7): si el grafo tiene el nodo human-in-the-loop, aprueba la
-    búsqueda web sin pausar (lo usa la prueba de carga de 5 pedidos concurrentes).
+    Turno 1 = el estado inicial completo. Turno 2+ (un seguimiento en el MISMO thread):
+    solo se reinician los campos "de la corrida" (pregunta, pedido, contadores, permiso
+    web). `aportes`, `decisiones`, `aprobaciones` y `turnos` NO se tocan (sus reductores
+    suman): quedan en el checkpoint como historial, y los nodos filtran por `turno`.
+    `auto_aprobar` (PE7): aprueba la búsqueda web sin pausar (prueba de carga).
     """
     from langchain_core.messages import HumanMessage
 
     pregunta = pregunta.strip()
     if not pregunta:
         raise ValueError("La pregunta no puede estar vacía.")
-    return {
+    entrada: dict[str, Any] = {
         "messages": [HumanMessage(content=pregunta)],
         "pregunta": pregunta,
         "pedido": None,
-        "aportes": [],
         "pasos_supervisor": 0,
         "siguiente": "investigador",
         "instruccion_actual": "",
         "temas_pedidos": [],
-        "decisiones": [],
         "respuesta_final": "",
         "permiso_web": "libre",
-        "aprobaciones": [],
         "auto_aprobar": auto_aprobar,
+        "turno": turno,
     }
+    if turno == 1:
+        entrada.update(aportes=[], decisiones=[], aprobaciones=[], turnos=[])
+    return entrada
+
+
+def estado_inicial(pregunta: str, auto_aprobar: bool = False) -> dict[str, Any]:
+    """El estado con el que arranca una corrida nueva (turno 1)."""
+    return entrada_turno(pregunta, turno=1, auto_aprobar=auto_aprobar)
 
 
 def validacion_del_pedido(llamadas: list[LlamadaHerramienta], pedido: PedidoViaje | None) -> str | None:
@@ -448,6 +511,26 @@ def validacion_del_pedido(llamadas: list[LlamadaHerramienta], pedido: PedidoViaj
     return "valido" if validaciones[0].resultado.startswith("VÁLIDO") else "invalido"
 
 
+def turno_actual(state: OrquestadorState) -> int:
+    return int(state.get("turno") or 1)
+
+
+def aportes_del_turno(state: OrquestadorState) -> list[Aporte]:
+    """Los aportes del turno actual (los de turnos anteriores quedan en el historial)."""
+    turno = turno_actual(state)
+    return [a for a in state.get("aportes", []) if a.turno == turno]
+
+
 def aportes_de(state: OrquestadorState, agente: Especialista) -> list[Aporte]:
-    """Los aportes de un especialista, en orden."""
-    return [a for a in state.get("aportes", []) if a.agente == agente]
+    """Los aportes de un especialista en el turno actual, en orden."""
+    return [a for a in aportes_del_turno(state) if a.agente == agente]
+
+
+def decisiones_del_turno(state: OrquestadorState) -> list[DecisionRegistrada]:
+    turno = turno_actual(state)
+    return [d for d in state.get("decisiones", []) if d.turno == turno]
+
+
+def aprobaciones_del_turno(state: OrquestadorState) -> list[RegistroAprobacion]:
+    turno = turno_actual(state)
+    return [r for r in state.get("aprobaciones", []) if r.turno == turno]

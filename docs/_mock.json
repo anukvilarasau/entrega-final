@@ -1,0 +1,1222 @@
+{
+  "configuracion": {
+    "modo": "mock",
+    "embeddings": "hash-bolsa-de-palabras",
+    "store": "chroma:chroma/guias_viaje",
+    "reranker": "solapamiento-lexico",
+    "candidatos_rerank": 12,
+    "max_caracteres_rerank": 1200,
+    "k": 4,
+    "candidatos_por_buscador": 20,
+    "rrf_k": 60,
+    "chunk_tokens": 500,
+    "chunk_overlap": 60,
+    "fragmentos_en_indice": 272,
+    "preguntas": 15,
+    "fecha": "2026-11-25 14:22"
+  },
+  "metricas": [
+    {
+      "modo": "vectorial",
+      "recall_doc_1": 0.933,
+      "precision_doc_1": 0.933,
+      "recall_doc_k": 1.0,
+      "precision_doc_k": 0.867,
+      "recall_frag_1": 0.4,
+      "precision_frag_1": 0.4,
+      "recall_frag_k": 0.517,
+      "precision_frag_k": 0.333,
+      "mrr": 0.517,
+      "ms_por_consulta": 2.9
+    },
+    {
+      "modo": "bm25",
+      "recall_doc_1": 0.8,
+      "precision_doc_1": 0.8,
+      "recall_doc_k": 1.0,
+      "precision_doc_k": 0.833,
+      "recall_frag_1": 0.667,
+      "precision_frag_1": 0.667,
+      "recall_frag_k": 0.75,
+      "precision_frag_k": 0.483,
+      "mrr": 0.717,
+      "ms_por_consulta": 0.5
+    },
+    {
+      "modo": "hibrido_rrf",
+      "recall_doc_1": 0.867,
+      "precision_doc_1": 0.867,
+      "recall_doc_k": 1.0,
+      "precision_doc_k": 0.85,
+      "recall_frag_1": 0.6,
+      "precision_frag_1": 0.6,
+      "recall_frag_k": 0.611,
+      "precision_frag_k": 0.4,
+      "mrr": 0.667,
+      "ms_por_consulta": 3.7
+    },
+    {
+      "modo": "hibrido_rrf_rerank",
+      "recall_doc_1": 0.867,
+      "precision_doc_1": 0.867,
+      "recall_doc_k": 1.0,
+      "precision_doc_k": 0.8,
+      "recall_frag_1": 0.533,
+      "precision_frag_1": 0.533,
+      "recall_frag_k": 0.611,
+      "precision_frag_k": 0.417,
+      "mrr": 0.617,
+      "ms_por_consulta": 5.0
+    }
+  ],
+  "detalle": {
+    "vectorial": [
+      {
+        "id": "esqui-bariloche",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:bariloche#028 (Enlaces externos)",
+          "guia:bariloche#006 (Llegar > En barco)",
+          "guia:bariloche#015 (Hacer > Senderismo)",
+          "guia:bariloche#007 (Llegar > A pie)"
+        ]
+      },
+      {
+        "id": "clima-mendoza-julio",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#001 (Entender > Clima)",
+          "guia:mendoza#017 (Comprar)",
+          "guia:mendoza#021 (Dormir > Presupuesto)"
+        ]
+      },
+      {
+        "id": "aeropuerto-salta",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.5,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.5,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:salta#003 (Llegar > Avión > Forma de acceso al aeropuerto)",
+          "guia:salta#017 (Hacer > Circuitos Turísticos Tradicionales > Circuito de los Valles Calchaquíes)",
+          "guia:salta#019 (Hacer > Circuitos Turísticos Tradicionales > Circuito Norte)",
+          "guia:salta#024 (Comer)"
+        ]
+      },
+      {
+        "id": "ballenas-madryn",
+        "relevantes_en_indice": 3,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:puerto-madryn#005 (Cómo moverse > Puerto Pirámides)",
+          "guia:puerto-madryn#013 (Agencias de Viaje)",
+          "guia:puerto-madryn#004 (Cómo moverse)",
+          "guia:puerto-madryn#010 (Beber)"
+        ]
+      },
+      {
+        "id": "perito-moreno",
+        "relevantes_en_indice": 7,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:el-calafate#008 (Hacer)",
+          "guia:el-calafate#007 (Hacer)",
+          "guia:el-calafate#003 (Llegar > En autobús)",
+          "guia:el-calafate#014 (Dormir)"
+        ]
+      },
+      {
+        "id": "garganta-diablo",
+        "relevantes_en_indice": 6,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.5,
+        "precision_frag_k": 0.5,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:iguazu#003 (Entender > Paisaje)",
+          "guia:iguazu#019 (Hacer > Lado brasileño)",
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#017 (Hacer)"
+        ]
+      },
+      {
+        "id": "ushuaia-invierno",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:ushuaia#019 (Hacer > Invierno)",
+          "guia:ushuaia#020 (Comprar)",
+          "guia:ushuaia#018 (Hacer > Agua)",
+          "guia:ushuaia#000 (Comprender)"
+        ]
+      },
+      {
+        "id": "vino-mendoza",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mendoza#011 (Hacer)",
+          "guia:mendoza#008 (Ver)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#012 (Hacer)"
+        ]
+      },
+      {
+        "id": "iglesias-cordoba",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:cordoba#012 (Ver)",
+          "guia:cordoba#013 (Ver > Iglesias)",
+          "guia:cordoba#014 (Ver > Otros edificios)",
+          "guia:cordoba#045 (Dormir > De lujo)"
+        ]
+      },
+      {
+        "id": "playas-mardel",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:mar-del-plata#011 (Hacer)",
+          "guia:mar-del-plata#008 (Desplazarse > Autobús (Colectivo) > Líneas interurbanas)",
+          "guia:mar-del-plata#010 (Ver)",
+          "guia:mar-del-plata#015 (Dormir)"
+        ]
+      },
+      {
+        "id": "comer-barato-ushuaia",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:ushuaia#018 (Hacer > Agua)",
+          "guia:ushuaia#035 (Conectar)",
+          "guia:ushuaia#008 (Llegar > En barco)",
+          "guia:ushuaia#019 (Hacer > Invierno)"
+        ]
+      },
+      {
+        "id": "seguridad-mendoza",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 0.25,
+        "top_con_filtro": [
+          "guia:mendoza#006 (Desplazarse > En Buses - Colectivos)",
+          "guia:mendoza#014 (Hacer)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#025 (Seguridad)"
+        ]
+      },
+      {
+        "id": "entrada-iguazu",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#000 (Introducción)",
+          "guia:iguazu#006 (Llegar > En avión)",
+          "guia:iguazu#028 (Dormir > Lado argentino)"
+        ]
+      },
+      {
+        "id": "valles-calchaquies",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.25,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.5,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:salta#017 (Hacer > Circuitos Turísticos Tradicionales > Circuito de los Valles Calchaquíes)",
+          "guia:salta#014 (Hacer)",
+          "guia:salta#016 (Hacer > Circuitos Turísticos Tradicionales > Circuito Puna-Andino)",
+          "guia:salta#019 (Hacer > Circuitos Turísticos Tradicionales > Circuito Norte)"
+        ]
+      },
+      {
+        "id": "micro-bariloche",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:bariloche#003 (Llegar > En tren)",
+          "guia:bariloche#028 (Enlaces externos)",
+          "guia:bariloche#006 (Llegar > En barco)",
+          "guia:bariloche#007 (Llegar > A pie)"
+        ]
+      }
+    ],
+    "bm25": [
+      {
+        "id": "esqui-bariloche",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:bariloche#015 (Hacer > Senderismo)",
+          "guia:bariloche#016 (Hacer > Senderismo)",
+          "guia:bariloche#006 (Llegar > En barco)",
+          "guia:bariloche#007 (Llegar > A pie)"
+        ]
+      },
+      {
+        "id": "clima-mendoza-julio",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.25,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mendoza#001 (Entender > Clima)",
+          "guia:mendoza#009 (Ver > Museos)",
+          "guia:mendoza#027 (Siguiente destino)",
+          "guia:mendoza#011 (Hacer)"
+        ]
+      },
+      {
+        "id": "aeropuerto-salta",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.5,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.5,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:salta#003 (Llegar > Avión > Forma de acceso al aeropuerto)",
+          "guia:salta#002 (Llegar > Avión)",
+          "guia:salta#028 (Dormir > Hoteles 5 estrellas)",
+          "guia:salta#031 (Dormir > Salta capital)"
+        ]
+      },
+      {
+        "id": "ballenas-madryn",
+        "relevantes_en_indice": 3,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:puerto-madryn#006 (Ver)",
+          "guia:puerto-madryn#000 (Comprender)",
+          "guia:puerto-madryn#007 (Hacer)",
+          "guia:puerto-madryn#002 (Comprender > Clima)"
+        ]
+      },
+      {
+        "id": "perito-moreno",
+        "relevantes_en_indice": 7,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:el-calafate#014 (Dormir)",
+          "guia:el-calafate#007 (Hacer)",
+          "guia:el-calafate#000 (Entender)",
+          "guia:el-calafate#008 (Hacer)"
+        ]
+      },
+      {
+        "id": "garganta-diablo",
+        "relevantes_en_indice": 6,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#014 (Ver > Lado argentino)",
+          "guia:iguazu#016 (Ver > Lado brasileño)",
+          "guia:iguazu#019 (Hacer > Lado brasileño)"
+        ]
+      },
+      {
+        "id": "ushuaia-invierno",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:ushuaia#019 (Hacer > Invierno)",
+          "guia:ushuaia#015 (Hacer)",
+          "guia:ushuaia#020 (Comprar)",
+          "guia:ushuaia#016 (Hacer > Verano)"
+        ]
+      },
+      {
+        "id": "vino-mendoza",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mendoza#011 (Hacer)",
+          "guia:mendoza#012 (Hacer)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#007 (Ver)"
+        ]
+      },
+      {
+        "id": "iglesias-cordoba",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:cordoba#013 (Ver > Iglesias)",
+          "guia:cordoba#012 (Ver)",
+          "guia:cordoba#014 (Ver > Otros edificios)",
+          "guia:cordoba#021 (Ver > Plazas)"
+        ]
+      },
+      {
+        "id": "playas-mardel",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mar-del-plata#005 (Desplazarse > A pie)",
+          "guia:mar-del-plata#015 (Dormir)",
+          "guia:mar-del-plata#010 (Ver)",
+          "guia:mar-del-plata#008 (Desplazarse > Autobús (Colectivo) > Líneas interurbanas)"
+        ]
+      },
+      {
+        "id": "comer-barato-ushuaia",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 0.25,
+        "top_con_filtro": [
+          "guia:ushuaia#027 (Dormir > Barato)",
+          "guia:ushuaia#024 (Comer > Gama alta)",
+          "guia:ushuaia#007 (Llegar > En autobús)",
+          "guia:ushuaia#022 (Comer > Económico)"
+        ]
+      },
+      {
+        "id": "seguridad-mendoza",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.5,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:mendoza#005 (Desplazarse > Auto Privado)",
+          "guia:mendoza#025 (Seguridad)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#014 (Hacer)"
+        ]
+      },
+      {
+        "id": "entrada-iguazu",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#000 (Introducción)",
+          "guia:iguazu#009 (Desplazarse > En bus)",
+          "guia:iguazu#016 (Ver > Lado brasileño)"
+        ]
+      },
+      {
+        "id": "valles-calchaquies",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.5,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:salta#017 (Hacer > Circuitos Turísticos Tradicionales > Circuito de los Valles Calchaquíes)",
+          "guia:salta#018 (Hacer > Circuitos Turísticos Tradicionales > Circuito Histórico-Gaucho)",
+          "guia:salta#019 (Hacer > Circuitos Turísticos Tradicionales > Circuito Norte)",
+          "guia:salta#016 (Hacer > Circuitos Turísticos Tradicionales > Circuito Puna-Andino)"
+        ]
+      },
+      {
+        "id": "micro-bariloche",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.5,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:bariloche#006 (Llegar > En barco)",
+          "guia:bariloche#024 (Dormir > Media gama)",
+          "guia:bariloche#003 (Llegar > En tren)",
+          "guia:bariloche#007 (Llegar > A pie)"
+        ]
+      }
+    ],
+    "hibrido_rrf": [
+      {
+        "id": "esqui-bariloche",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:bariloche#015 (Hacer > Senderismo)",
+          "guia:bariloche#006 (Llegar > En barco)",
+          "guia:bariloche#007 (Llegar > A pie)",
+          "guia:bariloche#028 (Enlaces externos)"
+        ]
+      },
+      {
+        "id": "clima-mendoza-julio",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mendoza#001 (Entender > Clima)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#011 (Hacer)",
+          "guia:mendoza#027 (Siguiente destino)"
+        ]
+      },
+      {
+        "id": "aeropuerto-salta",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.25,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.5,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:salta#003 (Llegar > Avión > Forma de acceso al aeropuerto)",
+          "guia:salta#028 (Dormir > Hoteles 5 estrellas)",
+          "guia:salta#031 (Dormir > Salta capital)",
+          "guia:salta#002 (Llegar > Avión)"
+        ]
+      },
+      {
+        "id": "ballenas-madryn",
+        "relevantes_en_indice": 3,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.667,
+        "precision_frag_k": 0.5,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:puerto-madryn#005 (Cómo moverse > Puerto Pirámides)",
+          "guia:puerto-madryn#000 (Comprender)",
+          "guia:puerto-madryn#006 (Ver)",
+          "guia:puerto-madryn#004 (Cómo moverse)"
+        ]
+      },
+      {
+        "id": "perito-moreno",
+        "relevantes_en_indice": 7,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:el-calafate#007 (Hacer)",
+          "guia:el-calafate#008 (Hacer)",
+          "guia:el-calafate#014 (Dormir)",
+          "guia:el-calafate#000 (Entender)"
+        ]
+      },
+      {
+        "id": "garganta-diablo",
+        "relevantes_en_indice": 6,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#019 (Hacer > Lado brasileño)",
+          "guia:iguazu#003 (Entender > Paisaje)",
+          "guia:iguazu#014 (Ver > Lado argentino)"
+        ]
+      },
+      {
+        "id": "ushuaia-invierno",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:ushuaia#019 (Hacer > Invierno)",
+          "guia:ushuaia#020 (Comprar)",
+          "guia:ushuaia#000 (Comprender)",
+          "guia:ushuaia#008 (Llegar > En barco)"
+        ]
+      },
+      {
+        "id": "vino-mendoza",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mendoza#011 (Hacer)",
+          "guia:mendoza#012 (Hacer)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#008 (Ver)"
+        ]
+      },
+      {
+        "id": "iglesias-cordoba",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:cordoba#012 (Ver)",
+          "guia:cordoba#013 (Ver > Iglesias)",
+          "guia:cordoba#014 (Ver > Otros edificios)",
+          "guia:cordoba#024 (Hacer > Cines)"
+        ]
+      },
+      {
+        "id": "playas-mardel",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mar-del-plata#008 (Desplazarse > Autobús (Colectivo) > Líneas interurbanas)",
+          "guia:mar-del-plata#015 (Dormir)",
+          "guia:mar-del-plata#010 (Ver)",
+          "guia:mar-del-plata#011 (Hacer)"
+        ]
+      },
+      {
+        "id": "comer-barato-ushuaia",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:ushuaia#027 (Dormir > Barato)",
+          "guia:ushuaia#008 (Llegar > En barco)",
+          "guia:ushuaia#018 (Hacer > Agua)",
+          "guia:ushuaia#021 (Comer)"
+        ]
+      },
+      {
+        "id": "seguridad-mendoza",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.5,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:mendoza#014 (Hacer)",
+          "guia:mendoza#025 (Seguridad)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#006 (Desplazarse > En Buses - Colectivos)"
+        ]
+      },
+      {
+        "id": "entrada-iguazu",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#000 (Introducción)",
+          "guia:iguazu#028 (Dormir > Lado argentino)",
+          "guia:iguazu#014 (Ver > Lado argentino)"
+        ]
+      },
+      {
+        "id": "valles-calchaquies",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.5,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:salta#017 (Hacer > Circuitos Turísticos Tradicionales > Circuito de los Valles Calchaquíes)",
+          "guia:salta#018 (Hacer > Circuitos Turísticos Tradicionales > Circuito Histórico-Gaucho)",
+          "guia:salta#016 (Hacer > Circuitos Turísticos Tradicionales > Circuito Puna-Andino)",
+          "guia:salta#019 (Hacer > Circuitos Turísticos Tradicionales > Circuito Norte)"
+        ]
+      },
+      {
+        "id": "micro-bariloche",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:bariloche#003 (Llegar > En tren)",
+          "guia:bariloche#006 (Llegar > En barco)",
+          "guia:bariloche#028 (Enlaces externos)",
+          "guia:bariloche#007 (Llegar > A pie)"
+        ]
+      }
+    ],
+    "hibrido_rrf_rerank": [
+      {
+        "id": "esqui-bariloche",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:bariloche#015 (Hacer > Senderismo)",
+          "guia:bariloche#016 (Hacer > Senderismo)",
+          "guia:bariloche#012 (Ver)",
+          "guia:bariloche#006 (Llegar > En barco)"
+        ]
+      },
+      {
+        "id": "clima-mendoza-julio",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.25,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mendoza#001 (Entender > Clima)",
+          "guia:mendoza#011 (Hacer)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#027 (Siguiente destino)"
+        ]
+      },
+      {
+        "id": "aeropuerto-salta",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.25,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.5,
+        "precision_frag_k": 0.25,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:salta#028 (Dormir > Hoteles 5 estrellas)",
+          "guia:salta#003 (Llegar > Avión > Forma de acceso al aeropuerto)",
+          "guia:salta#031 (Dormir > Salta capital)",
+          "guia:salta#030 (Dormir > Salta capital)"
+        ]
+      },
+      {
+        "id": "ballenas-madryn",
+        "relevantes_en_indice": 3,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.667,
+        "precision_frag_k": 0.5,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:puerto-madryn#006 (Ver)",
+          "guia:puerto-madryn#000 (Comprender)",
+          "guia:puerto-madryn#005 (Cómo moverse > Puerto Pirámides)",
+          "guia:puerto-madryn#004 (Cómo moverse)"
+        ]
+      },
+      {
+        "id": "perito-moreno",
+        "relevantes_en_indice": 7,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:el-calafate#007 (Hacer)",
+          "guia:el-calafate#014 (Dormir)",
+          "guia:el-calafate#008 (Hacer)",
+          "guia:el-calafate#000 (Entender)"
+        ]
+      },
+      {
+        "id": "garganta-diablo",
+        "relevantes_en_indice": 6,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:iguazu#019 (Hacer > Lado brasileño)",
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#014 (Ver > Lado argentino)",
+          "guia:iguazu#016 (Ver > Lado brasileño)"
+        ]
+      },
+      {
+        "id": "ushuaia-invierno",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:ushuaia#019 (Hacer > Invierno)",
+          "guia:ushuaia#020 (Comprar)",
+          "guia:ushuaia#016 (Hacer > Verano)",
+          "guia:ushuaia#015 (Hacer)"
+        ]
+      },
+      {
+        "id": "vino-mendoza",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mendoza#011 (Hacer)",
+          "guia:mendoza#012 (Hacer)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#009 (Ver > Museos)"
+        ]
+      },
+      {
+        "id": "iglesias-cordoba",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 0.75,
+        "precision_frag_k": 0.75,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:cordoba#013 (Ver > Iglesias)",
+          "guia:cordoba#021 (Ver > Plazas)",
+          "guia:cordoba#014 (Ver > Otros edificios)",
+          "guia:cordoba#012 (Ver)"
+        ]
+      },
+      {
+        "id": "playas-mardel",
+        "relevantes_en_indice": 5,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 1.0,
+        "precision_frag_1": 1.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 1.0,
+        "mrr": 1.0,
+        "top_con_filtro": [
+          "guia:mar-del-plata#008 (Desplazarse > Autobús (Colectivo) > Líneas interurbanas)",
+          "guia:mar-del-plata#015 (Dormir)",
+          "guia:mar-del-plata#005 (Desplazarse > A pie)",
+          "guia:mar-del-plata#009 (Ver)"
+        ]
+      },
+      {
+        "id": "comer-barato-ushuaia",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:ushuaia#027 (Dormir > Barato)",
+          "guia:ushuaia#021 (Comer)",
+          "guia:ushuaia#024 (Comer > Gama alta)",
+          "guia:ushuaia#008 (Llegar > En barco)"
+        ]
+      },
+      {
+        "id": "seguridad-mendoza",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 0.0,
+        "precision_doc_1": 0.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.25,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:mendoza#014 (Hacer)",
+          "guia:mendoza#024 (Dormir > Derroche)",
+          "guia:mendoza#006 (Desplazarse > En Buses - Colectivos)",
+          "guia:mendoza#005 (Desplazarse > Auto Privado)"
+        ]
+      },
+      {
+        "id": "entrada-iguazu",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.0,
+        "precision_frag_k": 0.0,
+        "mrr": 0.0,
+        "top_con_filtro": [
+          "guia:iguazu#008 (Desplazarse)",
+          "guia:iguazu#014 (Ver > Lado argentino)",
+          "guia:iguazu#009 (Desplazarse > En bus)",
+          "guia:iguazu#019 (Hacer > Lado brasileño)"
+        ]
+      },
+      {
+        "id": "valles-calchaquies",
+        "relevantes_en_indice": 2,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 1.0,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 0.5,
+        "precision_frag_k": 0.25,
+        "mrr": 0.5,
+        "top_con_filtro": [
+          "guia:salta#015 (Hacer > Circuitos Turísticos Tradicionales)",
+          "guia:salta#017 (Hacer > Circuitos Turísticos Tradicionales > Circuito de los Valles Calchaquíes)",
+          "guia:salta#018 (Hacer > Circuitos Turísticos Tradicionales > Circuito Histórico-Gaucho)",
+          "guia:salta#019 (Hacer > Circuitos Turísticos Tradicionales > Circuito Norte)"
+        ]
+      },
+      {
+        "id": "micro-bariloche",
+        "relevantes_en_indice": 1,
+        "recall_doc_1": 1.0,
+        "precision_doc_1": 1.0,
+        "recall_doc_k": 1.0,
+        "precision_doc_k": 0.75,
+        "recall_frag_1": 0.0,
+        "precision_frag_1": 0.0,
+        "recall_frag_k": 1.0,
+        "precision_frag_k": 0.25,
+        "mrr": 0.25,
+        "top_con_filtro": [
+          "guia:bariloche#003 (Llegar > En tren)",
+          "guia:bariloche#006 (Llegar > En barco)",
+          "guia:bariloche#007 (Llegar > A pie)",
+          "guia:bariloche#005 (Llegar > En autobús)"
+        ]
+      }
+    ]
+  }
+}

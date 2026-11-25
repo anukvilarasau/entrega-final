@@ -55,7 +55,7 @@ class Ajustes(BaseSettings):
     pinecone_cloud: str = "aws"
     pinecone_region: str = "us-east-1"
     embeddings_modelo: str = Field(default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", min_length=3)
-    modelos_cache_dir: Path = BASE_DIR / "data" / "modelos"
+    modelos_cache_dir: Path = Path.home() / ".cache" / "asesor-viajes" / "modelos"  # fuera del repo (y de OneDrive)
     chunk_tokens: int = Field(default=500, ge=50, le=2000)
     chunk_overlap: int = Field(default=60, ge=0)
     rag_top_k: int = Field(default=4, ge=1, le=20)
@@ -64,6 +64,7 @@ class Ajustes(BaseSettings):
     reranker: Literal["cross_encoder", "llm", "ninguno"] = "cross_encoder"
     reranker_modelo: str = "jinaai/jina-reranker-v2-base-multilingual"
     reranker_candidatos: int = Field(default=12, ge=1, le=50, description="Cuántos fusionados re-ordena el re-ranker.")
+    reranker_max_caracteres: int = Field(default=1200, ge=100, description="Cuánto de cada fragmento lee el cross-encoder.")
     ingesta_al_arrancar: bool = True
 
     # --- Memoria de búsquedas web (ChromaDB) ---
@@ -134,6 +135,7 @@ RAG_RRF_K: int = AJUSTES.rag_rrf_k
 RERANKER: str = AJUSTES.reranker
 RERANKER_MODELO: str = AJUSTES.reranker_modelo
 RERANKER_CANDIDATOS: int = AJUSTES.reranker_candidatos
+RERANKER_MAX_CARACTERES: int = AJUSTES.reranker_max_caracteres
 
 # Memoria de búsquedas
 CHROMA_DIR: Path = AJUSTES.memoria_dir

@@ -107,7 +107,7 @@ async def test_el_supervisor_ve_resumenes_no_llamadas_internas() -> None:
     llm = LLMMock(politica_estructurada=politica_supervisor_estructurada)
     await crear_nodo_supervisor(llm)(estado(pedido=PEDIDO, pasos_supervisor=1, aportes=[aporte_inv(["obs X"])]))
     visto = " ".join(str(m.content) for m in llm.vistos[-1])
-    assert "APORTE #1 | agente=investigador" in visto and "fuentes=1 (memoria=0, web=1)" in visto
+    assert "APORTE #1 | agente=investigador" in visto and "fuentes=1 (guia=0, memoria=0, web=1)" in visto
     assert "Observaciones del chequeo por código: obs X" in visto
     assert "SIN RESULTADOS EN MEMORIA" not in visto  # el resultado crudo de la herramienta no llega
     assert "R1 Cobertura" in visto and "esta es la número 2" in visto
@@ -203,7 +203,7 @@ async def test_el_supervisor_ve_la_cobertura_por_tema() -> None:
     await crear_nodo_supervisor(llm)(estado(pedido=PEDIDO, pasos_supervisor=1, aportes=[con_cob]))
     visto = " ".join(str(m.content) for m in llm.vistos[-1])
     assert "COBERTURA POR TEMA (calculada por código" in visto
-    assert "pasajes | 3 | 2 | 1 | sí" in visto and "clima | 1 | 1 | 0 | NO" in visto
+    assert "pasajes | 3 | 0 | 2 | 1 | sí" in visto and "clima | 1 | 0 | 1 | 0 | NO" in visto
 
 
 # ------------------------------------------------ escenario 4 real: fechas supuestas

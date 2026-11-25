@@ -23,7 +23,10 @@ B. calcular_presupuesto: hace la cuenta del viaje, renglón por renglón:
    costo por día y por persona por día.
 
 Las dos son determinísticas: el mismo input da siempre el mismo resultado.
-Igual que las del investigador, devuelven texto (para el LLM) + artifact.
+Igual que las del investigador, devuelven texto (para el LLM) + artifact, y los
+dos pasan por un modelo Pydantic (ResultadoValidacion / SalidaHerramienta).
+Son funciones sync de CPU pura (microsegundos, sin E/S): LangChain las corre
+en un executor cuando el agente las llama con ainvoke, así no bloquean el loop.
 """
 
 import math
@@ -35,6 +38,7 @@ from langchain_core.tools import BaseTool, StructuredTool
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 import config
+from agents.common import salida as salida_validada
 from graph.state import PATRON_ID_MEMORIA, Fuente, Moneda, cantidad
 
 MAX_DIAS_VIAJE: int = 60
@@ -117,6 +121,18 @@ def _errores_legibles(e: ValidationError) -> list[str]:
     return salida
 
 
+class ResultadoValidacion(BaseModel):
+    """El artifact de validar_viaje, validado con Pydantic."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    valido: bool
+    errores: list[str] = Field(default_factory=list)
+    dias: int | None = None
+    noches: int | None = None
+    personas: int | None = None
+
+
 def validar_viaje(**datos: object) -> tuple[str, dict[str, object]]:
     """Aplica ViajeValidado. Devuelve (texto, artifact con el resultado)."""
     try:
@@ -126,13 +142,14 @@ def validar_viaje(**datos: object) -> tuple[str, dict[str, object]]:
         return (
             "INVÁLIDO: el viaje no cumple las reglas.\n" + "\n".join(f"- {x}" for x in errores)
             + "\nNo calcules el presupuesto hasta que se corrijan estos datos."
-        ), {"valido": False, "errores": errores}
+        ), ResultadoValidacion(valido=False, errores=errores).model_dump(exclude_none=True)
     texto = (
         f"VÁLIDO: {v.origen} → {v.destino}, del {v.fecha_ida} al {v.fecha_vuelta} "
         f"({cantidad(v.dias, 'día', 'días')}, {cantidad(v.noches, 'noche')}), {cantidad(v.personas, 'persona')}, "
         f"presupuesto {_fmt(v.presupuesto, v.moneda)}."
     )
-    return texto, {"valido": True, "dias": v.dias, "noches": v.noches, "personas": v.personas}
+    return texto, ResultadoValidacion(valido=True, dias=v.dias, noches=v.noches, personas=v.personas).model_dump(
+        exclude_none=True, exclude={"errores"})
 
 
 # ===========================================================================
@@ -363,8 +380,8 @@ def calcular_presupuesto(**datos: object) -> tuple[str, list[Fuente]]:
     try:
         r = calcular(p)
     except ErrorDeCambio as e:
-        return (f"ERROR: {e}. Pedile al investigador la cotización que falta o usá precios en la misma "
-                "moneda del presupuesto."), []
+        return salida_validada(f"ERROR: {e}. Pedile al investigador la cotización que falta o usá precios en la "
+                               "misma moneda del presupuesto.")
     refs = [(p.pasaje.fuente, "pasajes"), (p.alojamiento.fuente, "alojamiento"),
             (p.comida_por_persona_por_dia.fuente, "comida")]
     if p.actividades_por_persona_por_dia:
@@ -372,7 +389,7 @@ def calcular_presupuesto(**datos: object) -> tuple[str, list[Fuente]]:
     refs += [(x.fuente, "actividades") for x in p.extras]
     refs += [(t.fuente, "cambio") for t in p.tipos_de_cambio]
     fuentes = [f for ref, tema in refs if (f := _fuente_de(ref, tema)) is not None]
-    return _texto_presupuesto(r), fuentes
+    return salida_validada(_texto_presupuesto(r), fuentes)
 
 
 # ===========================================================================

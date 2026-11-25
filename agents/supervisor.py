@@ -2,9 +2,12 @@
 supervisor.py — El SUPERVISOR: decide quién trabaja y cuándo terminar.
 
 En cada turno:
-1. (Solo la primera vez) ENTIENDE EL PEDIDO: con salida estructurada
-   `PedidoViaje` extrae origen, destino, fechas, personas, presupuesto y
-   moneda de la pregunta. Queda fijo para toda la corrida.
+1. (Solo la primera vez de cada turno) ENTIENDE EL PEDIDO: con salida
+   estructurada `PedidoViaje` extrae origen, destino, fechas, personas,
+   presupuesto y moneda. En un SEGUIMIENTO ("¿y si vamos en julio?") recibe
+   el pedido del turno anterior y devuelve el pedido completo actualizado; lo
+   que el LLM deje en null se completa por código con el pedido anterior
+   (`combinar_pedidos`). Queda fijo para todo el turno.
 2. FRENO DE PASOS: si ya tomó MAX_PASOS_SUPERVISOR − 1 decisiones, la
    siguiente es FINALIZAR forzado, por código, sin preguntarle al LLM.
    Así nunca hay "supervisor infinito".
@@ -36,7 +39,10 @@ from graph.state import (
     DecisionSupervisor,
     OrquestadorState,
     PedidoViaje,
+    TurnoConversacion,
     aportes_de,
+    aportes_del_turno,
+    turno_actual,
     validacion_del_pedido,
     validar_actualizacion,
 )
@@ -46,6 +52,7 @@ log = logging.getLogger(__name__)
 LARGO_CONTENIDO_RESUMEN: int = 2500  # caracteres del contenido de cada aporte que ve el supervisor
 MAX_RONDAS_INVESTIGADOR: int = 2      # la búsqueda original + UNA corrección
 TODOS_LOS_TEMAS: tuple[str, ...] = ("pasajes", "alojamiento", "comida", "actividades", "clima", "cambio")
+LARGO_RESPUESTA_PREVIA: int = 1500  # caracteres de la respuesta del turno anterior que ve el supervisor
 
 PROMPT_PEDIDO: str = """Extraé los datos del pedido de viaje del usuario. Hoy es {hoy}.
 Reglas:
@@ -54,21 +61,27 @@ Reglas:
 todavía no pasó) y anotalo en "supuestos".
 - Si dice la cantidad de días y la ida, calculá la vuelta como ida + (días − 1). Ej.: 7 días desde el 10/01 → vuelta 16/01.
 - NO corrijas los errores del usuario: si da fechas imposibles (vuelta antes que la ida), copialas tal cual.
-- Lo que el usuario no dijo queda en null."""
+- Lo que el usuario no dijo queda en null.
+- Si hay un PEDIDO ANTERIOR (la conversación sigue), el mensaje nuevo lo MODIFICA: devolvé el pedido COMPLETO \
+actualizado. Mantené todo lo que no cambió (origen, destino, personas, presupuesto, días...) y cambiá solo lo que \
+dice el mensaje nuevo. Ej.: "¿y si vamos en julio?" → mismas condiciones, ida el 10 de julio y la vuelta según los \
+días."""
 
 PROMPT_SUPERVISOR: str = """Sos el SUPERVISOR de un asesor de viajes multi-agente. Coordinás a dos especialistas y \
 decidís quién trabaja ahora, o si ya se puede FINALIZAR (pasar a la síntesis de la respuesta).
 
 Especialistas:
-- investigador: busca datos actuales con fuente (memoria local o web): pasajes, alojamiento, clima, actividades, \
-comida y cotización del dólar. No hace cuentas.
+- investigador: consigue datos con fuente. Lo ESTABLE (actividades, como_llegar, barrios, clima típico, consejos) lo \
+saca de la base de conocimiento de GUÍAS (Wikivoyage, gratis); lo que CAMBIA (precios de pasajes, alojamiento y \
+comida, y la cotización del dólar) de la memoria de búsquedas o, con permiso de una persona, de la web. No hace cuentas.
 - analista: valida el viaje (fechas, personas, presupuesto) y calcula el presupuesto con los precios que trajo el \
 investigador. Sin precios del investigador no puede trabajar.
 
 RÚBRICA: para FINALIZAR se tienen que cumplir TODOS estos puntos.
 R1 Cobertura: cada parte de la pregunta tiene datos. Si pregunta si alcanza la plata o pide armar el viaje, hacen \
 falta pasajes, alojamiento, comida/actividades y, si hay precios en dólares, la cotización.
-R2 Fuentes: cada aporte del investigador tiene fuentes (URL o mem-...).
+R2 Fuentes: cada aporte del investigador tiene fuentes (guia:..., URL o mem-...). Lo estable alcanza con fuentes de \
+guía; los precios tienen que venir de la memoria o la web (los precios de las guías pueden ser viejos).
 R3 Precios: los hallazgos de pasajes y alojamiento traen al menos un monto cada uno. Los precios de la web son DE \
 REFERENCIA: rangos, valores "desde", promedios o precios de fechas cercanas ALCANZAN para estimar. NO exijas precios \
 exactos para las fechas del viaje (casi nunca están publicados): con un precio de referencia de pasajes y otro de \
@@ -80,6 +93,8 @@ trabajo al MISMO especialista con una instrucción que diga exactamente qué cor
 búsqueda de pasajes con forzar=true porque no trajo precios").
 R6 Coherencia: no hay contradicciones entre aportes (noches, personas, monedas). Si las hay, pedile al analista \
 que recalcule con los datos correctos.
+R7 Economía: si la pregunta solo pide cosas estables (qué hacer, clima, cómo llegar, barrios, consejos), pedí SOLO \
+esos temas: las guías los responden sin gastar búsquedas web ni pedir permiso. No pidas precios que nadie preguntó.
 
 Reglas:
 - Si la pregunta NO tiene presupuesto ni pide cuentas (por ejemplo, solo el clima), no llames al analista.
@@ -94,7 +109,9 @@ la síntesis le va a avisar al usuario qué faltó.
 - Tenés un máximo de {maximo} decisiones; esta es la número {paso}. Si estás cerca del límite, priorizá terminar.
 - La instrucción tiene que ser concreta y autocontenida: el especialista NO ve la pregunta del usuario (sí ve los \
 DATOS DEL PEDIDO). Al investigador enumerale los temas a buscar (pasajes, alojamiento, comida, actividades, clima, \
-cambio) y pedile precios de referencia, no exactos.
+como_llegar, barrios, consejos, cambio) y, si hay precios, pedile precios de referencia, no exactos.
+- Si es un SEGUIMIENTO de una conversación (hay TURNO ANTERIOR), pedí solo lo que cambia con el pedido nuevo (por \
+ejemplo, otro mes → clima, actividades de esa temporada y precios): los aportes del turno anterior ya no cuentan.
 - Si mandás al investigador, completá "temas" con la lista de temas que tiene que buscar (solo los que faltan). \
 Mirá la COBERTURA POR TEMA (la calcula el sistema): no pidas de nuevo un tema que ya tiene fuentes y precios.
 - En "evaluacion", repasá la rúbrica punto por punto en una o dos líneas."""
@@ -105,11 +122,11 @@ Mirá la COBERTURA POR TEMA (la calcula el sistema): no pidas de nuevo un tema q
 # ---------------------------------------------------------------------------
 def resumen_aporte(n: int, a: Aporte) -> str:
     """Resumen de UN aporte para el supervisor (no incluye las llamadas internas)."""
-    origenes = {o: sum(1 for f in a.fuentes if f.origen == o) for o in ("memoria", "web")}
+    origenes = {o: sum(1 for f in a.fuentes if f.origen == o) for o in ("guia", "memoria", "web")}
     contenido = a.contenido[:LARGO_CONTENIDO_RESUMEN] + ("..." if len(a.contenido) > LARGO_CONTENIDO_RESUMEN else "")
     return (
         f"APORTE #{n} | agente={a.agente} | ronda={a.ronda} | herramientas={','.join(a.herramientas) or 'ninguna'} | "
-        f"fuentes={len(a.fuentes)} (memoria={origenes['memoria']}, web={origenes['web']})\n"
+        f"fuentes={len(a.fuentes)} (guia={origenes['guia']}, memoria={origenes['memoria']}, web={origenes['web']})\n"
         f"Instrucción que recibió: {a.instruccion}\n"
         f"Observaciones del chequeo por código: {' | '.join(a.observaciones) if a.observaciones else 'ninguna'}\n"
         f"Contenido:\n{contenido}"
@@ -126,23 +143,39 @@ def tabla_cobertura(state: OrquestadorState) -> str:
     total: dict[str, dict[str, Any]] = {}
     for a in aportes_de(state, "investigador"):
         for c in a.cobertura:
-            t = total.setdefault(c.tema, {"fuentes": 0, "memoria": 0, "web": 0, "precios": False})
+            t = total.setdefault(c.tema, {"fuentes": 0, "guia": 0, "memoria": 0, "web": 0, "precios": False})
             t["fuentes"] += c.fuentes
+            t["guia"] += c.guia
             t["memoria"] += c.memoria
             t["web"] += c.web
             t["precios"] = t["precios"] or c.con_precios
     if not total:
         return "COBERTURA POR TEMA (calculada por código): todavía no hay búsquedas."
     filas = ["COBERTURA POR TEMA (calculada por código, sumando todas las investigaciones):",
-             "tema | fuentes | de memoria | de la web | ¿trae precios?"]
-    filas += [f"{tema} | {t['fuentes']} | {t['memoria']} | {t['web']} | {'sí' if t['precios'] else 'NO'}"
+             "tema | fuentes | de guías | de memoria | de la web | ¿trae precios? (memoria/web)"]
+    filas += [f"{tema} | {t['fuentes']} | {t['guia']} | {t['memoria']} | {t['web']} | {'sí' if t['precios'] else 'NO'}"
               for tema, t in total.items()]
     return "\n".join(filas)
 
 
+def turno_anterior(state: OrquestadorState) -> TurnoConversacion | None:
+    """El último turno terminado de la conversación (None en el primer turno)."""
+    previos = [t for t in state.get("turnos", []) if t.turno < turno_actual(state)]
+    return previos[-1] if previos else None
+
+
+def bloque_turno_anterior(t: TurnoConversacion) -> str:
+    respuesta = t.respuesta[:LARGO_RESPUESTA_PREVIA] + ("..." if len(t.respuesta) > LARGO_RESPUESTA_PREVIA else "")
+    return (f"TURNO ANTERIOR DE LA CONVERSACIÓN (turno {t.turno}):\nPregunta: {t.pregunta}\n"
+            f"Respuesta que recibió el usuario:\n{respuesta}")
+
+
 def mensaje_para_supervisor(state: OrquestadorState, pedido: PedidoViaje) -> str:
-    aportes = state.get("aportes", [])
-    bloques = [f"PREGUNTA DEL USUARIO:\n{state['pregunta']}", pedido.como_texto()]
+    aportes = aportes_del_turno(state)
+    bloques = []
+    if (previo := turno_anterior(state)) is not None:
+        bloques.append(bloque_turno_anterior(previo))
+    bloques += [f"PREGUNTA DEL USUARIO{' (seguimiento)' if previo else ''}:\n{state['pregunta']}", pedido.como_texto()]
     if aportes:
         bloques.append(tabla_cobertura(state))
         bloques.append("APORTES HASTA AHORA:\n\n" + "\n\n".join(resumen_aporte(i, a) for i, a in enumerate(aportes, 1)))
@@ -189,7 +222,7 @@ def aplicar_reglas_duras(
             instruccion="Buscá los precios de pasajes, alojamiento, comida y actividades, y la cotización del dólar.",
             temas=["pasajes", "alojamiento", "comida", "actividades", "cambio"],
         ), "regla dura: el analista no puede trabajar sin datos del investigador → investigador"
-    if decision.siguiente == "FINALIZAR" and not state.get("aportes"):
+    if decision.siguiente == "FINALIZAR" and not aportes_del_turno(state):
         return DecisionSupervisor(
             evaluacion=decision.evaluacion, siguiente="investigador",
             instruccion=decision.instruccion or "Buscá los datos necesarios para responder la pregunta del pedido.",
@@ -235,15 +268,23 @@ def crear_nodo_supervisor(llm: BaseChatModel, max_pasos: int | None = None) -> N
     extractor = llm.with_structured_output(PedidoViaje)
     decisor = llm.with_structured_output(DecisionSupervisor)
 
-    async def extraer_pedido(pregunta: str) -> PedidoViaje:
+    async def extraer_pedido(pregunta: str, anterior: PedidoViaje | None = None) -> PedidoViaje:
+        texto = pregunta
+        if anterior is not None:
+            texto = (f"PEDIDO ANTERIOR (la conversación sigue):\n{anterior.model_dump_json(exclude_none=True)}\n\n"
+                     f"MENSAJE NUEVO DEL USUARIO:\n{pregunta}")
         mensajes = [SystemMessage(content=PROMPT_PEDIDO.format(hoy=config.FECHA_REFERENCIA.isoformat())),
-                    HumanMessage(content=pregunta)]
+                    HumanMessage(content=texto)]
         for intento in (1, 2):
             try:
                 pedido = await extractor.ainvoke(mensajes)
-                return pedido if isinstance(pedido, PedidoViaje) else PedidoViaje.model_validate(pedido)
+                pedido = pedido if isinstance(pedido, PedidoViaje) else PedidoViaje.model_validate(pedido)
+                return combinar_pedidos(anterior, pedido) if anterior is not None else pedido
             except (ValidationError, ValueError) as e:
                 log.warning("[supervisor] extracción del pedido inválida (intento %d): %s", intento, e)
+        if anterior is not None:
+            return anterior.model_copy(update={"supuestos": [*anterior.supuestos,
+                                                             "No se pudo interpretar el cambio pedido."]})
         return PedidoViaje(supuestos=["No se pudieron extraer los datos del pedido automáticamente."])
 
     async def supervisor(state: OrquestadorState) -> dict[str, Any]:
@@ -253,7 +294,8 @@ def crear_nodo_supervisor(llm: BaseChatModel, max_pasos: int | None = None) -> N
 
         pedido = state.get("pedido")
         if pedido is None:
-            pedido = await extraer_pedido(state["pregunta"])
+            previo = turno_anterior(state)
+            pedido = await extraer_pedido(state["pregunta"], previo.pedido if previo else None)
             actualizacion["pedido"] = pedido
             log.info("[supervisor] pedido: %s", pedido.model_dump(exclude_none=True))
 
@@ -289,7 +331,8 @@ def crear_nodo_supervisor(llm: BaseChatModel, max_pasos: int | None = None) -> N
             siguiente=decision.siguiente,
             instruccion_actual=decision.instruccion,
             temas_pedidos=list(decision.temas),
-            decisiones=[DecisionRegistrada(paso=paso, siguiente=decision.siguiente, instruccion=decision.instruccion,
+            decisiones=[DecisionRegistrada(paso=paso, turno=turno_actual(state), siguiente=decision.siguiente,
+                                           instruccion=decision.instruccion,
                                            temas=list(decision.temas), evaluacion=evaluacion, forzada=forzada)],
             messages=[AIMessage(
                 content=f"[supervisor] decisión {paso}: {decision.siguiente}"
@@ -300,6 +343,27 @@ def crear_nodo_supervisor(llm: BaseChatModel, max_pasos: int | None = None) -> N
         return validar_actualizacion("supervisor", actualizacion)
 
     return supervisor
+
+
+def combinar_pedidos(anterior: PedidoViaje, nuevo: PedidoViaje) -> PedidoViaje:
+    """Seguimiento: lo que el mensaje nuevo no dice se mantiene del pedido anterior (por código, no por el LLM).
+
+    Si cambió la ida y no se dijo la vuelta, la vuelta se recalcula con los días del viaje.
+    """
+    from datetime import timedelta
+
+    datos = anterior.model_dump()
+    cambios = {k: v for k, v in nuevo.model_dump().items() if v not in (None, [])}
+    datos.update(cambios)
+    if "fecha_ida" in cambios and "fecha_vuelta" not in cambios:
+        dias = datos.get("dias")
+        if dias:
+            datos["fecha_vuelta"] = datos["fecha_ida"] + timedelta(days=int(dias) - 1)
+        elif anterior.fecha_ida and anterior.fecha_vuelta:
+            datos["fecha_vuelta"] = datos["fecha_ida"] + (anterior.fecha_vuelta - anterior.fecha_ida)
+    datos["supuestos"] = list(dict.fromkeys(nuevo.supuestos or [x for x in anterior.supuestos
+                                                                 if "sin día exacto" not in x]))
+    return PedidoViaje.model_validate(datos)
 
 
 def ruta_supervisor(state: OrquestadorState) -> Literal["investigador", "analista", "sintesis"]:

@@ -1,5 +1,5 @@
 """
-graph.py — El grafo principal: topología JERÁRQUICA con un supervisor al centro.
+graph/builder.py — El grafo principal: topología JERÁRQUICA con un supervisor al centro.
 
             ┌──────────────┐
   START ──► │  supervisor  │ ──(FINALIZAR)──► sintesis ──► END
@@ -15,6 +15,9 @@ graph.py — El grafo principal: topología JERÁRQUICA con un supervisor al cen
   un nodo que acota su contexto y valida lo que escriben en el estado.
 - Frenos: MAX_PASOS_SUPERVISOR (supervisor), RECURSION_LIMIT (este grafo) y
   RECURSION_LIMIT_ESPECIALISTA (ciclo interno de cada especialista).
+- Entrega final: el investigador recibe la herramienta consultar_guias (el RAG
+  de rag/) además de la memoria y la web; el grafo de la API intercala el nodo
+  HITL "aprobacion_web" y compila con checkpointer (construir_grafo_api).
 
 `consultar()` corre UNA pregunta de punta a punta, registra cada paso en una
 traza y la guarda en traces/. La usan main.py, demo.ipynb y los tests.
@@ -37,15 +40,16 @@ import config
 from agents.analyst_agent import crear_agente_analista, crear_nodo_analista
 from agents.analyst_tools import crear_herramientas_analista
 from agents.common import NodoAsync
-from rag.memoria import EmbeddingHash, MemoriaBusquedas
+from agents.llm import Rol, crear_llm
 from agents.research_agent import crear_agente_investigador, crear_nodo_investigador
 from agents.research_tools import BuscadorMock, BuscadorTavily, BuscadorWeb, crear_herramientas_investigador
-from graph.hitl import crear_nodo_aprobacion
 from agents.supervisor import crear_nodo_supervisor, ruta_supervisor
 from agents.synthesizer import crear_nodo_sintesis
-from agents.llm import Rol, crear_llm
+from graph.hitl import crear_nodo_aprobacion
 from graph.state import OrquestadorState, estado_inicial
 from observability.traza import Traza
+from rag.base import BaseConocimiento, crear_base_conocimiento
+from rag.memoria import EmbeddingHash, MemoriaBusquedas
 
 log = logging.getLogger(__name__)
 
@@ -60,12 +64,16 @@ class Componentes:
     buscador: BuscadorWeb
     llms: dict[str, BaseChatModel]
     modo_mock: bool
+    base: BaseConocimiento | None = None   # RAG de guías (None = grafo de la PE6, sin consultar_guias)
 
 
 def crear_componentes(modo_mock: bool = config.MODO_MOCK, fallar_web: bool = False,
-                      ruta_memoria: Path | None = None) -> Componentes:
-    """Modo real: Claude + Tavily + ChromaDB en data/memoria_chroma/.
-    Modo mock: LLM simulado + Tavily simulado + ChromaDB en una carpeta temporal."""
+                      ruta_memoria: Path | None = None, con_guias: bool = True) -> Componentes:
+    """Modo real: Claude + Tavily + memoria ChromaDB + RAG (fastembed + VECTOR_STORE + re-ranker).
+    Modo mock: LLM simulado + Tavily simulado + todo en carpetas temporales, sin descargas.
+
+    Es sync (crea clientes y carga modelos ONNX): la API la llama con run_in_threadpool.
+    `con_guias=False` arma los componentes sin RAG (para comparar con el comportamiento de la PE6)."""
     if modo_mock:
         ruta = ruta_memoria or Path(tempfile.mkdtemp(prefix="memoria_mock_")) / "chroma"
         memoria = MemoriaBusquedas(ruta=ruta, embedding=EmbeddingHash())
@@ -74,7 +82,8 @@ def crear_componentes(modo_mock: bool = config.MODO_MOCK, fallar_web: bool = Fal
         memoria = MemoriaBusquedas(ruta=ruta_memoria or config.CHROMA_DIR)
         buscador = BuscadorTavily()
     llms = {rol: crear_llm(rol, modo_mock=modo_mock) for rol in ROLES}
-    return Componentes(memoria=memoria, buscador=buscador, llms=llms, modo_mock=modo_mock)
+    base = crear_base_conocimiento(modo_mock=modo_mock) if con_guias else None
+    return Componentes(memoria=memoria, buscador=buscador, llms=llms, modo_mock=modo_mock, base=base)
 
 
 def construir_grafo(
@@ -91,7 +100,7 @@ def construir_grafo(
     y reanudar. Sin esos dos argumentos el grafo es idéntico al de la PE6.
     """
     investigador = crear_agente_investigador(
-        componentes.llms["investigador"], crear_herramientas_investigador(componentes.memoria, componentes.buscador)
+        componentes.llms["investigador"], crear_herramientas_investigador(componentes.memoria, componentes.buscador, componentes.base)
     )
     analista = crear_agente_analista(componentes.llms["analista"], crear_herramientas_analista())
 
@@ -176,7 +185,7 @@ def construir_grafo_api(
     return construir_grafo(
         componentes,
         max_pasos=max_pasos,
-        nodo_aprobacion=crear_nodo_aprobacion(componentes.memoria),
+        nodo_aprobacion=crear_nodo_aprobacion(componentes.memoria, componentes.base),
         checkpointer=checkpointer,
     )
 

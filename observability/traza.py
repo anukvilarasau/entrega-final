@@ -1,5 +1,9 @@
 """
-tracing.py — La traza de cada corrida, en traces/<escenario>_<fecha>.json y .log.
+observability/traza.py — La traza local de cada corrida, en traces/<escenario>_<fecha>.json y .log.
+
+Complementa a LangSmith (observability/monitoreo.py): LangSmith muestra el árbol
+de spans, la latencia y el costo; esta traza queda versionada en el repo como
+evidencia y de ella salen las tablas del README.
 
 - .json: estructurado (ruta, decisiones, llamadas a herramientas, fuentes,
   observaciones, métricas, tokens, timestamps). Es la evidencia de cada
@@ -91,8 +95,9 @@ class Traza:
 
     # ------------------------------------------------------------------
     def _calcular_metricas(self, ultimo: dict[str, Any]) -> dict[str, Any]:
-        decisiones: list[DecisionRegistrada] = list(ultimo.get("decisiones", []))
-        aportes: list[Aporte] = list(ultimo.get("aportes", []))
+        turno = int(ultimo.get("turno") or 1)  # solo el turno actual (los anteriores son historial)
+        decisiones: list[DecisionRegistrada] = [d for d in ultimo.get("decisiones", []) if d.turno == turno]
+        aportes: list[Aporte] = [a for a in ultimo.get("aportes", []) if a.turno == turno]
         llamadas = [ll for a in aportes for ll in a.llamadas]
         web_real = [ll for ll in llamadas if ll.herramienta == "buscar_en_web"
                     and not ll.resultado.startswith(("NO SE BUSCÓ EN LA WEB", "WEB NO AUTORIZADA"))]
@@ -101,6 +106,7 @@ class Traza:
         delegaciones = [d.siguiente for d in decisiones if d.siguiente != "FINALIZAR"]
         veces = Counter(delegaciones)
         return {
+            "turno": turno,
             "ruta": " → ".join(self.ruta),
             "pasos_supervisor": len(decisiones),
             "decision_forzada_por_freno": any(d.forzada for d in decisiones),
@@ -108,6 +114,8 @@ class Traza:
             "refinamientos": sum(n - 1 for n in veces.values() if n > 1),
             "llamadas_por_herramienta": dict(Counter(ll.herramienta for ll in llamadas)),
             "busquedas_web": len(web_real),
+            "consultas_guias": sum(1 for ll in llamadas if ll.herramienta == "consultar_guias"),
+            "fuentes_guia": sum(1 for _, o in fuentes if o == "guia"),
             "fuentes_memoria": sum(1 for _, o in fuentes if o == "memoria"),
             "fuentes_web": sum(1 for _, o in fuentes if o == "web"),
             "observaciones": [o for a in aportes for o in a.observaciones],
@@ -128,7 +136,8 @@ class Traza:
 
     def texto_origenes(self) -> str:
         m = self.metricas
-        return f"{m.get('fuentes_memoria', 0)} de memoria · {m.get('fuentes_web', 0)} de la web"
+        return (f"{m.get('fuentes_guia', 0)} de guías · {m.get('fuentes_memoria', 0)} de memoria · "
+                f"{m.get('fuentes_web', 0)} de la web")
 
     def guardar(self, carpeta: Path | None = None) -> Path:
         """Escribe <etiqueta>_<fecha>.json y .log; devuelve la ruta del .json."""

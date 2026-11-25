@@ -33,7 +33,7 @@ CHECKPOINT_TTL_MINUTOS: int = 7 * 24 * 60
 # explícitamente: langgraph-checkpoint avisa que deserializar tipos no registrados se va a bloquear.
 TIPOS_DEL_ESTADO: list[tuple[str, str]] = [
     ("graph.state", nombre) for nombre in ("PedidoViaje", "Aporte", "Fuente", "LlamadaHerramienta", "CoberturaTema",
-                                     "DecisionRegistrada", "RegistroAprobacion")
+                                     "DecisionRegistrada", "RegistroAprobacion", "TurnoConversacion")
 ]
 
 

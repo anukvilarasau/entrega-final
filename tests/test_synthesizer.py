@@ -63,7 +63,8 @@ async def test_fuentes_y_aviso_los_agrega_el_codigo() -> None:
     assert f"- [memoria] mem-0123456789ab → {URL_CLIMA} — clima, buscado el 2026-11-03" in r
     assert r.count(URL_MICRO) == 1  # sin repetidos
     assert r.endswith(AVISO_PRECIOS)
-    assert set(salida) == {"respuesta_final", "messages"} and salida["messages"][0].name == "sintesis"
+    assert set(salida) == {"respuesta_final", "messages", "turnos"} and salida["messages"][0].name == "sintesis"
+    assert salida["turnos"][0].turno == 1 and salida["turnos"][0].respuesta == r
 
 
 async def test_flujo_completo_tiene_itinerario_dia_por_dia_y_presupuesto() -> None:

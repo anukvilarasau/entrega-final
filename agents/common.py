@@ -14,6 +14,7 @@ from typing import Any
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage
 from langgraph.errors import GraphRecursionError
 from langgraph.graph.state import CompiledStateGraph
+from pydantic import BaseModel, ConfigDict, Field
 
 import config
 from graph.state import Fuente, LlamadaHerramienta, OrquestadorState
@@ -23,6 +24,22 @@ log = logging.getLogger(__name__)
 LARGO_RESULTADO_TRAZA: int = 600  # caracteres de cada resultado que quedan en la traza
 
 NodoAsync = Callable[[OrquestadorState], Awaitable[dict[str, Any]]]
+
+
+class SalidaHerramienta(BaseModel):
+    """La salida de TODAS las herramientas de los agentes, validada antes de volver al LLM."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    texto: str = Field(min_length=1, description="Lo que lee el LLM.")
+    fuentes: list[Fuente] = Field(default_factory=list, description="El artifact: de dónde sale cada dato.")
+
+    def como_tupla(self) -> tuple[str, list[Fuente]]:
+        return self.texto, self.fuentes
+
+
+def salida(texto: str, fuentes: list[Fuente] | None = None) -> tuple[str, list[Fuente]]:
+    return SalidaHerramienta(texto=texto, fuentes=fuentes or []).como_tupla()
 
 
 async def correr_react(agente: CompiledStateGraph, entrada_texto: str) -> tuple[list[BaseMessage], bool]:
