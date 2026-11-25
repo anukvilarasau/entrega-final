@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from agents.memory import EmbeddingHash, MemoriaBusquedas
+from rag.memoria import EmbeddingHash, MemoriaBusquedas
 from agents.research_tools import BuscadorMock
 
 

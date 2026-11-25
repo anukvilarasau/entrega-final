@@ -22,8 +22,10 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-import config
-from graph import construir_grafo, consultar, crear_componentes
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import config  # noqa: E402
+from graph.builder import construir_grafo, consultar, crear_componentes  # noqa: E402
 
 DEMO = ("Quiero ir 7 días a Bariloche en enero, somos 2 personas, salimos desde Mendoza y tenemos "
         "800.000 pesos. ¿Me armás el viaje y me decís si nos alcanza?")

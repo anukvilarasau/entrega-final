@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 import config
-from state import Aporte, DecisionRegistrada, PedidoViaje, ahora, validacion_del_pedido
+from graph.state import Aporte, DecisionRegistrada, PedidoViaje, ahora, validacion_del_pedido
 
 LARGO_LOG: int = 300  # caracteres de cada resultado de herramienta en el .log
 

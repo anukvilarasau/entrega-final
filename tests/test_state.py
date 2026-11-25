@@ -6,7 +6,7 @@ import pytest
 from langgraph.graph import END, START, MessagesState, StateGraph
 from pydantic import ValidationError
 
-from state import (
+from graph.state import (
     Aporte,
     Fuente,
     DecisionSupervisor,
@@ -139,7 +139,7 @@ async def test_reductor_suma_aportes_en_un_grafo_real() -> None:
 def test_pedido_acepta_fechas_imposibles_para_que_las_valide_el_analista() -> None:
     from datetime import date
 
-    from state import PedidoViaje
+    from graph.state import PedidoViaje
 
     p = PedidoViaje(destino="Bariloche", fecha_ida=date(2027, 1, 16), fecha_vuelta=date(2027, 1, 10))
     assert p.fecha_vuelta < p.fecha_ida  # se registra tal cual lo dijo el usuario
@@ -152,7 +152,7 @@ def test_pedido_acepta_fechas_imposibles_para_que_las_valide_el_analista() -> No
 def test_contexto_especialista_no_incluye_pregunta() -> None:
     from datetime import date
 
-    from state import PedidoViaje, contexto_especialista
+    from graph.state import PedidoViaje, contexto_especialista
 
     texto = contexto_especialista("Buscá clima", PedidoViaje(destino="Bariloche", fecha_ida=date(2027, 1, 10),
                                                             presupuesto=800000, moneda="ARS"))

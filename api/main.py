@@ -31,12 +31,13 @@ from langgraph.types import Command
 from pydantic import BaseModel, ConfigDict, Field
 
 import config
-from app import observability
-from app.graph import abrir_checkpointer, construir_grafo_api
-from app.hitl import RespuestaAprobacion
-from app.worker import EstadoJob, JobStore, Worker
-from graph import Componentes, crear_componentes
-from state import ahora
+from observability import monitoreo as observability
+from graph.builder import construir_grafo_api
+from graph.checkpointer import abrir_checkpointer
+from graph.hitl import RespuestaAprobacion
+from api.worker import EstadoJob, JobStore, Worker
+from graph.builder import Componentes, crear_componentes
+from graph.state import ahora
 
 log = logging.getLogger(__name__)
 

@@ -23,12 +23,13 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command
 
 import config
-from app import observability
-from app.graph import abrir_checkpointer, construir_grafo_api
-from app.main import Ajustes, create_app
-from app.worker import EstadoJob, JobStore, Worker
-from graph import crear_componentes
-from state import Aporte, DecisionRegistrada, OrquestadorState, PedidoViaje
+from observability import monitoreo as observability
+from graph.builder import construir_grafo_api
+from graph.checkpointer import abrir_checkpointer
+from api.main import Ajustes, create_app
+from api.worker import EstadoJob, JobStore, Worker
+from graph.builder import crear_componentes
+from graph.state import Aporte, DecisionRegistrada, OrquestadorState, PedidoViaje
 
 DEMO = ("Quiero ir 7 días a Bariloche en enero, somos 2 personas, salimos desde Mendoza y tenemos "
         "800.000 pesos. ¿Me armás el viaje y me decís si nos alcanza?")
@@ -291,7 +292,7 @@ async def test_pausa_y_reanudacion_con_async_redis_saver_real(tmp_path: Path) ->
     comp = crear_componentes(modo_mock=True, ruta_memoria=tmp_path / "chroma")
     thread = f"test-{time.time_ns()}"
     cfg = {"configurable": {"thread_id": thread}}
-    from state import estado_inicial
+    from graph.state import estado_inicial
 
     async with abrir_checkpointer(os.environ["REDIS_URL_TESTS"]) as saver:
         await construir_grafo_api(comp, saver).ainvoke(estado_inicial(DEMO), cfg)

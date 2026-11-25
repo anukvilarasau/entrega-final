@@ -30,7 +30,7 @@ from langgraph.prebuilt import create_react_agent
 
 import config
 from agents.common import NodoAsync, correr_react, extraer_llamadas, respuesta_final, resultados
-from state import (
+from graph.state import (
     Aporte,
     OrquestadorState,
     PedidoViaje,

@@ -6,9 +6,9 @@ import pytest
 from langchain_core.messages import ToolMessage
 from pydantic import ValidationError
 
-from agents.memory import MemoriaBusquedas
+from rag.memoria import MemoriaBusquedas
 from agents.research_tools import BuscadorMock, crear_herramientas_investigador
-from state import Fuente
+from graph.state import Fuente
 
 ARGS = {"consulta": "precio pasaje vuelo Mendoza Bariloche ida y vuelta", "destino": "Bariloche", "tema": "pasajes"}
 

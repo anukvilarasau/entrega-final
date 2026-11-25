@@ -9,12 +9,12 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 import config
 from agents.analyst_agent import crear_agente_analista, crear_nodo_analista
 from agents.analyst_tools import crear_herramientas_analista
-from agents.memory import MemoriaBusquedas
+from rag.memoria import MemoriaBusquedas
 from agents.mock import politica_analista, politica_investigador
 from agents.research_agent import crear_agente_investigador, crear_nodo_investigador
 from agents.research_tools import BuscadorMock, crear_herramientas_investigador
-from llm import LLMMock, guion
-from state import Aporte, OrquestadorState, PedidoViaje, estado_inicial
+from agents.llm import LLMMock, guion
+from graph.state import Aporte, OrquestadorState, PedidoViaje, estado_inicial
 
 PREGUNTA = "PREGUNTA ORIGINAL: Quiero ir 7 días a Bariloche en enero..."
 PEDIDO = PedidoViaje(origen="Mendoza", destino="Bariloche", fecha_ida=date(2027, 1, 10),

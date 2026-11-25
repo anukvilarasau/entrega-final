@@ -38,9 +38,9 @@ from redis.asyncio import Redis
 from redis.exceptions import WatchError
 
 import config
-from app import observability
-from state import ahora, estado_inicial
-from tracing import Evento, Traza
+from observability import monitoreo as observability
+from graph.state import ahora, estado_inicial
+from observability.traza import Evento, Traza
 
 log = logging.getLogger(__name__)
 

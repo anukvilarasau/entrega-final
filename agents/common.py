@@ -16,7 +16,7 @@ from langgraph.errors import GraphRecursionError
 from langgraph.graph.state import CompiledStateGraph
 
 import config
-from state import Fuente, LlamadaHerramienta, OrquestadorState
+from graph.state import Fuente, LlamadaHerramienta, OrquestadorState
 
 log = logging.getLogger(__name__)
 

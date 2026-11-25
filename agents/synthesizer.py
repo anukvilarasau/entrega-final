@@ -23,7 +23,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from agents.common import NodoAsync
-from state import Fuente, OrquestadorState, validar_actualizacion
+from graph.state import Fuente, OrquestadorState, validar_actualizacion
 
 log = logging.getLogger(__name__)
 

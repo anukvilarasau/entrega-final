@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 
 import config
-from graph import Componentes, construir_grafo, consultar, crear_componentes, diagrama_mermaid
-from tracing import Traza
+from graph.builder import Componentes, construir_grafo, consultar, crear_componentes, diagrama_mermaid
+from observability.traza import Traza
 
 DEMO = ("Quiero ir 7 días a Bariloche en enero, somos 2 personas, salimos desde Mendoza y tenemos "
         "800.000 pesos. ¿Me armás el viaje y me decís si nos alcanza?")

@@ -6,8 +6,8 @@ from langchain_core.messages import AIMessage, HumanMessage
 from pydantic import ValidationError
 
 import config
-from llm import LLMMock, crear_llm, guion, nueva_llamada
-from state import DecisionSupervisor
+from agents.llm import LLMMock, crear_llm, guion, nueva_llamada
+from graph.state import DecisionSupervisor
 
 
 def test_modo_real_crea_claude_sin_llamar_a_la_api(monkeypatch: pytest.MonkeyPatch) -> None:

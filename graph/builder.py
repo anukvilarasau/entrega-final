@@ -37,14 +37,15 @@ import config
 from agents.analyst_agent import crear_agente_analista, crear_nodo_analista
 from agents.analyst_tools import crear_herramientas_analista
 from agents.common import NodoAsync
-from agents.memory import EmbeddingHash, MemoriaBusquedas
+from rag.memoria import EmbeddingHash, MemoriaBusquedas
 from agents.research_agent import crear_agente_investigador, crear_nodo_investigador
 from agents.research_tools import BuscadorMock, BuscadorTavily, BuscadorWeb, crear_herramientas_investigador
+from graph.hitl import crear_nodo_aprobacion
 from agents.supervisor import crear_nodo_supervisor, ruta_supervisor
 from agents.synthesizer import crear_nodo_sintesis
-from llm import Rol, crear_llm
-from state import OrquestadorState, estado_inicial
-from tracing import Traza
+from agents.llm import Rol, crear_llm
+from graph.state import OrquestadorState, estado_inicial
+from observability.traza import Traza
 
 log = logging.getLogger(__name__)
 
@@ -165,3 +166,22 @@ async def consultar(
     if guardar:
         traza.guardar()
     return traza
+
+def construir_grafo_api(
+    componentes: Componentes,
+    checkpointer: BaseCheckpointSaver | None,
+    max_pasos: int | None = None,
+) -> CompiledStateGraph:
+    """El grafo que corre la API: el de la PE6 + el nodo HITL + checkpointer."""
+    return construir_grafo(
+        componentes,
+        max_pasos=max_pasos,
+        nodo_aprobacion=crear_nodo_aprobacion(componentes.memoria),
+        checkpointer=checkpointer,
+    )
+
+
+def mermaid_produccion() -> str:
+    """El diagrama Mermaid del grafo de la API (con el nodo HITL), generado desde el código."""
+    componentes = crear_componentes(modo_mock=True)
+    return diagrama_mermaid(construir_grafo_api(componentes, checkpointer=None))

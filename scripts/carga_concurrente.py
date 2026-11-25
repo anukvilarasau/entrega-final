@@ -29,7 +29,7 @@ import httpx
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
-from app.observability import percentil  # noqa: E402
+from observability.monitoreo import percentil  # noqa: E402
 
 # Cinco viajes distintos (destinos distintos: ninguno sale de la memoria del otro).
 PREGUNTAS: list[str] = [

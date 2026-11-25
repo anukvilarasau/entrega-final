@@ -35,7 +35,7 @@ from langchain_core.tools import BaseTool, StructuredTool
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 import config
-from state import PATRON_ID_MEMORIA, Fuente, Moneda, cantidad
+from graph.state import PATRON_ID_MEMORIA, Fuente, Moneda, cantidad
 
 MAX_DIAS_VIAJE: int = 60
 MedioPago = Literal["tarjeta", "efectivo"]

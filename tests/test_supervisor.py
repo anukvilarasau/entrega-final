@@ -11,8 +11,8 @@ from pydantic import BaseModel
 import config
 from agents.mock import politica_supervisor_estructurada
 from agents.supervisor import PROMPT_SUPERVISOR, crear_nodo_supervisor, ruta_supervisor
-from llm import LLMMock
-from state import Aporte, DecisionSupervisor, Fuente, LlamadaHerramienta, PedidoViaje, estado_inicial
+from agents.llm import LLMMock
+from graph.state import Aporte, DecisionSupervisor, Fuente, LlamadaHerramienta, PedidoViaje, estado_inicial
 
 DEMO = ("Quiero ir 7 días a Bariloche en enero, somos 2 personas, salimos desde Mendoza y tenemos "
         "800.000 pesos. ¿Me armás el viaje y me decís si nos alcanza?")
@@ -194,7 +194,7 @@ def test_decision_al_investigador_exige_temas_y_los_demas_no_llevan() -> None:
 
 
 async def test_el_supervisor_ve_la_cobertura_por_tema() -> None:
-    from state import CoberturaTema
+    from graph.state import CoberturaTema
 
     con_cob = aporte_inv().model_copy(update={"cobertura": [
         CoberturaTema(tema="pasajes", fuentes=3, memoria=2, web=1, con_precios=True),
@@ -208,7 +208,7 @@ async def test_el_supervisor_ve_la_cobertura_por_tema() -> None:
 
 # ------------------------------------------------ escenario 4 real: fechas supuestas
 def test_validacion_del_pedido_ignora_fechas_inventadas() -> None:
-    from state import validacion_del_pedido
+    from graph.state import validacion_del_pedido
 
     malo = PEDIDO.model_copy(update={"fecha_ida": date(2027, 1, 16), "fecha_vuelta": date(2027, 1, 10)})
     llamadas = [

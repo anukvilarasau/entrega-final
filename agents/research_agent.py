@@ -36,7 +36,7 @@ from langgraph.prebuilt import create_react_agent
 import config
 from agents.common import NodoAsync, correr_react, extraer_llamadas, respuesta_final, resultados
 from agents.research_tools import PERMISO_WEB
-from state import PATRON_PRECIO, Aporte, CoberturaTema, Fuente, OrquestadorState, cantidad, contexto_especialista, validar_actualizacion
+from graph.state import PATRON_PRECIO, Aporte, CoberturaTema, Fuente, OrquestadorState, cantidad, contexto_especialista, validar_actualizacion
 
 log = logging.getLogger(__name__)
 

@@ -8,8 +8,8 @@ from langchain_core.messages import AIMessage
 
 from agents.mock import politica_sintesis
 from agents.synthesizer import AVISO_PRECIOS, crear_nodo_sintesis
-from llm import LLMMock, guion
-from state import Aporte, DecisionRegistrada, ErrorDeEstado, Fuente, PedidoViaje, estado_inicial, validar_actualizacion
+from agents.llm import LLMMock, guion
+from graph.state import Aporte, DecisionRegistrada, ErrorDeEstado, Fuente, PedidoViaje, estado_inicial, validar_actualizacion
 
 PEDIDO = PedidoViaje(origen="Mendoza", destino="Bariloche", fecha_ida=date(2027, 1, 10),
                      fecha_vuelta=date(2027, 1, 16), dias=7, personas=2, presupuesto=800_000, moneda="ARS")

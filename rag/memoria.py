@@ -42,7 +42,7 @@ from chromadb.api.types import Documents, EmbeddingFunction, Embeddings
 from chromadb.utils.embedding_functions import DefaultEmbeddingFunction, register_embedding_function
 
 import config
-from state import Tema
+from graph.state import Tema
 
 log = logging.getLogger(__name__)
 

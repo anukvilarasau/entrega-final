@@ -30,7 +30,7 @@ from pydantic import ValidationError
 
 import config
 from agents.common import NodoAsync
-from state import (
+from graph.state import (
     Aporte,
     DecisionRegistrada,
     DecisionSupervisor,

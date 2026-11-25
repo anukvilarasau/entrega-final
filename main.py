@@ -22,8 +22,8 @@ import logging
 import sys
 
 import config
-from graph import construir_grafo, consultar, crear_componentes, diagrama_mermaid
-from tracing import Traza
+from graph.builder import construir_grafo, consultar, crear_componentes, diagrama_mermaid
+from observability.traza import Traza
 
 COMANDOS_SALIR: set[str] = {"salir", "exit", "quit"}
 
@@ -104,7 +104,7 @@ async def main() -> int:
         if args.sin_hitl:
             print(diagrama_mermaid(grafo))
         else:  # el grafo que corre la API (app/graph.py): el mismo + el nodo human-in-the-loop
-            from app.graph import construir_grafo_api
+            from graph.builder import construir_grafo_api
 
             print(diagrama_mermaid(construir_grafo_api(componentes, checkpointer=None, max_pasos=args.max_pasos)))
         return 0

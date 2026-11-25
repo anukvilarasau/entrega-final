@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from agents.memory import EmbeddingHash, MemoriaBusquedas, ResultadoWeb, id_memoria, normalizar
+from rag.memoria import EmbeddingHash, MemoriaBusquedas, ResultadoWeb, id_memoria, normalizar
 
 AHORA = datetime(2026, 11, 5, 12, 0).astimezone()
 VUELOS = ResultadoWeb("https://a.example/vuelos", "Vuelos Mendoza Bariloche", "Pasaje ida y vuelta $480.000 por persona")

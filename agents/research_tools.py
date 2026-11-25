@@ -40,8 +40,8 @@ from langchain_core.tools import BaseTool, StructuredTool, ToolException
 from pydantic import BaseModel, ConfigDict, Field
 
 import config
-from agents.memory import MemoriaBusquedas, ResultadoBusquedaMemoria, ResultadoWeb, id_memoria, normalizar
-from state import PATRON_PRECIO, Fuente, PermisoWeb, Tema, cantidad
+from rag.memoria import MemoriaBusquedas, ResultadoBusquedaMemoria, ResultadoWeb, id_memoria, normalizar
+from graph.state import PATRON_PRECIO, Fuente, PermisoWeb, Tema, cantidad
 
 log = logging.getLogger(__name__)
 

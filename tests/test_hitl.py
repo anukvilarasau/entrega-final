@@ -11,10 +11,10 @@ from langgraph.types import Command
 import config
 from agents.research_tools import PERMISO_WEB, crear_herramientas_investigador
 from agents.synthesizer import AVISO_SIN_WEB
-from app.graph import construir_grafo_api
-from app.hitl import interpretar_respuesta
-from graph import Componentes, crear_componentes, diagrama_mermaid
-from state import estado_inicial
+from graph.builder import construir_grafo_api
+from graph.hitl import interpretar_respuesta
+from graph.builder import Componentes, crear_componentes, diagrama_mermaid
+from graph.state import estado_inicial
 
 DEMO = ("Quiero ir 7 días a Bariloche en enero, somos 2 personas, salimos desde Mendoza y tenemos "
         "800.000 pesos. ¿Me armás el viaje y me decís si nos alcanza?")
@@ -130,7 +130,7 @@ async def test_la_herramienta_web_no_llama_a_tavily_sin_permiso(comp: Componente
 def test_hay_vigentes_mira_destino_tema_y_antiguedad(comp: Componentes) -> None:
     from datetime import datetime, timedelta
 
-    from agents.memory import ResultadoWeb
+    from rag.memoria import ResultadoWeb
 
     m = comp.memoria
     assert not m.hay_vigentes("Bariloche", "pasajes")

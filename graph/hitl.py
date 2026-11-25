@@ -33,8 +33,8 @@ from langgraph.types import interrupt
 from pydantic import BaseModel, ConfigDict, Field
 
 from agents.common import NodoAsync
-from agents.memory import MemoriaBusquedas
-from state import OrquestadorState, PermisoWeb, RegistroAprobacion, Tema, validar_actualizacion
+from rag.memoria import MemoriaBusquedas
+from graph.state import OrquestadorState, PermisoWeb, RegistroAprobacion, Tema, validar_actualizacion
 
 log = logging.getLogger(__name__)
 
@@ -105,7 +105,7 @@ CONSULTAS_POR_TEMA: dict[str, str] = {
 
 def consulta_prevista(tema: str, pedido: Any) -> str:
     """Una descripción legible de la búsqueda web que haría el investigador para ese tema."""
-    from state import MESES
+    from graph.state import MESES
 
     datos = {"origen": "el origen", "destino": "el destino", "mes": "las fechas del viaje"}
     if pedido is not None:

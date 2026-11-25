@@ -7,12 +7,12 @@ import pytest
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 import config
-from agents.memory import MemoriaBusquedas
+from rag.memoria import MemoriaBusquedas
 from agents.mock import politica_investigador
 from agents.research_agent import crear_agente_investigador, crear_nodo_investigador
 from agents.research_tools import BuscadorMock, crear_herramientas_investigador
-from llm import LLMMock, guion, nueva_llamada
-from state import (
+from agents.llm import LLMMock, guion, nueva_llamada
+from graph.state import (
     Aporte,
     ErrorDeEstado,
     OrquestadorState,

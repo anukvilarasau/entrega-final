@@ -20,10 +20,10 @@ from typing import TYPE_CHECKING, Any
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage
 from pydantic import BaseModel
 
-from llm import Politica, PoliticaEstructurada, nueva_llamada
+from agents.llm import Politica, PoliticaEstructurada, nueva_llamada
 
 if TYPE_CHECKING:
-    from state import DecisionSupervisor, PedidoViaje
+    from graph.state import DecisionSupervisor, PedidoViaje
 
 TEMAS: tuple[str, ...] = ("pasajes", "alojamiento", "clima", "actividades", "cambio")
 
@@ -306,7 +306,7 @@ def extraer_pedido_mock(pregunta: str) -> "PedidoViaje":
     from datetime import date, timedelta
 
     import config
-    from state import MESES, PedidoViaje
+    from graph.state import MESES, PedidoViaje
 
     q = pregunta
     def num(patron: str) -> int | None:
@@ -358,7 +358,7 @@ def _aportes_resumidos(texto: str) -> list[dict[str, str]]:
 
 
 def decidir_mock(texto: str) -> "DecisionSupervisor":
-    from state import DecisionSupervisor
+    from graph.state import DecisionSupervisor
 
     pregunta = texto.split("PREGUNTA DEL USUARIO:\n", 1)[-1].split("\n\nDATOS DEL PEDIDO", 1)[0]
     pedido = leer_pedido(texto)
