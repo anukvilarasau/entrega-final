@@ -10,3 +10,7 @@ __pycache__/
 data/memoria_chroma/
 # Notas de progreso personales (no se suben)
 PROGRESO.md
+
+# Índices y modelos (se generan solos: ingesta y descarga al arrancar)
+data/indice_chroma/
+data/modelos/
