@@ -1,5 +1,5 @@
 """
-llm.py — Fábrica de modelos: Claude real o un LLM simulado (modo mock).
+agents/llm.py — Fábrica de modelos (capa M1-M2): Claude real o un LLM simulado (modo mock).
 
 Cada rol (supervisor, investigador, analista, sintesis) pide su modelo con
 `crear_llm(rol)`. El grafo NO sabe si está hablando con Claude o con el
@@ -133,8 +133,8 @@ def crear_llm_real() -> BaseChatModel:
         api_key=SecretStr(config.ANTHROPIC_API_KEY),
         max_tokens_to_sample=config.MAX_TOKENS_RESPUESTA,
         effort="low",
-        max_retries=3,   # reintentos con backoff ante 429/5xx
-        timeout=90,
+        max_retries=config.AJUSTES.llm_max_reintentos,   # reintentos con backoff ante 429/5xx
+        timeout=config.AJUSTES.llm_timeout_s,
         stop=None,
     )
 
@@ -148,3 +148,21 @@ def crear_llm(rol: Rol, modo_mock: bool = config.MODO_MOCK) -> BaseChatModel:
     politica, politica_estructurada = mock.POLITICAS[rol]
     log.debug("LLM mock para el rol %s", rol)
     return LLMMock(politica=politica, politica_estructurada=politica_estructurada)
+
+
+def explicar_error(e: Exception) -> str:
+    """Traduce los errores más comunes de las APIs a un mensaje claro."""
+    try:
+        import anthropic
+
+        if isinstance(e, anthropic.AuthenticationError):
+            return "La ANTHROPIC_API_KEY del .env es inválida (la API respondió 401)."
+        if isinstance(e, anthropic.NotFoundError):
+            return f"El modelo '{config.ANTHROPIC_MODEL}' no existe o no tenés acceso. Revisá ANTHROPIC_MODEL en el .env."
+        if isinstance(e, anthropic.RateLimitError):
+            return "La API de Claude está limitando los pedidos (429). Esperá un momento y probá de nuevo."
+        if isinstance(e, (anthropic.APIConnectionError, anthropic.APITimeoutError)):
+            return "No se pudo conectar con la API de Claude (sin internet o timeout)."
+    except ImportError:
+        pass
+    return f"{type(e).__name__}: {e}"

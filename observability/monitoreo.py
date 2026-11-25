@@ -1,14 +1,15 @@
 """
-app/observability.py — Observabilidad: LangSmith + métricas propias de cada job.
+observability/monitoreo.py — Observabilidad: LangSmith + métricas propias de cada job.
 
 LangSmith (trazas):
 - Se activa con LANGSMITH_TRACING=true + LANGSMITH_API_KEY (en el .env). LangChain
   y LangGraph mandan solos cada corrida: el run raíz "asesor_de_viajes" y, adentro,
   un run por nodo con su nombre (supervisor, aprobacion_web, investigador,
   analista, sintesis), el subagente ReAct, cada herramienta y cada llamada a Claude.
-- `config_de_job()` le pone a todas esas corridas la metadata job_id (= thread_id,
-  así LangSmith agrupa en la vista "Threads" el tramo antes y después de la pausa
-  HITL), el modo y el tramo, más tags para filtrar en el dashboard.
+- `config_de_job()` le pone a todas esas corridas la metadata job_id, thread_id
+  (la conversación: LangSmith agrupa en la vista "Threads" los tramos de la pausa
+  HITL y los turnos de seguimiento), turno, modo y tramo, más tags para filtrar.
+  LangGraph crea un span por nodo con su nombre, y cada span hereda la metadata.
 - En modo mock no se traza (salvo que LANGSMITH_TRACING=true lo pida explícitamente).
 
 Costo: LangSmith calcula el costo con su tabla de precios por modelo. Además
@@ -26,7 +27,7 @@ import config
 
 log = logging.getLogger(__name__)
 
-PROYECTO_POR_DEFECTO: str = "pre-entrega-7"
+PROYECTO_POR_DEFECTO: str = config.AJUSTES.langsmith_project
 
 # USD por millón de tokens (precios de la API de Anthropic, noviembre de 2026; prompts de hasta 100K tokens).
 # Lectura de caché = 0,1× la entrada; escritura de caché (5 min) = 1,25× la entrada.
@@ -65,21 +66,28 @@ def config_de_job(
     modo_mock: bool,
     tramo: int,
     callbacks: list[Any],
+    thread_id: str | None = None,
+    turno: int = 1,
     recursion_limit: int = config.RECURSION_LIMIT,
 ) -> dict[str, Any]:
-    """El RunnableConfig de una ejecución del grafo para un job (inicio o reanudación)."""
+    """El RunnableConfig de una ejecución del grafo para un job (inicio, reanudación o seguimiento)."""
+    thread_id = thread_id or job_id
     return {
-        "configurable": {"thread_id": job_id},     # checkpoint de LangGraph = un hilo por job
+        "configurable": {"thread_id": thread_id},  # checkpoint de LangGraph = un hilo por conversación
         "recursion_limit": recursion_limit,
         "callbacks": callbacks,
         "run_name": "asesor_de_viajes",
-        "tags": ["pre-entrega-7", "api", "mock" if modo_mock else "real", f"tramo-{tramo}"],
+        "tags": ["entrega-final", "api", "mock" if modo_mock else "real", f"tramo-{tramo}", f"turno-{turno}"],
         "metadata": {
             "job_id": job_id,
-            "thread_id": job_id,                   # LangSmith agrupa los tramos del job en "Threads"
+            "thread_id": thread_id,                # LangSmith agrupa tramos y turnos de la conversación en "Threads"
+            "turno": turno,                        # 1 = primera pregunta, 2+ = seguimientos
             "modo": "mock" if modo_mock else "real",
             "tramo": tramo,                        # 1 = inicio, 2+ = reanudación después de la pausa HITL
             "modelo": config.ANTHROPIC_MODEL,
+            "embeddings": config.EMBEDDINGS_MODELO,
+            "reranker": config.RERANKER,
+            "vector_store": config.VECTOR_STORE,
         },
     }
 

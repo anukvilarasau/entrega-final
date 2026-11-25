@@ -157,7 +157,7 @@ En invierno, el área se convierte en una gran estación de esquí. En Ushuaia h
 ## Comprar
 Cerca de la costanera y principalmente en la **avenida San Martín** se encuentra la principal zona comercial y al oeste de la ciudad y al norte del aeropuerto se encuentra una pequeña zona comercial. Los precios en **Ushuaia** son más altos que en el interior de Argentina. A causa de los bajos aranceles sobre las importaciones en Tierra del Fuego, los bienes importados (electrónicos) son un negocio comparativo.
 
-  - Paseo del Fuego Shopping Center** es un moderno centro comercial de grandes dimensiones que cuenta con un cineplex en el que se proyectan películas de estreno en inglés y español, ofreciendo una opción adicional para los días de lluvia.
+**Paseo del Fuego Shopping Center** es un moderno centro comercial de grandes dimensiones que cuenta con un cineplex en el que se proyectan películas de estreno en inglés y español, ofreciendo una opción adicional para los días de lluvia.
 
 Mientras los viajeros a la Antártida deben llegar con equipo adecuado ya en su posesión, el equipo de invierno que incluyen botas, abrigos y otros artículos de primera necesidad así como souvenirs se pueden comprar en una gran variedad de tiendas. Se pueden encontrar tiendas de recuerdos como **La abuela Oma**, **La Última Bita** y **World's End**.
 

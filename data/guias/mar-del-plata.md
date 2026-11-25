@@ -39,11 +39,11 @@ La principal arteria para acceder desde la Ciudad de Buenos Aires es la Autovía
 ### A pie
 Gran parte de los principales atractivos de Mar del Plata se articulan en torno a su paseo costero consolidado. Recorrer caminando la explanada desde La Perla, pasando por el Casino Central y la Rambla, hasta llegar a la bahía de Varese o Playa Grande, es un paseo en sí mismo y la mejor forma de apreciar la arquitectura y el perfil marítimo de la ciudad.
 
-### Taxis y remises
+### **Taxis y remises**
 Son medios de transporte confiables, regulados y de uso muy extendido. Todos cuentan con taxímetro: la bajada de bandera cuesta $2.250 y la ficha adicional (que cae cada 160 metros recorridos o por cada minuto de espera) tiene un valor de $150 (septiembre de 2026). Si bien operan aplicaciones de movilidad en la ciudad (como Uber o Cabify), su funcionamiento carece de una regulación municipal plena, lo que ocasionalmente genera fricciones con el transporte público tradicional.
 
-    - Taxis**: www.MardelPlata.info Guía De Mar del Plata.
-    - Remises**: www.MardelPlata.info Guía De Mar del Plata.
+- **Taxis**: www.MardelPlata.info Guía De Mar del Plata.
+- **Remises**: www.MardelPlata.info Guía De Mar del Plata.
 
 ### Autobús (Colectivo)
 La ciudad cuenta con una amplia red de colectivos urbanos. El pago del pasaje cuenta con una tarifa plana de aproximadamente $1.500 (septiembre de 2026) y se realiza de forma exclusiva mediante la tarjeta inteligente SUBE. Las unidades no aceptan dinero en efectivo. Como alternativa tecnológica reciente, el pasaje también puede ser abonado mediante código QR desde distintas billeteras virtuales (como Cuenta DNI) y tarjetas bancarias habilitadas con tecnología NFC.
@@ -54,7 +54,7 @@ La línea 221 (operada por la empresa Costa Azul) presta un servicio costero que
 ## Ver
 
 - **Playas y balnearios**. Con 17 kilómetros de playas, Mar del Plata es un lugar ideal para pasar el día en sus playas. Los balnearios consisten en zonas de playa privadas, donde el turista paga alrededor de $1000 pesos por día y alquila una pequeña caseta de madera con hamacas o sombrillas. Las orillas al mar son, en toda su extensión, públicas. Aunque a veces se encuentren un poco ocultos, siempre se garantiza algún acceso público y gratuito, para quien quiera disfrutar cualquiera de las playas sin abonar el servicio del balneario.
-    - Balnearios**: www.MardelPlata.info Guía de Balnearios.
+- **Balnearios**: www.MardelPlata.info Guía de Balnearios.
 - **Puerto**. Está situado entre la escollera norte y sur. La zona del puerto tiene un centro comercial y numerosos puestos de productos del mar. Asimismo, hay una colonia de leones marinos (misteriosamente la mayoría de ellos son machos) y alguno de ellos se puede observar en las zonas donde trabajan los pescadores preparando sus redes o descargando pescado. A pocos kilómetros, en la escollera Sur, es donde se concentra la mayor parte de los leones marinos. El olor es un tanto desagradable. Siguiendo las escollera Sur, se llega a un cementerio de barcos, donde se amontonan decenas de barcos oxidados y semi-hundidos. Al final de la escollera hay un restaurante y se tienen vistas panorámicas.
 - **Peatonal San Martin**. Esta calle peatonal es un buen lugar para pasear. Está llena de pequeños y grandes comercios y tiendas en su gran mayoría de marcas populares y accesibles. Si nos desplazamos una cuadra hasta la calle Rivadavia accederemos a algunas marcas más exclusivas pudiendo caminar algunas cuadras hasta llegar al Shopping Los Gallegos en donde encontraremos las marcas más importantes de la ciudad.
 - **Calle Güemes**. En esta calle se concentran tiendas de ropa (se pueden encontrar marcas como Reef o Quicksilver a muy buen precio) y otros comercios como joyerías o relojerías. También tiene buenos restaurantes.
@@ -75,7 +75,7 @@ La línea 221 (operada por la empresa Costa Azul) presta un servicio costero que
 "Alfajores Balcarce", también muy populares en la costa atlántica.
 
 ## Comer
-    - Restaurantes** : MardelPlata.infoGuía de Restaurantes
+- **Restaurantes** : MardelPlata.infoGuía de Restaurantes
 - **LOS GARCÍA Spetto Corrido**, Olavarría 2657 (casi Alberti), Mar del Plata. Asador de carnes asadas en espadas situado en la zona de la calle Güemes.
 - **El Palacio del Bife**, Córdoba 1857. Tel. 494-7727. Asador de carne.
 - **Zafarrancho**, Belgrano 2253. Tel. 494-7342. Otro asador de carne, de calidad similar al anterior.
@@ -83,18 +83,17 @@ La línea 221 (operada por la empresa Costa Azul) presta un servicio costero que
 - **Manolo**, churrería.
 
 ## Beber y salir
-    - Boliches**: MardelPlata.info Guía de Boliches.
+- **Boliches**: MardelPlata.info Guía de Boliches.
 
 ## Dormir
-    - Hoteles**: www.MardelPlata.info Guía De Mar del Plata , todos los hoteles de la ciudad.
-    - Sheraton Hotel**
-    - Costa Galana**
-    - NH Gran Hotel Provincial**Junto al mar.
+- **Hoteles**: www.MardelPlata.info Guía De Mar del Plata , todos los hoteles de la ciudad.
+- **Sheraton Hotel**
+- **Costa Galana**
+- **NH Gran Hotel Provincial**Junto al mar.
 - **Apart hotel Bristol Condominio**, peatonal San Martín 2150 . Ofrece acceso gratuito a Internet wireless.
-    - Hotel España**, Av. P. Luro 2964 Ubicado en microcentro de la ciudad. Servicio 3 estrellas.
-    - Hotel Hermitage**Hotel 5 estrellas junto al mar, muy importante en la ciudad.
-    - Cabañas**: www.MardelPlata.info Guía De Mar del Plata.
-
+- **Hotel España**, Av. P. Luro 2964 Ubicado en microcentro de la ciudad. Servicio 3 estrellas.
+- **Hotel Hermitage**Hotel 5 estrellas junto al mar, muy importante en la ciudad.
+- **Cabañas**: www.MardelPlata.info Guía De Mar del Plata.
 - **Hotel Riviera Mar del Plata**
 
 - **Hotel Merit Mar del Plata**
@@ -110,7 +109,7 @@ La línea 221 (operada por la empresa Costa Azul) presta un servicio costero que
 ## Lidiar con
 - **Mar de Plata** cuenta con una oficina de
 - **Migraciones**: Se pueden gestionar diversos trasmites para el extranjero, como Visas temporales o extensiones de los 90 días de turistas permitidos. Dirección: San Martin 3161/65. Horario: Lunes a Viernes de 08:00 a 14:00 hs.
-  - Consulado Italiano en Mar del Plata**: Falucho 1416 - (0223) 451-7703
+**Consulado Italiano en Mar del Plata**: Falucho 1416 - (0223) 451-7703
 
 - **Consulado de Chile**, Rivadavia 2641
 - **Viceconsulado de España**, Bartolomé Mitre 1159 - 0223 493-2006

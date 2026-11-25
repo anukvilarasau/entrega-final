@@ -23,19 +23,25 @@ from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
+import config
+
 
 log = logging.getLogger(__name__)
 
-# Los checkpoints de un job se borran solos después de este tiempo (Redis TTL, en minutos).
-CHECKPOINT_TTL_MINUTOS: int = 7 * 24 * 60
+# Los checkpoints de una conversación se borran solos después de este tiempo (Redis TTL, en minutos).
+CHECKPOINT_TTL_MINUTOS: int = config.AJUSTES.checkpoint_ttl_minutos
 
 # Tipos propios que viajan en el estado (y en los artifacts de las herramientas). Se declaran
 # explícitamente: langgraph-checkpoint avisa que deserializar tipos no registrados se va a bloquear.
-TIPOS_DEL_ESTADO: list[tuple[str, str]] = [
-    ("graph.state", nombre) for nombre in ("PedidoViaje", "Aporte", "Fuente", "LlamadaHerramienta", "CoberturaTema",
-                                     "DecisionRegistrada", "RegistroAprobacion", "TurnoConversacion")
-]
-
+MODULO_ESTADO: str = "graph.state"
+CLASES_DEL_ESTADO: tuple[str, ...] = ("PedidoViaje", "Aporte", "Fuente", "LlamadaHerramienta", "CoberturaTema",
+                                      "DecisionRegistrada", "RegistroAprobacion", "TurnoConversacion")
+# msgpack identifica una clase por (módulo, clase)...
+TIPOS_DEL_ESTADO: list[tuple[str, ...]] = [(MODULO_ESTADO, c) for c in CLASES_DEL_ESTADO]
+# ...pero el JSON de RedisSaver la identifica por la RUTA COMPLETA del id: ["graph", "state", "PedidoViaje"].
+# (Al mover state.py a graph/state.py en la entrega final, la allowlist vieja dejó de coincidir y los modelos
+# volvían del checkpoint como dict: lo detectó el test contra Redis real.)
+TIPOS_JSON_DEL_ESTADO: list[tuple[str, ...]] = [(*MODULO_ESTADO.split("."), c) for c in CLASES_DEL_ESTADO]
 
 
 @asynccontextmanager
@@ -66,7 +72,7 @@ async def abrir_checkpointer(redis_url: str | None, max_conexiones: int = 14) ->
     ) as saver:
         # RedisSaver guarda el estado como JSON (RedisJSON) y solo revive las clases de esta lista:
         # sin ella, PedidoViaje / Aporte / ... vuelven del checkpoint como dict y el grafo se rompe al reanudar.
-        saver.serde = JsonPlusRedisSerializer(allowed_json_modules=TIPOS_DEL_ESTADO,
+        saver.serde = JsonPlusRedisSerializer(allowed_json_modules=TIPOS_JSON_DEL_ESTADO,
                                               allowed_msgpack_modules=TIPOS_DEL_ESTADO)
         log.info("Checkpointer: AsyncRedisSaver (%s)", redis_url.split("@")[-1])
         yield saver

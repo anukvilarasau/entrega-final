@@ -22,6 +22,7 @@ import re
 from pathlib import Path
 from typing import Any, Protocol
 
+from langchain_core.messages import HumanMessage
 from pydantic import BaseModel, ConfigDict, Field
 
 from rag.documentos import Fragmento, normalizar
@@ -127,7 +128,7 @@ class RerankerLLM:
                             for i, f in enumerate(fragmentos, 1))
         prompt = (f"Consulta: {consulta}\n\nPuntuá de 0 a 10 qué tanto sirve cada fragmento de guía de viaje para "
                   f"responder la consulta. Devolvé un puntaje por cada fragmento.\n\n{lista}")
-        r = await self._llm.ainvoke(prompt)
+        r = await self._llm.ainvoke([HumanMessage(content=prompt)])
         r = r if isinstance(r, PuntajesRelevancia) else PuntajesRelevancia.model_validate(r)
         por_n = {p.n: float(p.relevancia) for p in r.puntajes}
         return [por_n.get(i, 0.0) - i * 1e-3 for i in range(1, len(fragmentos) + 1)]  # empate → orden previo

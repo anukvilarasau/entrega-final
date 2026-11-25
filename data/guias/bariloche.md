@@ -158,7 +158,7 @@ Hay muchas rutas de trekking cerca de Bariloche. Puedes obtener más informació
 
 - **Cerro Tronador**: Visita el glaciar negro (ventisquero negro), observa el Cerro Tronador y una cascada sobre un acantilado llamada Saltillo de las Nalcas, cerca del pueblo de Pampa Linda. El viaje en bus dura unas dos horas y cuesta AR$90 ida y vuelta o AR$45 solo ida (Transitando, 20 de Febrero 300, Bariloche). Hay una tarifa adicional de entrada al parque nacional de AR$50 (para extranjeros). Con este bus, debes caminar los últimos 7 km hasta el glaciar, lo que es una experiencia hermosa, ya que hay una ruta de senderismo y el paisaje es increíble. Algunos buses turísticos te llevan directamente a los puntos de interés. Cerca del mirador hay una confitería que vende comida a precios elevados, aunque la ubicación es remota y el lugar asombroso.
 
-  - Más lejos**:
+**Más lejos**:
 
 - **Pampa Linda & Monte Tronador**: Hasta 4 días de senderismo con buenas rutas y un albergue, desde y hacia Bariloche. Consulta en la oficina local del parque nacional.
 

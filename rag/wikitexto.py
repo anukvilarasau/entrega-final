@@ -205,7 +205,6 @@ def wikitexto_a_markdown(wikitexto: str) -> str:
     t = re.sub(r"\[(?:https?:)?//[^\s\]]+\]", "", t)                 # [url] → nada
     t = re.sub(r"<br\s*/?>", "\n", t, flags=re.I)
     t = re.sub(r"</?[a-zA-Z][^>]*>", "", t)                           # resto de las etiquetas HTML
-    t = t.replace("'''", "**").replace("''", "")
     t = t.replace("&nbsp;", " ").replace("&ndash;", "–").replace("&mdash;", "—")
 
     lineas: list[str] = []
@@ -221,7 +220,8 @@ def wikitexto_a_markdown(wikitexto: str) -> str:
         elif re.match(r"^(\{\||\|\}|\|-(?!-)|!)", linea):  # restos de tablas wiki (no "|---|" de markdown)
             linea = ""
         lineas.append(linea)
-    md = "\n".join(lineas)
+    # La negrita se convierte DESPUÉS de las listas: "'''Importante'''" al principio de una línea no es un ítem.
+    md = "\n".join(lineas).replace("'''", "**").replace("''", "")
     md = re.sub(r"(?m)^- \s*$", "", md)
     md = re.sub(r"(?m)^(- .*)\n\n(?=- )", r"\1\n", md)                 # las fichas seguidas forman una lista
     md = re.sub(r"\n{3,}", "\n\n", md).strip()

@@ -22,6 +22,7 @@ import logging
 import sys
 
 import config
+from agents.llm import explicar_error
 from graph.builder import construir_grafo, consultar, crear_componentes, diagrama_mermaid
 from observability.traza import Traza
 
@@ -42,24 +43,6 @@ def leer_argumentos() -> argparse.Namespace:
     p.add_argument("--sin-hitl", action="store_true", help="Con --mermaid: el grafo de consola, sin el nodo HITL.")
     p.add_argument("-v", "--verbose", action="store_true", help="Muestra los logs de cada etapa.")
     return p.parse_args()
-
-
-def explicar_error(e: Exception) -> str:
-    """Traduce los errores más comunes de las APIs a un mensaje claro."""
-    try:
-        import anthropic
-
-        if isinstance(e, anthropic.AuthenticationError):
-            return "La ANTHROPIC_API_KEY del .env es inválida (la API respondió 401)."
-        if isinstance(e, anthropic.NotFoundError):
-            return f"El modelo '{config.ANTHROPIC_MODEL}' no existe o no tenés acceso. Revisá ANTHROPIC_MODEL en el .env."
-        if isinstance(e, anthropic.RateLimitError):
-            return "La API de Claude está limitando los pedidos (429). Esperá un momento y probá de nuevo."
-        if isinstance(e, (anthropic.APIConnectionError, anthropic.APITimeoutError)):
-            return "No se pudo conectar con la API de Claude (sin internet o timeout)."
-    except ImportError:
-        pass
-    return f"{type(e).__name__}: {e}"
 
 
 def mostrar(traza: Traza) -> None:

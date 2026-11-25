@@ -49,12 +49,12 @@ El clima de El Calafate es fresco y seco. Los veranos son suaves y ventosos, mie
 
 - **Aeropuerto Internacional Comandante Armando Tola** ((IATA: FTE)): Como suele ocurrir en Argentina, el cajero automático del aeropuerto está fuera de servicio y no se puede usar. Sin embargo, hay muchos cajeros automáticos en la ciudad. El aeropuerto ofrece algo de Wi-Fi gratuito y enchufes eléctricos.
 
-  - Destinos**:
+**Destinos**:
 
 - Aerolíneas Argentinas tiene vuelos diarios desde Buenos Aires (en ambos aeropuertos) y vuelos estacionales desde Córdoba, Rosario, San Carlos de Bariloche, Ushuaia. Es posible hacer reservas en línea y obtener boletos electrónicos. LADE vuela desde muchas ciudades de Argentina. Durante la temporada alta, los vuelos suelen estar completos con grupos de turistas. Asegúrate de reservar tu vuelo con bastante antelación.
 - También hay vuelos charter desde Puerto Natales operados por DAP. Estos vuelos desde el pequeño aeropuerto de Puerto Natales pueden ser muy panorámicos y permiten cruzar los Andes en aproximadamente 90 minutos sin complicaciones de viaje por carretera (aunque, en su justa medida, esto es algo que no hay que perderse en Patagonia).
 
-  - Cómo llegar y salir**:
+**Cómo llegar y salir**:
 
 Justo después de desembarcar, encontrarás remises y oficinas de transfer a tu derecha.
 - **En autobús** – "VES" opera un servicio de autobuses hacia cualquier hotel de la ciudad desde el mostrador marcado "BUS".
@@ -69,7 +69,7 @@ Las vistas, si el clima es bueno, son en lugares impresionantes, especialmente e
 
 El viaje en autobús te permitirá pasar (y con suerte quedarte y disfrutar) por El Chaltén y te dará la oportunidad de quedarte en Perito Moreno desde donde podrás organizar un (largo) paseo para visitar la "Cueva de las Manos pintadas".
 
-  - Asegúrate** de reservar tu boleto de autobús al salir de la ciudad, cuando llegues, o podrías quedarte atrapado allí durante un par de días.
+**Asegúrate** de reservar tu boleto de autobús al salir de la ciudad, cuando llegues, o podrías quedarte atrapado allí durante un par de días.
 
 ### En coche
 Llegar en coche desde Chile (Puerto Natales) es un proceso bastante sencillo. La carretera (Ruta 40) está pavimentada en todo el trayecto; evita cualquier instrucción de Google Maps u otras aplicaciones que te envíen por carreteras sin pavimentar.
@@ -196,11 +196,10 @@ No te pierdas:
 
 Alto Calafate, Hotel Patagónico. www.hotelaltocalafate.com.ar Mail para Reservas: reservas@hotelaltocalafate.com.ar
 
-  - La Cantera:** La Cantera Hotel Boutique es un hotel boutique ubicado sobre una loma en El Calafate, a pocos minutos del centro de la ciudad. Inspirado en la arquitectura patagónica, ofrece habitaciones amplias, vistas panorámicas al Lago Argentino y al paisaje de la estepa, restaurante con gastronomía regional y atención personalizada. Su ubicación lo convierte en un punto de partida ideal para visitar el Glaciar Perito Moreno y el Parque Nacional Los Glaciares, disfrutando al mismo tiempo de un entorno tranquilo.
+**La Cantera:** La Cantera Hotel Boutique es un hotel boutique ubicado sobre una loma en El Calafate, a pocos minutos del centro de la ciudad. Inspirado en la arquitectura patagónica, ofrece habitaciones amplias, vistas panorámicas al Lago Argentino y al paisaje de la estepa, restaurante con gastronomía regional y atención personalizada. Su ubicación lo convierte en un punto de partida ideal para visitar el Glaciar Perito Moreno y el Parque Nacional Los Glaciares, disfrutando al mismo tiempo de un entorno tranquilo.
 
 - **Rochester Hotel Calafate**: Rochester Calafate se ubica en las adyacencias del centro de la Ciudad y con vista al Lago Argentino, en Bahía Redonda. Las habitaciones cuentan con sommiers King Size, amplios escritorios, mini bar, TV con cable, climatización y caja de seguridad. Dirección: Av. Libertador 3614, El Calafate, Santa Cruz, Argentina.
-
-    - Hostería Boutique y Cabañas Blanca Patagonia.** Charles Furh 149, El Calafate, Santa Cruz, Argentina. , ☎ (+54) (2902) 493370. correo electrónico: blancapatagonia@cotecal.com.ar www.blancapatagonia.com
+- **Hostería Boutique y Cabañas Blanca Patagonia.** Charles Furh 149, El Calafate, Santa Cruz, Argentina. , ☎ (+54) (2902) 493370. correo electrónico: blancapatagonia@cotecal.com.ar www.blancapatagonia.com
 
 - **Hostería Meulen Calafate**: Calle 202 N°608 frente a Laguna Nimez. El hotel tiene un servicio de traslado gratuito al centro, bar, restaurante, Wi-Fi, internet, DDI, DDN y lavandería.
 

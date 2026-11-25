@@ -71,7 +71,7 @@ Aires
 
 Desde Asuncion: Es un recorrido relativamente corto (300 kms) que se hace en aproximadamente 6 horas. Se pueden tomar lineas paraguayas, argentinas o brasileras. El costo estimado es de 20 USD
 
-  - En Automóvil**
+**En Automóvil**
 
 Trasladarse por Argentina desde Posadas a Puerto Iguazú es de las experiencias mas bellas de un recorrido turístico en automóvil. El paisaje de 400 km es de selva muy colorida lleno de atractivos y lugares para visitar desde Ruinas Jesuitas hasta pequeños paraísos de pequeñas cascadas. Lugares de minas de piedras preciosas, muy recomendable de hacer con tiempo .-
 
@@ -167,7 +167,7 @@ En el lugar se venden numerosas artesanías de madera talladas a mano que repres
 ## Comer
 
 - **Restaurante el Quincho de tío querido**: excelente asador de carne con una magnífica bodega de vinos.
-  - A piacere Restaurant Parrilla** ubicado en la avenida Córdoba donde se puede comer pastas, pescados de río, carne de corte argentino, ofrece un salón con aire acondicionado y un patio con terraza.
+**A piacere Restaurant Parrilla** ubicado en la avenida Córdoba donde se puede comer pastas, pescados de río, carne de corte argentino, ofrece un salón con aire acondicionado y un patio con terraza.
 
 ### Argentina
 El hotel Meliá (ver #Dormir más abajo) en el mismo parque ofrece una buena alternativa a los puestos de comida chatarra ubicados en todo el parque. Hay una bonita terraza donde puedes descansar desde la cual puedes ver la niebla que sale de las cataratas y también generalmente ver tucanes y otras aves volando alrededor.
@@ -186,8 +186,7 @@ Hay que tener en cuenta que existen precios oficiales de turista y de residente.
 - **Hotel Sheraton**: es el más caro, pero es el único que está dentro del parque Nacional de Cataratas
 - **Hotel Cataratas**: hotel de 5 estrellas, la doble cuesta unos 120€. Tiene spa, jacuzzi al aire libre, piscina, piscina y jacuzzi cubierto, pistas de paddle. Internet gratis. El desayuno es correcto. Sin embargo la cena deja bastante que desear para ser un hotel de 5 estrellas.
 - **Residencial Uno Hostel**: una opción económica en el centro de la ciudad, con todos los servicios: desayuno, Internet gratis, área Wi-Fi, piscina, bar, cocina para huéspedes, parrilla, habitaciones privadas (desde €20 la doble) y compartidas (a partir de €5,50). Fray Luis Beltrán 116. Tel: +54-3757-420-529. E-mail: residencialuno@gmail.com
-
-    - Hotel Lilian**: Un buen hotel cituado a tres cuadras del centro un lugar tranqilo y acogedor para descanzar. Fray Luis Beltran 183
+- **Hotel Lilian**: Un buen hotel cituado a tres cuadras del centro un lugar tranqilo y acogedor para descanzar. Fray Luis Beltran 183
 
 ### Lado brasileño
 

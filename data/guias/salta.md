@@ -95,7 +95,7 @@ Con 14 paradores dentro de la ciudad de Salta, el bus parte todos los días (de 
 
 En su recorrido de aproximadamente dos horas y media, pueden observarse los principales monumentos y atractivos de la ciudad. Junto con el ticket se entrega una guía escrita, multilingüe en español, inglés y francés, con la descripción de todos los atractivos del recorrido.
 
-  - Bus turístico Salta -BTS-**: Calle 20 de Febrero 796, Salta Capital | Tel.: (0387) 4227798 / 4315205 | E-mail: busturisticosalta@hotmail.com
+**Bus turístico Salta -BTS-**: Calle 20 de Febrero 796, Salta Capital | Tel.: (0387) 4227798 / 4315205 | E-mail: busturisticosalta@hotmail.com
 
 Tarifas: mayores (a partir de 12 años) $60, menores (de 5 a 12 años) y jubilados $50 (menores de 5 años no pagan).
 
@@ -301,7 +301,7 @@ Hotel con servicio 5 estrellas ubicado a los pies del cerro San Bernardo a 2 cua
 
 ### Turismo rural
 
-  - Estancias:**
+**Estancias:**
 - **Estancia El Bordo De Las Lanzas**: El Bordo, Gral. Güemes | E-mail: reser-vas@estanciaelbordo.com | Tel.: (0387) 156841176.
 - **Estancia Pampa Grande**: Guachipas | E-mail: estanciapampagrande@gmail.com | Tel.: (0387) 154044836.
 - **Estancia de Charme - House of Jasmines**: Ruta Nacional N 51 km 6 - La Merced Chica | E-mail: reservas@houseofjasmines.com | Tel.: (0387) 4972002.

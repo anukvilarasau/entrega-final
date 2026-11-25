@@ -385,7 +385,8 @@ def _aportes_resumidos(texto: str) -> list[dict[str, str]]:
 def decidir_mock(texto: str) -> "DecisionSupervisor":
     from graph.state import DecisionSupervisor
 
-    pregunta = texto.split("PREGUNTA DEL USUARIO:\n", 1)[-1].split("\n\nDATOS DEL PEDIDO", 1)[0]
+    # "PREGUNTA DEL USUARIO:" o, en un seguimiento, "PREGUNTA DEL USUARIO (seguimiento):"
+    pregunta = re.split(r"PREGUNTA DEL USUARIO[^:\n]*:\n", texto, maxsplit=1)[-1].split("\n\nDATOS DEL PEDIDO", 1)[0]
     pedido = leer_pedido(texto)
     con_presupuesto = pedido.get("presupuesto total", "no informado") != "no informado"
     aportes = _aportes_resumidos(texto)
@@ -436,7 +437,8 @@ def decidir_mock(texto: str) -> "DecisionSupervisor":
 def politica_supervisor_estructurada(mensajes: list[BaseMessage], esquema: type[BaseModel]) -> BaseModel:
     texto = _instruccion(mensajes)
     if esquema.__name__ == "PedidoViaje":
-        return extraer_pedido_mock(texto)
+        # Seguimiento: el mock extrae solo lo que dice el mensaje nuevo; combinar_pedidos completa el resto.
+        return extraer_pedido_mock(texto.split("MENSAJE NUEVO DEL USUARIO:\n", 1)[-1])
     return decidir_mock(texto)
 
 

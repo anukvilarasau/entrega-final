@@ -74,14 +74,14 @@ Para los precios regulares de los tours, consulta más abajo.
 - El **EcoCentro** es un excelente y moderno centro de interpretación marina que ofrece información interactiva sobre la vida marina de la región. Está ubicado con vista al golfo al sur de la ciudad en Julio Verne 784.
 
 ## Hacer
-    - Avistaje de ballenas**, la ballena franca austral utiliza las aguas del Golfo Nuevo para su reproducción y parto. Se pueden ver fácilmente desde la costa y el muelle. Los barcos para el avistaje de ballenas salen desde Puerto Pirámides, ubicado en la Península Valdés.
-    - Kite boarding y windsurfing**.
-    - Buceo en el Golfo Nuevo**. El agua tiene muy buena claridad y no tiene corriente. Se pone fría.
-    - Paseo a caballo**
-    - Pesca en el mar**
-    - Avistaje de orcas**, la excursión a Punta Norte es realmente cara y solo te lleva de un punto a otro, pasas todo el día en el coche y solo verás a los animales desde una gran distancia. Si quieres ver orcas, trata de encontrar otra manera de llegar a Punta Norte muy temprano en la mañana y quédate allí hasta que aparezca una o tengas que regresar. Puede que te pierdas alguna, pero al menos habrás tenido más oportunidades de verlas.
-    - Snorkel con lobos marinos**, es posible hacer snorkel con lobos marinos realmente cerca del puerto. Te llevan en un pequeño bote a una isla. Allí, los lobos marinos estarán jugando. No se les da de comer a los lobos marinos y no se permite acercarse demasiado a la colonia. Sin embargo, los lobos marinos son curiosos, así que se acercan a jugar. Es muy divertido, pero trata de alargar un poco el tour porque es un poco corto. Los trajes de neopreno están incluidos y te mantendrán lo suficientemente cálido. (AR$1400 por tour de 2 horas).
-    - Travesías en bicicleta entre ballenas y fauna patagónica:** Explorá paisajes costeros únicos pedaleando junto a Península Valdés. Esta experiencia te permite combinar el cicloturismo con el avistaje terrestre de ballenas, recorriendo senderos rodeados de la flora nativa de la estepa y la fascinante fauna silvestre de la Patagonia. En Alpataco Travel, podes disfutar esta experiencia.
+- **Avistaje de ballenas**, la ballena franca austral utiliza las aguas del Golfo Nuevo para su reproducción y parto. Se pueden ver fácilmente desde la costa y el muelle. Los barcos para el avistaje de ballenas salen desde Puerto Pirámides, ubicado en la Península Valdés.
+- **Kite boarding y windsurfing**.
+- **Buceo en el Golfo Nuevo**. El agua tiene muy buena claridad y no tiene corriente. Se pone fría.
+- **Paseo a caballo**
+- **Pesca en el mar**
+- **Avistaje de orcas**, la excursión a Punta Norte es realmente cara y solo te lleva de un punto a otro, pasas todo el día en el coche y solo verás a los animales desde una gran distancia. Si quieres ver orcas, trata de encontrar otra manera de llegar a Punta Norte muy temprano en la mañana y quédate allí hasta que aparezca una o tengas que regresar. Puede que te pierdas alguna, pero al menos habrás tenido más oportunidades de verlas.
+- **Snorkel con lobos marinos**, es posible hacer snorkel con lobos marinos realmente cerca del puerto. Te llevan en un pequeño bote a una isla. Allí, los lobos marinos estarán jugando. No se les da de comer a los lobos marinos y no se permite acercarse demasiado a la colonia. Sin embargo, los lobos marinos son curiosos, así que se acercan a jugar. Es muy divertido, pero trata de alargar un poco el tour porque es un poco corto. Los trajes de neopreno están incluidos y te mantendrán lo suficientemente cálido. (AR$1400 por tour de 2 horas).
+- **Travesías en bicicleta entre ballenas y fauna patagónica:** Explorá paisajes costeros únicos pedaleando junto a Península Valdés. Esta experiencia te permite combinar el cicloturismo con el avistaje terrestre de ballenas, recorriendo senderos rodeados de la flora nativa de la estepa y la fascinante fauna silvestre de la Patagonia. En Alpataco Travel, podes disfutar esta experiencia.
 
 Aquí algunos precios de tours. Recuerda regatear—dependiendo de la temporada y la cantidad de personas, es fácil conseguir descuentos:
 - Península Valdés: US$80 (más entrada)

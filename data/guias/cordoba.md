@@ -332,7 +332,7 @@ También se realizan actividades culturales en los **CPC** (centros distritales 
 ### Deportes
 Hay muchos clubes donde puedes practicar una amplia variedad de deportes, siendo las asociaciones de fútbol, baloncesto, rugby y hockey sobre césped, lo más popular. También puedes hacer patinaje en línea, bicicleta y jugar fútbol de manera informal en los parques, como el Parque Sarmiento, y muchas plazas en los barrios fuera del centro de la ciudad.
 
-El fútbol es el deporte más popular. Los equipos de fútbol más conocidos de Córdoba son Belgrano, Talleres e Instituto. Córdoba también tiene un buen equipo de baloncesto, Atenas, que tiene el récord de campeonatos en Argentina.
+El fútbol es el deporte más popular. Los equipos de fútbol más conocidos de Córdoba son Belgrano, Talleres  e Instituto. Córdoba también tiene un buen equipo de baloncesto, Atenas, que tiene el récord de campeonatos en Argentina.
 
 ### Estadios
 
@@ -415,7 +415,7 @@ Encontrarás muchas parillas (restaurantes de asado), algo típico en Argentina.
 
 ### Económico
 
-    - Puestos de choripán**, muy sabrosos sándwiches con chorizo argentino; la mayoría están en el Parque Sarmiento y cerca del río Suquía.
+- **Puestos de choripán**, muy sabrosos sándwiches con chorizo argentino; la mayoría están en el Parque Sarmiento y cerca del río Suquía.
 
 - **Juanito**: Comida mexicana, frecuentemente lleno los fines de semana. Dirección: José Baigorri 512.
 
@@ -454,10 +454,10 @@ Encontrarás muchas parillas (restaurantes de asado), algo típico en Argentina.
 ### Vida Nocturna
 En los siguientes barrios se encuentra la vida nocturna más activa:
 
-    - Nueva Córdoba**, hogar de muchos estudiantes de otras ciudades argentinas. Aquí encontrarás numerosos bares, pubs y algunas discotecas principales.
-    - Güemes**, especialmente en la calle Belgrano, la avenida Marcelo T. de Alvear (zona conocida como "La Cañada") y alrededores. Hay bares agradables y unas pocas discotecas más grandes. También se pueden encontrar buenos clubes en la avenida Roca al oeste de La Cañada.
-    - Ex Abasto**, el antiguo distrito "rojo" cerca del río Suquía. Cuenta con numerosos clubes de rock y cuarteto, además de grandes discotecas. La música aquí varía entre lo comercial y lo underground. Sin embargo, la zona circundante no es muy segura, por lo que es mejor mantenerse en las calles principales, que los fines de semana están llenas de jóvenes.
-    - Chateau Carreras**, cerca del Parque San Martín, es la zona más "chic", con clubes caros que suelen ofrecer música electrónica y pop internacional, aunque también hay fiestas de cuarteto.
+- **Nueva Córdoba**, hogar de muchos estudiantes de otras ciudades argentinas. Aquí encontrarás numerosos bares, pubs y algunas discotecas principales.
+- **Güemes**, especialmente en la calle Belgrano, la avenida Marcelo T. de Alvear (zona conocida como "La Cañada") y alrededores. Hay bares agradables y unas pocas discotecas más grandes. También se pueden encontrar buenos clubes en la avenida Roca al oeste de La Cañada.
+- **Ex Abasto**, el antiguo distrito "rojo" cerca del río Suquía. Cuenta con numerosos clubes de rock y cuarteto, además de grandes discotecas. La música aquí varía entre lo comercial y lo underground. Sin embargo, la zona circundante no es muy segura, por lo que es mejor mantenerse en las calles principales, que los fines de semana están llenas de jóvenes.
+- **Chateau Carreras**, cerca del Parque San Martín, es la zona más "chic", con clubes caros que suelen ofrecer música electrónica y pop internacional, aunque también hay fiestas de cuarteto.
 
 También hay clubes exclusivos en el barrio del Cerro de las Rosas. En Alta Córdoba y los distritos cercanos como General Bustos, encontrarás arte bares con música en vivo. En los suburbios de Villa Allende, Saldán y La Calera hay clubes populares. Durante el verano, la vida nocturna en Villa Carlos Paz es muy activa; minibuses privados llevan a las personas a los clubes más grandes desde la Plaza Vélez Sarsfield a la 01:00, siempre y cuando se pague la entrada por adelantado.
 
