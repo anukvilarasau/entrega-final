@@ -28,6 +28,8 @@ services:
     environment:
       REDIS_URL: redis://redis:6379/0           # pisa el REDIS_URL del .env: adentro de compose se usa este Redis
       MODO_MOCK: ${MODO_MOCK:-0}
+      # se puede pisar desde la shell (ej. LANGSMITH_TRACING=false para una prueba mock sin mandar trazas)
+      LANGSMITH_TRACING: ${LANGSMITH_TRACING:-true}
       CHROMA_DIR: /app/data/indice_chroma
       MEMORIA_DIR: /app/data/memoria_chroma
     ports:
